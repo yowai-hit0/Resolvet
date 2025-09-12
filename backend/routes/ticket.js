@@ -23,21 +23,21 @@ const router = express.Router();
 router.use(authenticate);
 
 // Get ticket statistics
-router.get('/stats', authorize['admin'], getTicketStats);
+router.get('/stats', authorize(['admin']), getTicketStats);
 
 // Get all tickets with pagination and filters
-router.get('/', authorize['admin'], validate(ticketQueryValidator, 'query'), getAllTickets);
+router.get('/', authorize(['admin', 'agent', 'customer']), validate(ticketQueryValidator, 'query'), getAllTickets);
 
 // Get ticket by ID
 router.get('/:id', getTicketById);
 
-// Create ticket (admin, customer)
-router.post('/', authorize['admin', 'customer'], validate(createTicketValidator), createTicket);
+// Create ticket (admin, customer, agent)
+router.post('/', authorize(['admin', 'customer','agent']), validate(createTicketValidator), createTicket);
 
 // Update ticket (admin, assigned agent)
-router.put('/:id', authorize['admin', 'agent'], validate(updateTicketValidator), updateTicket);
+router.put('/:id', authorize(['admin', 'agent']), validate(updateTicketValidator), updateTicket);
 
 // Add comment to ticket
-router.post('/:id/comments', authorize['admin', 'agent'], validate(commentValidator), addComment);
+router.post('/:id/comments', authorize(['admin', 'agent']), validate(commentValidator), addComment);
 
 export default router;

@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import oasGenerator from 'express-oas-generator'
 import { errorHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
@@ -33,6 +34,26 @@ app.use(cors({
   credentials: true
 }));
 
+oasGenerator.init(appm, {
+  swaggerDocumentOptions: {
+    openapi: "3.0.0",
+    info: {
+      title: "My Express API",
+      version: "1.0.0",
+      description: "Auto-generated API docs with Swagger + Redoc",
+    },
+    servers: [{ url: "http://localhost:3000" }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+  },
+})
 // Static files
 app.use('/uploads', express.static('uploads'));
 
