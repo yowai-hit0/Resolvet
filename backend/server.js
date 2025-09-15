@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 import ticketRoutes from './routes/ticket.js'
 import adminRoutes from './routes/admin.js';
+import tagRoutes from './routes/tag.js';
 import agentRoutes from './routes/agent.js';
 
 // Load env vars
@@ -64,6 +65,7 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/tickets', ticketRoutes);
 app.use('/api/v1/admin', adminRoutes); 
 app.use('/api/v1/agent', agentRoutes);
+app.use('/api/v1/tags', tagRoutes);
 // app.use('/api/v1/customer', customerRoutes)
 // Health check endpoint
 app.get('/api/v1/health', (req, res) => {
