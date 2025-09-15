@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { successResponse, errorResponse } from '../utils/responses.js';
+
 import { generateToken } from '../utils/generateToken.js';
 import prisma from '../config/database.js';
 import { ApiError } from '../utils/apiError.js';
@@ -54,7 +54,7 @@ export const register = asyncHandler(async (req, res) => {
 
   } catch (error) {
     console.error('Registration error:', error);
-    return errorResponse(res, 'Internal server error during registration');
+    throw ApiError.internal('Internal server error during registration');
   }
 });
 
@@ -77,13 +77,13 @@ export const login = asyncHandler(async (req, res) => {
     });
 
     if (!user || !user.is_active) {
-      return errorResponse(res, 'Invalid credentials or inactive account', 401);
+      throw ApiError.unauthorized('Invalid credentials or inactive account');
     }
 
     // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
     if (!isPasswordValid) {
-      return errorResponse(res, 'Invalid credentials', 401);
+      throw ApiError.unauthorized('Invalid credentials');
     }
 
     // Remove password from response
@@ -101,7 +101,7 @@ export const login = asyncHandler(async (req, res) => {
 
   } catch (error) {
     console.error('Login error:', error);
-    return errorResponse(res, 'Internal server error during login');
+    throw ApiError.internal('Internal server error during login');
   }
 });
 
@@ -129,6 +129,6 @@ export const getProfile = asyncHandler(async (req, res) => {
     return res.status(response.statusCode).json(response);
   } catch (error) {
     console.error('Get profile error:', error);
-    return errorResponse(res, 'Internal server error');
+    throw ApiError.internal('Internal server error');
   }
 });

@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import oasGenerator from 'express-oas-generator'
+import expressOasGenerator from "express-oas-generator";
 import { errorHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
@@ -16,6 +16,28 @@ import agentRoutes from './routes/agent.js';
 dotenv.config();
 
 const app = express();
+
+expressOasGenerator.init(app, {
+  swaggerDocumentOptions: {
+    openapi: "3.0.0",
+    info: {
+      title: "Resolvet Express APIs",
+      version: "1.0.1",
+      description: "Auto-generated API docs with Swagger + Redoc",
+    },
+    servers: [{ url: `http://localhost:${process.env.PORT || 3001}` }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+  },
+});
+
 
 app.use(helmet());
 app.use(compression());
@@ -33,27 +55,6 @@ app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
   credentials: true
 }));
-
-oasGenerator.init(appm, {
-  swaggerDocumentOptions: {
-    openapi: "3.0.0",
-    info: {
-      title: "My Express API",
-      version: "1.0.0",
-      description: "Auto-generated API docs with Swagger + Redoc",
-    },
-    servers: [{ url: "http://localhost:3000" }],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-    },
-  },
-})
 // Static files
 app.use('/uploads', express.static('uploads'));
 
@@ -73,16 +74,29 @@ app.get('/api/v1/health', (req, res) => {
   });
 });
 
+expressOasGenerator.handleResponses(app, {
+  alwaysServeDocs: true, 
+  specOutputPath: "./openapi.json",
+  swaggerUiServePath: "/api-docs", 
+  redocUiServePath: "/redoc",     
+  security: [{ bearerAuth: [] }],
+  excludeRoutes: [
+    "/api/v1/auth/login",
+    "/api/v1/auth/register",
+  ],
+});
+
 // Error handling middleware
 app.use(errorHandler);
 
 // Handle 404
-app.use('*', (req, res) => {
+app.use((req, res) => {
   res.status(404).json({
     success: false,
     message: 'Route not found'
   });
 });
+
 
 const PORT = process.env.PORT || 3001;
 

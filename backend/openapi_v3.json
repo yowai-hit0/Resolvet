@@ -1,0 +1,295 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "backend",
+    "version": "1.0.0",
+    "license": {
+      "name": "ISC"
+    },
+    "description": "Specification JSONs: [v2](/api-spec/v2), [v3](/api-spec/v3).\n\nresolvet customer support ticket backend"
+  },
+  "paths": {
+    "/api/v1/auth/register": {
+      "post": {
+        "summary": "/api/v1/auth/register",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "summary": "/api/v1/auth/login",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/auth/profile": {
+      "get": {
+        "summary": "/api/v1/auth/profile",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/users/me": {
+      "get": {
+        "summary": "/api/v1/users/me",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/users/stats": {
+      "get": {
+        "summary": "/api/v1/users/stats",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "summary": "/api/v1/users",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/users/{id}": {
+      "get": {
+        "summary": "/api/v1/users/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "put": {
+        "summary": "/api/v1/users/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/users/{id}/status": {
+      "patch": {
+        "summary": "/api/v1/users/{id}/status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/tickets/stats": {
+      "get": {
+        "summary": "/api/v1/tickets/stats",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/tickets": {
+      "get": {
+        "summary": "/api/v1/tickets",
+        "responses": {},
+        "tags": []
+      },
+      "post": {
+        "summary": "/api/v1/tickets",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/tickets/{id}": {
+      "get": {
+        "summary": "/api/v1/tickets/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "put": {
+        "summary": "/api/v1/tickets/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/tickets/{id}/comments": {
+      "post": {
+        "summary": "/api/v1/tickets/{id}/comments",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/admin/dashboard": {
+      "get": {
+        "summary": "/api/v1/admin/dashboard",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/admin/tickets/bulk-assign": {
+      "post": {
+        "summary": "/api/v1/admin/tickets/bulk-assign",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/admin/tickets/bulk-status": {
+      "post": {
+        "summary": "/api/v1/admin/tickets/bulk-status",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/admin/analytics/agent-performance": {
+      "get": {
+        "summary": "/api/v1/admin/analytics/agent-performance",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/admin/analytics/system": {
+      "get": {
+        "summary": "/api/v1/admin/analytics/system",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/agent/dashboard": {
+      "get": {
+        "summary": "/api/v1/agent/dashboard",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/agent/tickets": {
+      "get": {
+        "summary": "/api/v1/agent/tickets",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/agent/tickets/{id}/status": {
+      "patch": {
+        "summary": "/api/v1/agent/tickets/{id}/status",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/agent/tickets/{id}/priority": {
+      "patch": {
+        "summary": "/api/v1/agent/tickets/{id}/priority",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/agent/performance": {
+      "get": {
+        "summary": "/api/v1/agent/performance",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "summary": "/api/v1/health",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Server is running successfully"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "example": "2025-09-12T13:58:03.631Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    }
+  },
+  "tags": []
+}
