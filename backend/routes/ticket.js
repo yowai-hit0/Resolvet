@@ -10,12 +10,14 @@ import {
 } from '../controllers/ticketController.js';
 import { authenticate, authorize } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
+import { uploadSingleImage, uploadMultipleImages } from '../middleware/uploadImage.js';
 import {
   createTicketValidator,
   updateTicketValidator,
   ticketQueryValidator,
   commentValidator
 } from '../validators/ticketValidators.js';
+import { uploadTicketImage, deleteTicketAttachment, uploadTicketImages } from '../controllers/ticketController.js';
 
 const router = express.Router();
 
@@ -39,5 +41,10 @@ router.put('/:id', authorize(['admin', 'agent']), validate(updateTicketValidator
 
 // Add comment to ticket
 router.post('/:id/comments', authorize(['admin', 'agent']), validate(commentValidator), addComment);
+
+// Image attachments
+router.post('/:id/attachments/image', authorize(['admin', 'agent']), uploadSingleImage, uploadTicketImage);
+router.post('/:id/attachments/images', authorize(['admin', 'agent']), uploadMultipleImages, uploadTicketImages);
+router.delete('/:id/attachments/:attachmentId', authorize(['admin', 'agent']), deleteTicketAttachment);
 
 export default router;

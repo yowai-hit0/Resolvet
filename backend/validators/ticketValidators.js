@@ -80,3 +80,5 @@ export const commentValidator = Joi.object({
   }),
   is_internal: Joi.boolean().default(false)
 });
+
+export const attachmentQueryValidator = Joi.object({});

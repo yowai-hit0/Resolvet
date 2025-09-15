@@ -2,6 +2,7 @@ import { ApiResponse } from '../utils/apiResponse.js';
 import { ApiError } from '../utils/apiError.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import prisma from '../config/database.js';
+import cloudinary from '../config/cloudinary.js';
 
 // Helper function to generate ticket code
 const generateTicketCode = () => {
@@ -617,6 +618,153 @@ export const addComment = asyncHandler(async (req, res) => {
     'Comment added successfully'
   );
 
+  return res.status(response.statusCode).json(response);
+});
+
+// Upload image attachment to a ticket (admin, agent)
+export const uploadTicketImage = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const ticket = await prisma.ticket.findUnique({ where: { id: parseInt(id) } });
+  if (!ticket) {
+    throw ApiError.notFound('Ticket not found');
+  }
+
+  if (!hasTicketUpdateAccess(req.user, ticket)) {
+    throw ApiError.forbidden('Access denied to this ticket');
+  }
+
+  if (!req.file) {
+    throw ApiError.badRequest('No image file provided');
+  }
+
+  // Upload to Cloudinary using buffer
+  const uploadResult = await new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: 'resolvet/tickets', resource_type: 'image' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+    stream.end(req.file.buffer);
+  });
+
+  const attachment = await prisma.attachment.create({
+    data: {
+      original_filename: req.file.originalname,
+      stored_filename: uploadResult.secure_url,
+      mime_type: req.file.mimetype,
+      size: BigInt(req.file.size),
+      ticket_id: ticket.id,
+      uploaded_by_id: req.user.id
+    }
+  });
+
+  await prisma.ticketEvent.create({
+    data: {
+      ticket_id: ticket.id,
+      user_id: req.user.id,
+      change_type: 'attachment_added',
+      new_value: attachment.stored_filename
+    }
+  });
+
+  const response = ApiResponse.created({ attachment }, 'Image uploaded successfully');
+  return res.status(response.statusCode).json(response);
+});
+
+// Upload multiple image attachments
+export const uploadTicketImages = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const ticket = await prisma.ticket.findUnique({ where: { id: parseInt(id) } });
+  if (!ticket) {
+    throw ApiError.notFound('Ticket not found');
+  }
+  if (!hasTicketUpdateAccess(req.user, ticket)) {
+    throw ApiError.forbidden('Access denied to this ticket');
+  }
+  if (!req.files || req.files.length === 0) {
+    throw ApiError.badRequest('No image files provided');
+  }
+
+  const uploads = await Promise.all(req.files.map(file => new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: 'resolvet/tickets', resource_type: 'image' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve({ result, file });
+      }
+    );
+    stream.end(file.buffer);
+  })));
+
+  const created = await prisma.$transaction(async (tx) => {
+    const createdAttachments = await Promise.all(uploads.map(({ result, file }) => tx.attachment.create({
+      data: {
+        original_filename: file.originalname,
+        stored_filename: result.secure_url,
+        mime_type: file.mimetype,
+        size: BigInt(file.size),
+        ticket_id: ticket.id,
+        uploaded_by_id: req.user.id
+      }
+    })));
+
+    await tx.ticketEvent.createMany({
+      data: createdAttachments.map(a => ({
+        ticket_id: ticket.id,
+        user_id: req.user.id,
+        change_type: 'attachment_added',
+        new_value: a.stored_filename
+      }))
+    });
+
+    return createdAttachments;
+  });
+
+  const response = ApiResponse.created({ attachments: created }, 'Images uploaded successfully');
+  return res.status(response.statusCode).json(response);
+});
+
+// Delete an attachment from a ticket (admin, agent)
+export const deleteTicketAttachment = asyncHandler(async (req, res) => {
+  const { id, attachmentId } = req.params;
+
+  const ticket = await prisma.ticket.findUnique({ where: { id: parseInt(id) } });
+  if (!ticket) {
+    throw ApiError.notFound('Ticket not found');
+  }
+  if (!hasTicketUpdateAccess(req.user, ticket)) {
+    throw ApiError.forbidden('Access denied to this ticket');
+  }
+
+  const attachment = await prisma.attachment.findUnique({ where: { id: parseInt(attachmentId) } });
+  if (!attachment || attachment.ticket_id !== ticket.id) {
+    throw ApiError.notFound('Attachment not found for this ticket');
+  }
+
+  // Best-effort delete from Cloudinary if URL contains public_id pattern
+  try {
+    const urlParts = attachment.stored_filename.split('/');
+    const publicIdWithExt = urlParts.slice(urlParts.indexOf('resolvet'), urlParts.length).join('/');
+    const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
+    await cloudinary.uploader.destroy(publicId);
+  } catch {}
+
+  await prisma.attachment.delete({ where: { id: attachment.id } });
+
+  await prisma.ticketEvent.create({
+    data: {
+      ticket_id: ticket.id,
+      user_id: req.user.id,
+      change_type: 'attachment_deleted',
+      old_value: attachment.stored_filename
+    }
+  });
+
+  const response = ApiResponse.success({}, 'Attachment deleted successfully');
   return res.status(response.statusCode).json(response);
 });
 
