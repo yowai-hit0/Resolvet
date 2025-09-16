@@ -187,9 +187,13 @@ export const getAllTickets = asyncHandler(async (req, res) => {
 
 export const getTicketById = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  const ticketId = parseInt(id);
+  if (!Number.isFinite(ticketId)) {
+    throw ApiError.badRequest('Invalid ticket id');
+  }
 
   const ticket = await prisma.ticket.findUnique({
-    where: { id: parseInt(id) },
+    where: { id: ticketId },
     include: {
       priority: {
         select: {
@@ -282,7 +286,8 @@ export const getTicketById = asyncHandler(async (req, res) => {
   // Format tags for response
   const formattedTicket = {
     ...ticket,
-    tags: ticket.tags.map(ticketTag => ticketTag.tag)
+    tags: ticket.tags.map(ticketTag => ticketTag.tag),
+    attachments: ticket.attachments.map(a => ({ ...a, size: Number(a.size) })),
   };
 
   const response = ApiResponse.success(
@@ -468,10 +473,12 @@ export const updateTicket = asyncHandler(async (req, res) => {
 
   // Update ticket with transaction
   const updatedTicket = await prisma.$transaction(async (tx) => {
+    // Handle tags separately
+    const { tag_ids, ...rest } = updates;
     const ticket = await tx.ticket.update({
       where: { id: parseInt(id) },
       data: {
-        ...updates,
+        ...rest,
         ...statusUpdates,
         updated_at: now
       },
@@ -532,16 +539,16 @@ export const updateTicket = asyncHandler(async (req, res) => {
     }
 
     // Handle tags if provided
-    if (updates.tag_ids) {
+    if (tag_ids) {
       // Remove existing tags
       await tx.ticketTag.deleteMany({
         where: { ticket_id: ticket.id }
       });
 
       // Add new tags
-      if (updates.tag_ids.length > 0) {
+      if (tag_ids.length > 0) {
         await tx.ticketTag.createMany({
-          data: updates.tag_ids.map(tag_id => ({
+          data: tag_ids.map(tag_id => ({
             ticket_id: ticket.id,
             tag_id
           }))
@@ -837,5 +844,56 @@ export const getTicketStats = asyncHandler(async (req, res) => {
     'Ticket statistics retrieved successfully'
   );
 
+  return res.status(response.statusCode).json(response);
+});
+
+// Ticket priorities CRUD
+export const getTicketPriorities = asyncHandler(async (req, res) => {
+  const priorities = await prisma.ticketPriority.findMany({
+    orderBy: { id: 'asc' }
+  });
+  const response = ApiResponse.success(
+    { priorities },
+    'Ticket priorities retrieved successfully'
+  );
+  return res.status(response.statusCode).json(response);
+});
+
+export const createTicketPriority = asyncHandler(async (req, res) => {
+  const { name } = req.body;
+  if (!name || !name.trim()) {
+    throw ApiError.badRequest('Priority name is required');
+  }
+  const created = await prisma.ticketPriority.create({ data: { name: name.trim() } });
+  const response = ApiResponse.created({ priority: created }, 'Priority created successfully');
+  return res.status(response.statusCode).json(response);
+});
+
+export const updateTicketPriority = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+  const priorityId = parseInt(id);
+  if (!Number.isFinite(priorityId)) {
+    throw ApiError.badRequest('Invalid priority id');
+  }
+  if (!name || !name.trim()) {
+    throw ApiError.badRequest('Priority name is required');
+  }
+  const updated = await prisma.ticketPriority.update({
+    where: { id: priorityId },
+    data: { name: name.trim() }
+  });
+  const response = ApiResponse.success({ priority: updated }, 'Priority updated successfully');
+  return res.status(response.statusCode).json(response);
+});
+
+export const deleteTicketPriority = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const priorityId = parseInt(id);
+  if (!Number.isFinite(priorityId)) {
+    throw ApiError.badRequest('Invalid priority id');
+  }
+  await prisma.ticketPriority.delete({ where: { id: priorityId } });
+  const response = ApiResponse.success({}, 'Priority deleted successfully');
   return res.status(response.statusCode).json(response);
 });

@@ -103,6 +103,54 @@
     "/api/v1/tickets/stats": {
       "get": {
         "summary": "/api/v1/tickets/stats",
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
+        "tags": []
+      }
+    },
+    "/api/v1/tickets/priorities": {
+      "get": {
+        "summary": "/api/v1/tickets/priorities",
+        "responses": {},
+        "tags": []
+      },
+      "post": {
+        "summary": "/api/v1/tickets/priorities",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/tickets/priorities/{id}": {
+      "put": {
+        "summary": "/api/v1/tickets/priorities/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "delete": {
+        "summary": "/api/v1/tickets/priorities/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {},
         "tags": []
       }
@@ -168,6 +216,65 @@
         "tags": []
       }
     },
+    "/api/v1/tickets/{id}/attachments/image": {
+      "post": {
+        "summary": "/api/v1/tickets/{id}/attachments/image",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/tickets/{id}/attachments/images": {
+      "post": {
+        "summary": "/api/v1/tickets/{id}/attachments/images",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/tickets/{id}/attachments/{attachmentId}": {
+      "delete": {
+        "summary": "/api/v1/tickets/{id}/attachments/{attachmentId}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
     "/api/v1/admin/dashboard": {
       "get": {
         "summary": "/api/v1/admin/dashboard",
@@ -199,7 +306,11 @@
     "/api/v1/admin/analytics/system": {
       "get": {
         "summary": "/api/v1/admin/analytics/system",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },
@@ -258,35 +369,54 @@
         "tags": []
       }
     },
+    "/api/v1/tags": {
+      "get": {
+        "summary": "/api/v1/tags",
+        "responses": {},
+        "tags": []
+      },
+      "post": {
+        "summary": "/api/v1/tags",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/tags/{id}": {
+      "put": {
+        "summary": "/api/v1/tags/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      },
+      "delete": {
+        "summary": "/api/v1/tags/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {},
+        "tags": []
+      }
+    },
     "/api/v1/health": {
       "get": {
         "summary": "/api/v1/health",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Server is running successfully"
-                    },
-                    "timestamp": {
-                      "type": "string",
-                      "example": "2025-09-12T13:58:03.631Z"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       }
     }

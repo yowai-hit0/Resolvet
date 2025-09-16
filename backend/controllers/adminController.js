@@ -302,7 +302,7 @@ export const getAgentPerformance = asyncHandler(async (req, res) => {
 
   const [
     ticketStats,
-    resolutionTime,
+    resolvedForAvg,
     priorityBreakdown
   ] = await Promise.all([
     // Ticket counts by status
@@ -317,20 +317,15 @@ export const getAgentPerformance = asyncHandler(async (req, res) => {
       }
     }),
 
-    // Average resolution time
-    prisma.ticket.aggregate({
+    // Records to compute average resolution time (resolved items)
+    prisma.ticket.findMany({
       where: {
         ...agentFilter,
         status: { in: ['resolved', 'closed'] },
         resolved_at: { not: null },
         created_at: Object.keys(dateFilter).length > 0 ? dateFilter : undefined
       },
-      _avg: {
-        resolved_at: true
-      },
-      _count: {
-        id: true
-      }
+      select: { created_at: true, resolved_at: true }
     }),
 
     // Tickets by priority
@@ -361,6 +356,13 @@ export const getAgentPerformance = asyncHandler(async (req, res) => {
   }
 
   // Format response
+  // Compute average resolution in ms
+  let avgResolutionMs = null;
+  if (resolvedForAvg.length > 0) {
+    const total = resolvedForAvg.reduce((sum, t) => sum + (t.resolved_at - t.created_at), 0);
+    avgResolutionMs = Math.round(total / resolvedForAvg.length);
+  }
+
   const performanceData = {
     agent: agentDetails,
     period: {
@@ -370,8 +372,8 @@ export const getAgentPerformance = asyncHandler(async (req, res) => {
     stats: {
       by_status: {},
       total_tickets: ticketStats.reduce((sum, stat) => sum + stat._count.id, 0),
-      average_resolution_time: resolutionTime._avg.resolved_at,
-      resolved_tickets: resolutionTime._count.id
+      average_resolution_ms: avgResolutionMs,
+      resolved_tickets: resolvedForAvg.length
     },
     priority_breakdown: {}
   };

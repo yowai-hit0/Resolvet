@@ -54,6 +54,7 @@ export const register = asyncHandler(async (req, res) => {
 
   } catch (error) {
     console.error('Registration error:', error);
+    if (error?.statusCode) throw error;
     throw ApiError.internal('Internal server error during registration');
   }
 });
@@ -101,6 +102,7 @@ export const login = asyncHandler(async (req, res) => {
 
   } catch (error) {
     console.error('Login error:', error);
+    if (error?.statusCode) throw error;
     throw ApiError.internal('Internal server error during login');
   }
 });
@@ -129,6 +131,7 @@ export const getProfile = asyncHandler(async (req, res) => {
     return res.status(response.statusCode).json(response);
   } catch (error) {
     console.error('Get profile error:', error);
+    if (error?.statusCode) throw error;
     throw ApiError.internal('Internal server error');
   }
 });

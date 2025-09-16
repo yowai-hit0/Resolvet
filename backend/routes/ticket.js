@@ -17,7 +17,7 @@ import {
   ticketQueryValidator,
   commentValidator
 } from '../validators/ticketValidators.js';
-import { uploadTicketImage, deleteTicketAttachment, uploadTicketImages } from '../controllers/ticketController.js';
+import { uploadTicketImage, deleteTicketAttachment, uploadTicketImages, getTicketPriorities, createTicketPriority, updateTicketPriority, deleteTicketPriority } from '../controllers/ticketController.js';
 
 const router = express.Router();
 
@@ -26,6 +26,14 @@ router.use(authenticate);
 
 // Get ticket statistics
 router.get('/stats', authorize(['admin']), getTicketStats);
+
+// Public GET for priorities
+router.get('/priorities', getTicketPriorities);
+
+// Manage priorities (admin)
+router.post('/priorities', authorize(['admin']), createTicketPriority);
+router.put('/priorities/:id', authorize(['admin']), updateTicketPriority);
+router.delete('/priorities/:id', authorize(['admin']), deleteTicketPriority);
 
 // Get all tickets with pagination and filters
 router.get('/', authorize(['admin', 'agent', 'customer']), validate(ticketQueryValidator, 'query'), getAllTickets);
