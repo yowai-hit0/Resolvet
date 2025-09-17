@@ -49,8 +49,19 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
-        "tags": []
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "string",
+              "example": "\u001bp\u0005\u0000dSg�����em�\u0013��zP\u001d���I*���\u0004��{����0=�\u0000��0\u000f�H\u000b\u0017��\u0012\f��m^��+\u0012�a}Y��{]�Ȫ\u001e�T)_�C\u000e�\u0007=\u0018w֖�8K7�\u0017^�b��ߋ�\u0002Nu\u0014\u001b�#s�]\u000e�j��x�,�q�N�y�\u0010B���,\u001a�3\u0012\n\\���Uڂ�ixgm�\u0015[�Q,�����J\u0003�N\u0016\n�)��S��GK[pcy$co䲺\u0003�$\u001chi��B!M�7@쑶,W��C�I]W�\u0013��\u001e�q'��8K�\b\u0015\u0011\n�{\u0005Q\u0004\"v!6m�u�-+V�\n�U>C�vi,�U\fE��t\bC\u0016��I^�u��|#�w�\u000e\u0015\n��\u0004�~����MF0���ò����U����w�_�DȃQ:~��\u0005P�7I MN\t�9\n\"�|:\u001eB2 \u001d\u0018Lȃ�� ���#"
+            }
+          }
+        },
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/api/v1/users/stats": {
@@ -131,9 +142,7 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "304": {}
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -314,6 +323,17 @@
         "tags": []
       }
     },
+    "/api/v1/tickets/attachments/temp/images": {
+      "post": {
+        "summary": "/api/v1/tickets/attachments/temp/images",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": []
+      }
+    },
     "/api/v1/admin/dashboard": {
       "get": {
         "summary": "/api/v1/admin/dashboard",
@@ -365,9 +385,7 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "304": {}
-        },
+        "responses": {},
         "tags": []
       }
     },

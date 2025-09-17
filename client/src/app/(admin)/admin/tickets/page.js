@@ -27,6 +27,8 @@ export default function AdminTickets() {
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({ subject: "", description: "", requester_email: "", requester_name: "", priority_id: "", assignee_id: "", tag_ids: [] });
   const [files, setFiles] = useState([]);
+  const [fileUploading, setFileUploading] = useState(false);
+  const [tempUrls, setTempUrls] = useState([]);
   const showToast = useToastStore((s) => s.show);
   const STORAGE_KEY = "admin_tickets_state";
   const SAVED_VIEWS_KEY = "admin_tickets_saved_views";
@@ -121,6 +123,24 @@ export default function AdminTickets() {
     try { localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(views)); } catch {}
   };
 
+  const onTempUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    setFileUploading(true);
+    try {
+      const fd = new FormData();
+      files.forEach((f) => fd.append('images', f));
+      const r = await api.post('/tickets/attachments/temp/images', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const urls = r?.data?.data?.urls || r?.data?.urls || [];
+      setTempUrls((prev) => Array.from(new Set([...(prev || []), ...urls])));
+      showToast('Uploaded', 'success');
+    } catch (err) {
+      showToast('Upload failed', 'error');
+    } finally {
+      setFileUploading(false);
+    }
+  };
+
   const saveCurrentAsView = () => {
     if (!newViewName.trim()) return;
     const view = { name: newViewName.trim(), params: { status, priorityId, assigneeId, search, limit } };
@@ -212,20 +232,13 @@ export default function AdminTickets() {
         assignee_id: form.assignee_id ? Number(form.assignee_id) : undefined,
         tag_ids: form.tag_ids,
       };
-      const created = await api.post("/tickets", payload);
+      const created = await api.post("/tickets", { ...payload, image_urls: tempUrls });
       const ticketId = created?.data?.data?.ticket?.id || created?.data?.ticket?.id;
-      // optional images upload after creation
-      if (ticketId && files && files.length > 0) {
-        for (const f of files) {
-          const fd = new FormData();
-          fd.append("image", f);
-          try { await api.post(`/tickets/${ticketId}/attachments/image`, fd, { headers: { "Content-Type": "multipart/form-data" } }); } catch {}
-        }
-      }
       showToast("Ticket created", "success");
       setShowCreate(false);
       setForm({ subject: "", description: "", requester_email: "", requester_name: "", priority_id: "", assignee_id: "", tag_ids: [] });
       setFiles([]);
+      setTempUrls([]);
       TicketsAPI.list(queryParams).then((d) => {
         const rows = d?.data?.tickets || d?.tickets || [];
         setItems(rows);
@@ -418,8 +431,21 @@ export default function AdminTickets() {
               </div>
               <div>
                 <label className="text-sm">Attachments (optional, images)</label>
-                <input type="file" accept="image/*" multiple onChange={(e) => setFiles(Array.from(e.target.files || []))} />
-                <div className="text-xs opacity-70 mt-1">Images are uploaded after ticket creation.</div>
+                <div className="flex items-center gap-2">
+                  <input type="file" accept="image/*" multiple onChange={onTempUpload} disabled={fileUploading} />
+                  <button type="button" className="btn" onClick={() => document.querySelector('input[type=file]')?.click()} disabled={fileUploading}>{fileUploading ? 'Uploading…' : 'Choose files'}</button>
+                </div>
+                <div className="text-xs opacity-70 mt-1">Previews below are saved on create; duplicates are removed.</div>
+                {tempUrls.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {tempUrls.map((url) => (
+                      <div key={url} className="relative group border rounded overflow-hidden">
+                        <img src={url} alt="preview" className="w-full h-24 object-cover" />
+                        <button type="button" className="absolute top-1 right-1 hidden group-hover:block btn" onClick={() => setTempUrls((u) => u.filter((x) => x !== url))}>Remove</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="flex items-center justify-end gap-2">
                 <button type="button" className="btn" onClick={() => setShowCreate(false)}>Cancel</button>

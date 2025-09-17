@@ -10,13 +10,23 @@ export const api = axios.create({
 });
 
 // Token injection via setter to avoid circular import from the store
-let getAuthToken = () => undefined;
-export const setAuthTokenGetter = (getter) => {
-  getAuthToken = getter;
-};
+// let getAuthToken = () => undefined;
+// export const setAuthTokenGetter = (getter) => {
+//   getAuthToken = getter;
+// };
+
+// api.interceptors.request.use((config) => {
+//   const token = getAuthToken?.();
+//   if (token) {
+//     config.headers = config.headers || {};
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
+
 
 api.interceptors.request.use((config) => {
-  const token = getAuthToken?.();
+  const token = useAuthStore.getState().token;
   if (token) {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
@@ -25,6 +35,7 @@ api.interceptors.request.use((config) => {
 });
 
 let isRedirecting401 = false;
+
 
 api.interceptors.response.use(
   (response) => response,
@@ -36,7 +47,9 @@ api.interceptors.response.use(
         const isAuthPath = path.startsWith("/login") || path.startsWith("/register");
         const isIgnored = url.includes("/auth/login") || url.includes("/health");
         // Clear token on 401
+        
         try { useAuthStore.getState().setToken(undefined); } catch {}
+
         if (!isAuthPath && !isIgnored && !isRedirecting401) {
           isRedirecting401 = true;
           window.location.href = "/login";

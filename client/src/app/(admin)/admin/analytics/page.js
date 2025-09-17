@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AdminAPI } from "@/lib/api";
+import { LineSimple, BarSimple, PieSimple, NoData } from "@/components/charts/ChartKit";
 
 export default function AnalyticsPage() {
   const [system, setSystem] = useState();
@@ -22,15 +23,29 @@ export default function AnalyticsPage() {
     };
   }, []);
 
+  const trends = system?.analytics?.ticket_trends || system?.charts?.tickets_by_day || [];
+  const busiest = system?.analytics?.busiest_agents || system?.charts?.tickets_by_agent || [];
+  const pieData = (system?.analytics?.common_tags || []).map((t) => ({ name: t.tag?.name, value: t.usage_count }));
+
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <div className="border rounded p-4">
-        <h2 className="font-medium mb-2">System</h2>
-        <pre className="text-xs overflow-auto">{JSON.stringify(system, null, 2)}</pre>
+      <div className="card">
+        <div className="card-body">
+          <div className="font-medium mb-2">Tickets per day</div>
+          <LineSimple data={trends} xKey={trends[0]?.date ? "date" : "date"} yKey={trends[0]?.count !== undefined ? "count" : "count"} />
+        </div>
       </div>
-      <div className="border rounded p-4">
-        <h2 className="font-medium mb-2">Agent Performance</h2>
-        <pre className="text-xs overflow-auto">{JSON.stringify(agents, null, 2)}</pre>
+      <div className="card">
+        <div className="card-body">
+          <div className="font-medium mb-2">Tickets per agent</div>
+          <BarSimple data={busiest.map((b) => ({ name: b.agent?.email, count: b.ticket_count }))} xKey="name" yKey="count" />
+        </div>
+      </div>
+      <div className="card md:col-span-2">
+        <div className="card-body">
+          <div className="font-medium mb-2">Common tags</div>
+          <PieSimple data={pieData} nameKey="name" valueKey="value" />
+        </div>
       </div>
     </div>
   );

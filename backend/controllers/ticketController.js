@@ -306,7 +306,8 @@ export const createTicket = asyncHandler(async (req, res) => {
     requester_name,
     priority_id,
     assignee_id,
-    tag_ids
+    tag_ids,
+    image_urls
   } = req.body;
 
   // Verify priority exists
@@ -391,6 +392,23 @@ export const createTicket = asyncHandler(async (req, res) => {
           tag_id
         }))
       });
+    }
+
+    // Attach pre-uploaded image urls if provided (dedup)
+    if (image_urls && Array.isArray(image_urls) && image_urls.length > 0) {
+      const uniqueUrls = Array.from(new Set(image_urls.filter(Boolean)));
+      if (uniqueUrls.length > 0) {
+        await tx.attachment.createMany({
+          data: uniqueUrls.map((url) => ({
+            original_filename: url.split('/').pop() || 'image',
+            stored_filename: url,
+            mime_type: 'image',
+            size: BigInt(0),
+            ticket_id: newTicket.id,
+            uploaded_by_id: req.user.id
+          }))
+        });
+      }
     }
 
     return newTicket;
@@ -772,6 +790,17 @@ export const deleteTicketAttachment = asyncHandler(async (req, res) => {
   });
 
   const response = ApiResponse.success({}, 'Attachment deleted successfully');
+  return res.status(response.statusCode).json(response);
+});
+
+// Temporary upload for images before ticket exists; returns urls only
+export const uploadTempTicketImages = asyncHandler(async (req, res) => {
+  if (!req.files || req.files.length === 0) {
+    throw ApiError.badRequest('No image files provided');
+  }
+  // Files are already uploaded to cloudinary by multer storage; each file has path/secure_url
+  const urls = req.files.map((f) => f.path || f.secure_url).filter(Boolean);
+  const response = ApiResponse.success({ urls: Array.from(new Set(urls)) }, 'Images uploaded');
   return res.status(response.statusCode).json(response);
 });
 

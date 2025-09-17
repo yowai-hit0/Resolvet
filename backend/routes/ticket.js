@@ -11,13 +11,14 @@ import {
 import { authenticate, authorize } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
 import { uploadSingleImage, uploadMultipleImages } from '../middleware/uploadImage.js';
+// import { uploadMultipleImages as uploadTempImages, handleUploadErrors as handleTempUploadErrors } from '../middleware/uploadImage.js';
 import {
   createTicketValidator,
   updateTicketValidator,
   ticketQueryValidator,
   commentValidator
 } from '../validators/ticketValidators.js';
-import { uploadTicketImage, deleteTicketAttachment, uploadTicketImages, getTicketPriorities, createTicketPriority, updateTicketPriority, deleteTicketPriority } from '../controllers/ticketController.js';
+import { uploadTicketImage, deleteTicketAttachment, uploadTicketImages, getTicketPriorities, createTicketPriority, updateTicketPriority, deleteTicketPriority, uploadTempTicketImages } from '../controllers/ticketController.js';
 
 const router = express.Router();
 
@@ -54,5 +55,8 @@ router.post('/:id/comments', authorize(['admin', 'agent']), validate(commentVali
 router.post('/:id/attachments/image', authorize(['admin', 'agent']), uploadSingleImage, uploadTicketImage);
 router.post('/:id/attachments/images', authorize(['admin', 'agent']), uploadMultipleImages, uploadTicketImages);
 router.delete('/:id/attachments/:attachmentId', authorize(['admin', 'agent']), deleteTicketAttachment);
+
+// Temp pre-create upload (authenticated users)
+router.post('/attachments/temp/images', uploadMultipleImages, uploadTempTicketImages);
 
 export default router;

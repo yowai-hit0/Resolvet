@@ -62,6 +62,6 @@ export const useAuthStore = create((set, get) => ({
 }));
 
 // let the api layer query current token
-setAuthTokenGetter(() => useAuthStore.getState().token);
+// setAuthTokenGetter(() => useAuthStore.getState().token);
 
 

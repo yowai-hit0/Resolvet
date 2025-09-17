@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AdminAPI, api } from "@/lib/api";
+import { LineSimple, BarSimple } from "@/components/charts/ChartKit";
 
 export default function AdminHome() {
   const [system, setSystem] = useState();
@@ -31,8 +32,8 @@ export default function AdminHome() {
         <div className="card"><div className="card-body"><div className="text-xs opacity-70">Total</div><div className="text-2xl font-semibold">{total}</div></div></div>
       </div>
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="card"><div className="card-body"><div className="font-medium mb-2">Tickets per day (last 30d)</div><pre className="text-xs overflow-auto">{JSON.stringify(system?.analytics?.ticket_trends || system?.charts?.tickets_by_day, null, 2)}</pre></div></div>
-        <div className="card"><div className="card-body"><div className="font-medium mb-2">Tickets per agent</div><pre className="text-xs overflow-auto">{JSON.stringify(system?.analytics?.busiest_agents || system?.charts?.tickets_by_agent, null, 2)}</pre></div></div>
+        <div className="card"><div className="card-body"><div className="font-medium mb-2">Tickets per day (last 30d)</div><LineSimple data={system?.analytics?.ticket_trends || system?.charts?.tickets_by_day || []} xKey="date" yKey="count" /></div></div>
+        <div className="card"><div className="card-body"><div className="font-medium mb-2">Tickets per agent</div><BarSimple data={(system?.analytics?.busiest_agents || system?.charts?.tickets_by_agent || []).map((a) => ({ name: a.agent?.email, count: a.ticket_count }))} xKey="name" yKey="count" /></div></div>
       </div>
     </div>
   );
