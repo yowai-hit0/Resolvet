@@ -8,6 +8,9 @@ export const useAuthStore = create((set, get) => ({
   user: undefined,
   loading: false,
   error: undefined,
+  loginInProgress: false,
+  redirecting401: false,
+  setRedirecting401: (val) => set({redirecting401: val}),
 
   setToken: (token) => {
     if (typeof window !== "undefined") {
@@ -38,7 +41,7 @@ export const useAuthStore = create((set, get) => ({
   },
 
   login: async (email, password) => {
-    set({ loading: true, error: undefined });
+    set({  loginInProgress: true,error: undefined });
     try {
       const data = await AuthAPI.login({ email, password });
       const token = data?.data?.token || data?.token;
@@ -49,9 +52,10 @@ export const useAuthStore = create((set, get) => ({
     } catch (err) {
       const message = err?.response?.data?.message || "Login failed";
       set({ error: message });
-      throw err;
+      // throw err;
+      return({error:message})
     } finally {
-      set({ loading: false });
+      set({ loginInProgress: false });
     }
   },
 
@@ -60,8 +64,3 @@ export const useAuthStore = create((set, get) => ({
     set({ token: undefined, user: undefined });
   },
 }));
-
-// let the api layer query current token
-// setAuthTokenGetter(() => useAuthStore.getState().token);
-
-

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useToastStore } from "@/store/ui";
 import { useAuthStore } from "@/store/auth";
 
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001/api/v1";
 
 export const api = axios.create({
@@ -9,20 +10,6 @@ export const api = axios.create({
   withCredentials: true,
 });
 
-// Token injection via setter to avoid circular import from the store
-// let getAuthToken = () => undefined;
-// export const setAuthTokenGetter = (getter) => {
-//   getAuthToken = getter;
-// };
-
-// api.interceptors.request.use((config) => {
-//   const token = getAuthToken?.();
-//   if (token) {
-//     config.headers = config.headers || {};
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
 
 
 api.interceptors.request.use((config) => {
@@ -34,33 +21,43 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-let isRedirecting401 = false;
-
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error?.response?.status === 401) {
+
       if (typeof window !== "undefined") {
         const url = error?.config?.url || "";
         const path = window.location.pathname;
         const isAuthPath = path.startsWith("/login") || path.startsWith("/register");
         const isIgnored = url.includes("/auth/login") || url.includes("/health");
         // Clear token on 401
-        
-        try { useAuthStore.getState().setToken(undefined); } catch {}
+        if (url.includes("/auth/login")) {
+          return Promise.reject(error); // Let the login page handle the error
+        }
+        // when a user is logged out i guess
+        const { token } = useAuthStore.getState();
+        if (!token) return Promise.reject(error);
 
-        if (!isAuthPath && !isIgnored && !isRedirecting401) {
-          isRedirecting401 = true;
+
+        if (!isAuthPath && !isIgnored && ! useAuthStore.getState().redirecting401) {
+          useAuthStore.getState().setRedirecting401(true);
+          try {
+            useAuthStore.getState().setToken(undefined);
+          } catch {}
           window.location.href = "/login";
-          return; // prevent further handling
+          return;
         }
       }
     }
+    const isLoginError = error?.config?.url?.includes("/auth/login");
+    if(!isLoginError){
     try {
       const message = error?.response?.data?.message || error?.message || "Request failed";
       useToastStore.getState().show(message, "error", 4000);
     } catch {}
+  }
     return Promise.reject(error);
   }
 );

@@ -3,73 +3,119 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
+import RedirectIfAuth from "@/components/RedirectIfAuth";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, loading, error, user } = useAuthStore();
+  const { login, loginInProgress, error, user } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
-  // Redirect after login based on role
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  // Clear error when form inputs change
   useEffect(() => {
-    if (user?.role) {
-      router.replace(user.role === "admin" ? "/admin" : "/agent");
+    if (error) {
+      useAuthStore.getState().error = undefined;
     }
-  }, [user, router]);
+  }, [email, password]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) return;
+    if (!email || !password || loginInProgress) return;
+    
     try {
       const result = await login(email, password);
-      const role = result?.user?.role;
-      router.replace(role === "admin" ? "/admin" : "/agent");
-    } catch {}
+      if (result?.user) {
+        setIsRedirecting(true);
+        const role = result.user.role;
+        router.replace(role === "admin" ? "/admin" : "/agent");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+    }
   };
 
-  if (user) return null;
+  if (user && !isRedirecting) return null;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <form onSubmit={onSubmit} className="w-full max-w-sm space-y-4 border rounded p-6">
-        <div className="text-center">
-          <div className="text-2xl font-bold">Resolvet</div>
-          <div className="text-sm opacity-70">Sign in</div>
+    <RedirectIfAuth> 
+      <div className="login-container">
+        <div className="login-card">
+          <div className="card-body">
+            <div className="login-header">
+              <h1 className="login-title">Resolvet</h1>
+              <p className="login-subtitle">Sign in to your account</p>
+            </div>
+
+            {error && (
+              <div className="login-error">
+                {error.includes("401") ? "Invalid email or password" : error}
+              </div>
+            )}
+
+            <form onSubmit={onSubmit} className="login-form">
+              <div className="login-form-group">
+                <label htmlFor="email" className="login-label">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  className="input"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="Enter your email"
+                  disabled={loginInProgress || isRedirecting}
+                />
+              </div>
+
+              <div className="login-form-group">
+                <label htmlFor="password" className="login-label">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  className="input"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="Enter your password"
+                  disabled={loginInProgress || isRedirecting}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loginInProgress || isRedirecting}
+                className="login-button"
+              >
+                {loginInProgress ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                    Signing in...
+                  </>
+                ) : isRedirecting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                    Redirecting...
+                  </>
+                ) : (
+                  "Sign in"
+                )}
+              </button>
+            </form>
+
+            <div className="login-footer">
+              Don't have an account?{" "}
+              <a href="/register" className="login-link">
+                Sign up
+              </a>
+            </div>
+          </div>
         </div>
-        {error && <p className="text-red-600 text-sm">{error}</p>}
-        <div className="space-y-1">
-          <label className="text-sm">Email</label>
-          <input
-            className="w-full border rounded px-3 py-2 text-black"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-sm">Password</label>
-          <input
-            className="w-full border rounded px-3 py-2 text-black"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded bg-black text-white py-2 disabled:opacity-50"
-        >
-          {loading ? "Signing in..." : "Sign in"}
-        </button>
-        <div className="text-sm text-center">
-          Don't have an account? <a href="/register" className="underline">Sign up</a>
-        </div>
-      </form>
-    </div>
+      </div>
+    </RedirectIfAuth> 
   );
 }
-
-

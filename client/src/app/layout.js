@@ -3,7 +3,7 @@ import "./globals.css";
 import Toaster from "@/components/Toaster";
 import { HealthGate } from "@/components/health-gate";
 import CommandPalette from "@/components/CommandPalette";
-
+import RouteProgress from "@/components/RouteProgress";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -25,11 +25,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <RouteProgress/>
         <HealthGate>
           {children}
         </HealthGate>
         <Toaster />
-        <CommandPalette />
+        {/* <CommandPalette /> */}
       </body>
     </html>
   );
