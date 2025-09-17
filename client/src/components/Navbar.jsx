@@ -1,3 +1,4 @@
+// components/Navbar.jsx
 "use client";
 
 import Link from "next/link";
@@ -9,6 +10,7 @@ export default function Navbar({ title }) {
   const { user, logout } = useAuthStore();
   const { toggleSidebar } = useUIStore();
   const router = useRouter();
+  
   const onLogout = () => {
     logout();
     if (typeof window !== "undefined") {
@@ -17,21 +19,33 @@ export default function Navbar({ title }) {
       router.replace("/login");
     }
   };
+  
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-b bg-background sticky top-0 z-40">
+    <div className="flex items-center justify-between px-4 py-3 bg-background sticky top-0 z-40 shadow-sm">
       <div className="flex items-center gap-3">
-        <button className="btn inline-flex sm:hidden" onClick={toggleSidebar} aria-label="Toggle menu">☰</button>
-        <div className="font-semibold">{title || "Resolvet"}</div>
+        <button 
+          className="btn btn-ghost p-2 md:hidden" 
+          onClick={toggleSidebar} 
+          aria-label="Toggle menu"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <div className="font-semibold text-lg">{title || "Resolvet"}</div>
       </div>
       <div className="flex items-center gap-3">
         {user && (
           <>
-            <span className="text-sm opacity-80">{user.email}</span>
+            <span className="text-sm text-muted-foreground hidden sm:block">{user.email}</span>
             <button
               onClick={onLogout}
-              className="text-sm border rounded px-3 py-1 hover:bg-black hover:text-white"
+              className="btn btn-ghost text-sm"
             >
-              Logout
+              <span className="hidden sm:inline">Logout</span>
+              <svg className="w-5 h-5 sm:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
             </button>
           </>
         )}
@@ -44,5 +58,3 @@ export default function Navbar({ title }) {
     </div>
   );
 }
-
-

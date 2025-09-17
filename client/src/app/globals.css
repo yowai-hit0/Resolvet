@@ -1,25 +1,31 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --primary: #f34d11;
-  --primary-foreground: #ffffff;
-  --primary-hover: #e0440f;
-  --primary-active: #c73c0d;
-  --muted: #f5f5f5;
-  --muted-foreground: #737373;
-  --border: #e5e5e5;
-  --input: #ffffff;
-  --ring: rgba(243, 77, 17, 0.3);
-  --destructive: #dc2626;
-  --destructive-foreground: #ffffff;
+@theme {
+  --color-primary: #f34d11;
+  --color-primary-foreground: #ffffff;
+  --color-primary-hover: #e0440f;
+  --color-primary-active: #c73c0d;
+  --color-ring: rgba(243, 77, 17, 0.3);
+
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-muted: #f5f5f5;
+  --color-muted-foreground: #737373;
+  --color-border: #e5e5e5;
+  --color-input: #ffffff;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-card: #ffffff;
+  --color-accent: #f8f9fa;
 }
+
+
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
 }
 
 /* Accessibility */
@@ -37,74 +43,130 @@ body {
   }
 }
 
-/* Centralized component styles using Tailwind's native system */
+/* Component styles */
 .card {
-  @apply border border-gray-200 rounded-lg bg-white shadow-sm;
+  @apply border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden;
 }
 .card-body {
   @apply p-6;
 }
-.btn {
-  @apply inline-flex items-center justify-center border rounded-lg px-4 py-2.5 text-sm font-medium disabled:opacity-50 transition-all duration-200 ease-out;
+.card-header {
+  @apply p-6 pb-0;
 }
-.btn-primary {
-  @apply bg-[#f34d11] text-white border-[#f34d11] hover:bg-[#e0440f] hover:border-[#e0440f] active:bg-[#c73c0d] active:border-[#c73c0d] focus-visible:ring-4 focus-visible:ring-[rgba(243,77,17,0.3)];
-}
-.btn-secondary {
-  @apply bg-white text-gray-900 border-gray-200 hover:bg-gray-50 active:bg-gray-100;
-}
-.input {
-  @apply border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm w-full bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[rgba(243,77,17,0.3)] focus:border-[#f34d11] transition-all duration-150 ease-out;
-}
-.select {
-  @apply border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm w-full bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[rgba(243,77,17,0.3)] focus:border-[#f34d11] transition-all duration-150 ease-out;
+.card-footer {
+  @apply p-6 pt-0;
 }
 
-/* Login specific styles */
+.btn {
+  @apply inline-flex items-center justify-center border rounded-lg px-4 py-2.5 text-sm font-medium disabled:opacity-50 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary;
+}
+.btn-primary {
+  @apply bg-primary text-primary-foreground border-primary hover:bg-primary-hover hover:border-primary-hover active:bg-primary-active active:border-primary-active focus:ring-ring;
+}
+.btn-secondary {
+  @apply bg-white text-foreground border-border hover:bg-accent active:bg-muted;
+}
+.btn-ghost {
+  @apply border-transparent bg-transparent text-foreground hover:bg-accent;
+}
+.btn-destructive {
+  @apply bg-destructive text-destructive-foreground border-destructive hover:bg-destructive/90;
+}
+
+.input {
+  @apply border border-border rounded-lg px-3.5 py-2.5 text-sm w-full bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition-all duration-150 ease-out;
+}
+.select {
+  @apply border border-border rounded-lg px-3.5 py-2.5 text-sm w-full bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition-all duration-150 ease-out;
+}
+.textarea {
+  @apply border border-border rounded-lg px-3.5 py-2.5 text-sm w-full bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition-all duration-150 ease-out min-h-[80px];
+}
+
+.chip {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground;
+}
+.chip-primary {
+  @apply bg-primary/10 text-primary;
+}
+
+/* Table styles */
+.table-head {
+  @apply grid gap-4 px-6 py-3 bg-muted border-b border-border font-medium text-sm;
+}
+.table-row {
+  @apply grid gap-4 px-6 py-4 border-b border-border hover:bg-accent transition-colors cursor-pointer;
+}
+
+/* Toolbar styles */
+.toolbar {
+  @apply flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 bg-card border-b border-border;
+}
+
+/* Loading states */
+.skeleton {
+  @apply animate-pulse bg-muted rounded;
+}
+
+/* Mobile responsive utilities */
+.mobile-only {
+  @apply block sm:hidden;
+}
+.desktop-only {
+  @apply hidden sm:block;
+}
+
+/* Status badges */
+.status-badge {
+  @apply px-2 py-1 rounded-full text-xs font-medium capitalize;
+}
+.status-new {
+  @apply bg-blue-100 text-blue-800;
+}
+.status-open {
+  @apply bg-yellow-100 text-yellow-800;
+}
+.status-resolved {
+  @apply bg-green-100 text-green-800;
+}
+.status-closed {
+  @apply bg-gray-100 text-gray-800;
+}
+
+/* Login page styles (kept from your original) */
 .login-container {
   @apply min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50/50 to-white;
 }
-
 .login-card {
   @apply w-full max-w-md border border-gray-200 rounded-lg bg-white shadow-sm;
 }
-
 .login-header {
   @apply text-center space-y-2 mb-6;
 }
-
 .login-title {
   @apply text-3xl font-bold text-gray-900;
 }
-
 .login-subtitle {
   @apply text-gray-600 text-base;
 }
-
 .login-error {
   @apply p-3 bg-red-100 border border-red-200 rounded-lg text-red-700 text-sm;
 }
-
 .login-form {
   @apply space-y-4;
 }
-
 .login-form-group {
   @apply space-y-2;
 }
-
 .login-label {
   @apply text-sm font-medium text-gray-900;
 }
-
 .login-button {
-  @apply w-full bg-[#f34d11] text-white border-[#f34d11] hover:bg-[#e0440f] hover:border-[#e0440f] active:bg-[#c73c0d] active:border-[#c73c0d] focus-visible:ring-4 focus-visible:ring-[rgba(243,77,17,0.3)] inline-flex items-center justify-center border rounded-lg px-4 py-3 text-base font-medium disabled:opacity-50 transition-all duration-200 ease-out;
+  @apply w-full bg-primary text-primary-foreground border-primary hover:bg-primary-hover hover:border-primary-hover active:bg-primary-active active:border-primary-active focus-visible:ring-4 focus-visible:ring-ring inline-flex items-center justify-center border rounded-lg px-4 py-3 text-base font-medium disabled:opacity-50 transition-all duration-200 ease-out;
 }
-
 .login-footer {
   @apply text-center text-sm text-gray-600 pt-4 border-t border-gray-200 mt-6;
 }
-
 .login-link {
-  @apply text-[#f34d11] font-medium hover:text-[#e0440f] transition-colors;
+  @apply text-primary font-medium hover:text-primary-hover transition-colors;
 }

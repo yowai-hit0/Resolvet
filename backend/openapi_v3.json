@@ -19,6 +19,20 @@
     "/api/v1/auth/login": {
       "post": {
         "summary": "/api/v1/auth/login",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/auth/profile": {
+      "get": {
+        "summary": "/api/v1/auth/profile",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/users/me": {
+      "get": {
+        "summary": "/api/v1/users/me",
         "responses": {
           "200": {
             "description": "OK",
@@ -60,18 +74,22 @@
                             "is_active": {
                               "type": "boolean",
                               "example": true
+                            },
+                            "created_at": {
+                              "type": "string",
+                              "example": "2025-09-15T11:49:59.152Z"
+                            },
+                            "updated_at": {
+                              "type": "string",
+                              "example": "2025-09-15T11:49:59.152Z"
                             }
                           }
-                        },
-                        "token": {
-                          "type": "string",
-                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1ODExNDU0MiwiZXhwIjoxNzU4NzE5MzQyfQ.vBZTTNnld657fk02REiATW--Ke7soBC-Dt68NGAS5ws"
                         }
                       }
                     },
                     "message": {
                       "type": "string",
-                      "example": "Login successful"
+                      "example": "Current user retrieved successfully"
                     },
                     "success": {
                       "type": "boolean",
@@ -81,22 +99,11 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": ""
           }
         },
-        "tags": []
-      }
-    },
-    "/api/v1/auth/profile": {
-      "get": {
-        "summary": "/api/v1/auth/profile",
-        "responses": {},
-        "tags": []
-      }
-    },
-    "/api/v1/users/me": {
-      "get": {
-        "summary": "/api/v1/users/me",
-        "responses": {},
         "tags": []
       }
     },
@@ -239,7 +246,11 @@
             }
           }
         ],
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       },
       "put": {
@@ -434,7 +445,11 @@
     "/api/v1/tags": {
       "get": {
         "summary": "/api/v1/tags",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       },
       "post": {
@@ -496,7 +511,7 @@
                     },
                     "timestamp": {
                       "type": "string",
-                      "example": "2025-09-17T13:09:02.480Z"
+                      "example": "2025-09-17T17:55:32.761Z"
                     }
                   }
                 }

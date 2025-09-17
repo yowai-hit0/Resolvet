@@ -1,3 +1,4 @@
+// app/(admin)/tickets/page.js
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -8,7 +9,12 @@ import FiltersBar from "@/components/FiltersBar";
 import { TableSkeleton } from "@/components/Loader";
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
-const STATUSES = ["new", "open", "resolved", "closed"];
+const STATUSES = [
+  { value: "new", label: "New", class: "status-new" },
+  { value: "open", label: "Open", class: "status-open" },
+  { value: "resolved", label: "Resolved", class: "status-resolved" },
+  { value: "closed", label: "Closed", class: "status-closed" },
+];
 
 export default function AdminTickets() {
   const [items, setItems] = useState([]);
@@ -34,6 +40,7 @@ export default function AdminTickets() {
   const SAVED_VIEWS_KEY = "admin_tickets_saved_views";
   const [savedViews, setSavedViews] = useState([]);
   const [newViewName, setNewViewName] = useState("");
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // load persisted state
   useEffect(() => {
@@ -133,7 +140,7 @@ export default function AdminTickets() {
       const r = await api.post('/tickets/attachments/temp/images', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
       const urls = r?.data?.data?.urls || r?.data?.urls || [];
       setTempUrls((prev) => Array.from(new Set([...(prev || []), ...urls])));
-      showToast('Uploaded', 'success');
+      showToast('Uploaded successfully', 'success');
     } catch (err) {
       showToast('Upload failed', 'error');
     } finally {
@@ -211,7 +218,7 @@ export default function AdminTickets() {
     const ticket_ids = Array.from(selectedIds);
     if (ticket_ids.length === 0) return;
     await AdminAPI.bulkStatus({ ticket_ids, status: newStatus });
-    showToast(`Status -> ${newStatus}`, "success");
+    showToast(`Status updated to ${newStatus}`, "success");
     TicketsAPI.list(queryParams).then((d) => {
       const rows = d?.data?.tickets || d?.tickets || [];
       setItems(rows);
@@ -234,7 +241,7 @@ export default function AdminTickets() {
       };
       const created = await api.post("/tickets", { ...payload, image_urls: tempUrls });
       const ticketId = created?.data?.data?.ticket?.id || created?.data?.ticket?.id;
-      showToast("Ticket created", "success");
+      showToast("Ticket created successfully", "success");
       setShowCreate(false);
       setForm({ subject: "", description: "", requester_email: "", requester_name: "", priority_id: "", assignee_id: "", tag_ids: [] });
       setFiles([]);
@@ -249,92 +256,245 @@ export default function AdminTickets() {
   };
 
   return (
-    <div>
-      <FiltersBar
-        right={<>
-          <div className="hidden md:flex items-center gap-2">
-            <button className="btn btn-primary" onClick={() => setShowCreate(true)}>Create Ticket</button>
-            <select className="select max-w-56" value={assigneeId} onChange={(e) => setAssigneeId(e.target.value)}>
-              <option value="">Assign to...</option>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-foreground">Ticket Management</h1>
+        <button 
+          className="btn btn-primary mobile-only"
+          onClick={() => setShowCreate(true)}
+        >
+          + Create
+        </button>
+        <button 
+          className="btn btn-primary desktop-only"
+          onClick={() => setShowCreate(true)}
+        >
+          + Create Ticket
+        </button>
+      </div>
+
+      {/* Mobile Filters Toggle */}
+      <button 
+        className="btn btn-secondary mobile-only w-full"
+        onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+      >
+        {mobileFiltersOpen ? 'Hide Filters' : 'Show Filters'}
+      </button>
+
+      {/* Filters Bar - Desktop */}
+      <div className="desktop-only">
+        <FiltersBar
+          right={
+            <div className="flex items-center gap-2 flex-wrap">
+              <select 
+                className="select max-w-40" 
+                value={assigneeId} 
+                onChange={(e) => setAssigneeId(e.target.value)}
+              >
+                <option value="">Assign to...</option>
+                {agents.map((a) => (
+                  <option key={a.id} value={a.id}>{a.email}</option>
+                ))}
+              </select>
+              <button 
+                className="btn" 
+                onClick={bulkAssign} 
+                disabled={selectedIds.size === 0 || !assigneeId}
+              >
+                Bulk Assign
+              </button>
+              <div className="flex items-center gap-1">
+                <button 
+                  className="btn" 
+                  onClick={() => bulkStatus("open")} 
+                  disabled={selectedIds.size === 0}
+                >
+                  Open
+                </button>
+                <button 
+                  className="btn" 
+                  onClick={() => bulkStatus("resolved")} 
+                  disabled={selectedIds.size === 0}
+                >
+                  Resolve
+                </button>
+                <button 
+                  className="btn" 
+                  onClick={() => bulkStatus("closed")} 
+                  disabled={selectedIds.size === 0}
+                >
+                  Close
+                </button>
+              </div>
+              <button className="btn" onClick={exportCsv}>
+                Export CSV
+              </button>
+            </div>
+          }
+        >
+          <div className="flex items-center gap-2 w-full flex-wrap">
+            <input
+              className="input flex-1 min-w-[200px]"
+              placeholder="Search tickets..."
+              value={search}
+              onChange={(e) => { setPage(1); setSearch(e.target.value); }}
+            />
+            <select 
+              className="select max-w-32" 
+              value={status} 
+              onChange={(e) => { setPage(1); setStatus(e.target.value); }}
+            >
+              <option value="">All Status</option>
+              {STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+            <select 
+              className="select max-w-40" 
+              value={priorityId} 
+              onChange={(e) => { setPage(1); setPriorityId(e.target.value); }}
+            >
+              <option value="">All Priorities</option>
+              {priorities.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+            <select 
+              className="select max-w-48" 
+              value={assigneeId} 
+              onChange={(e) => { setPage(1); setAssigneeId(e.target.value); }}
+            >
+              <option value="">Any Assignee</option>
               {agents.map((a) => (
                 <option key={a.id} value={a.id}>{a.email}</option>
               ))}
             </select>
-            <button className="btn" onClick={bulkAssign} disabled={selectedIds.size === 0 || !assigneeId}>Bulk assign</button>
-            <div className="flex items-center gap-1">
-              <button className="btn" onClick={() => bulkStatus("open")} disabled={selectedIds.size === 0}>Open</button>
-              <button className="btn" onClick={() => bulkStatus("resolved")} disabled={selectedIds.size === 0}>Resolve</button>
-              <button className="btn" onClick={() => bulkStatus("closed")} disabled={selectedIds.size === 0}>Close</button>
-            </div>
-            <button className="btn" onClick={exportCsv}>Export CSV</button>
+            <select 
+              className="select max-w-32" 
+              value={limit} 
+              onChange={(e) => { setPage(1); setLimit(Number(e.target.value)); }}
+            >
+              {PAGE_SIZE_OPTIONS.map((n) => (
+                <option key={n} value={n}>{n} / page</option>
+              ))}
+            </select>
           </div>
-          <div className="md:hidden relative">
-            <button className="btn btn-primary" onClick={() => setShowCreate(true)}>Create</button>
-            <MobileActions
-              agents={agents}
-              assigneeId={assigneeId}
-              setAssigneeId={setAssigneeId}
-              bulkAssign={bulkAssign}
-              bulkStatus={bulkStatus}
-              canBulk={selectedIds.size > 0}
-              exportCsv={exportCsv}
-            />
-          </div>
-        </>}
-      >
-        <div className="flex items-center gap-2 w-full flex-wrap">
-        <input
-          className="input max-w-xs focus-visible:outline-2 focus-visible:outline-black"
-          placeholder="Search code, subject, requester... (Cmd/Ctrl+K)"
-          value={search}
-          onChange={(e) => { setPage(1); setSearch(e.target.value); }}
-        />
-        <select className="select max-w-40" value={status} onChange={(e) => { setPage(1); setStatus(e.target.value); }}>
-          <option value="">All status</option>
-          {STATUSES.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
-        <input
-          className="input max-w-40"
-          placeholder="Priority ID"
-          value={priorityId}
-          onChange={(e) => { setPage(1); setPriorityId(e.target.value); }}
-        />
-        <select className="select max-w-56" value={assigneeId} onChange={(e) => { setPage(1); setAssigneeId(e.target.value); }}>
-          <option value="">Any assignee</option>
-          {agents.map((a) => (
-            <option key={a.id} value={a.id}>{a.email}</option>
-          ))}
-        </select>
-        <select className="select max-w-32" value={limit} onChange={(e) => { setPage(1); setLimit(Number(e.target.value)); }}>
-          {PAGE_SIZE_OPTIONS.map((n) => (
-            <option key={n} value={n}>{n} / page</option>
-          ))}
-        </select>
-        <div className="flex items-center gap-2">
-          <select className="select max-w-56" onChange={(e) => { const v = savedViews.find(sv => sv.name === e.target.value); if (v) applyView(v); }}>
-            <option value="">Saved views</option>
-            {savedViews.map((v) => (
-              <option key={v.name} value={v.name}>{v.name}</option>
-            ))}
-          </select>
-          <input className="input max-w-40" placeholder="Save as…" value={newViewName} onChange={(e) => setNewViewName(e.target.value)} />
-          <button className="btn" onClick={saveCurrentAsView}>Save</button>
-          {savedViews.length > 0 && (
-            <button className="btn" onClick={() => deleteView(savedViews[savedViews.length-1].name)}>Delete Last</button>
-          )}
-        </div>
-        </div>
-      </FiltersBar>
+        </FiltersBar>
+      </div>
 
+      {/* Mobile Filters */}
+      {mobileFiltersOpen && (
+        <div className="card mobile-only">
+          <div className="card-body space-y-3">
+            <h3 className="font-semibold">Filters</h3>
+            <input
+              className="input"
+              placeholder="Search tickets..."
+              value={search}
+              onChange={(e) => { setPage(1); setSearch(e.target.value); }}
+            />
+            <select 
+              className="select" 
+              value={status} 
+              onChange={(e) => { setPage(1); setStatus(e.target.value); }}
+            >
+              <option value="">All Status</option>
+              {STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+            <select 
+              className="select" 
+              value={priorityId} 
+              onChange={(e) => { setPage(1); setPriorityId(e.target.value); }}
+            >
+              <option value="">All Priorities</option>
+              {priorities.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+            <select 
+              className="select" 
+              value={assigneeId} 
+              onChange={(e) => { setPage(1); setAssigneeId(e.target.value); }}
+            >
+              <option value="">Any Assignee</option>
+              {agents.map((a) => (
+                <option key={a.id} value={a.id}>{a.email}</option>
+              ))}
+            </select>
+            <select 
+              className="select" 
+              value={limit} 
+              onChange={(e) => { setPage(1); setLimit(Number(e.target.value)); }}
+            >
+              {PAGE_SIZE_OPTIONS.map((n) => (
+                <option key={n} value={n}>{n} / page</option>
+              ))}
+            </select>
+            
+            {/* Mobile bulk actions */}
+            <div className="pt-4 border-t">
+              <h4 className="font-medium mb-2">Bulk Actions</h4>
+              <select 
+                className="select mb-2" 
+                value={assigneeId} 
+                onChange={(e) => setAssigneeId(e.target.value)}
+              >
+                <option value="">Assign to...</option>
+                {agents.map((a) => (
+                  <option key={a.id} value={a.id}>{a.email}</option>
+                ))}
+              </select>
+              <button 
+                className="btn w-full mb-2" 
+                onClick={bulkAssign} 
+                disabled={selectedIds.size === 0 || !assigneeId}
+              >
+                Bulk Assign
+              </button>
+              <div className="grid grid-cols-3 gap-2">
+                <button 
+                  className="btn" 
+                  onClick={() => bulkStatus("open")} 
+                  disabled={selectedIds.size === 0}
+                >
+                  Open
+                </button>
+                <button 
+                  className="btn" 
+                  onClick={() => bulkStatus("resolved")} 
+                  disabled={selectedIds.size === 0}
+                >
+                  Resolve
+                </button>
+                <button 
+                  className="btn" 
+                  onClick={() => bulkStatus("closed")} 
+                  disabled={selectedIds.size === 0}
+                >
+                  Close
+                </button>
+              </div>
+              <button className="btn w-full mt-2" onClick={exportCsv}>
+                Export CSV
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tickets Table */}
       <div className="card overflow-x-auto">
-        <div className="table-head grid-cols-8 text-xs md:text-sm">
+        <div className="table-head grid-cols-8">
           <div>
-            <input type="checkbox" onChange={(e) => {
-              if (e.target.checked) setSelectedIds(new Set(items.map((t) => t.id)));
-              else setSelectedIds(new Set());
-            }} />
+            <input 
+              type="checkbox" 
+              onChange={(e) => {
+                if (e.target.checked) setSelectedIds(new Set(items.map((t) => t.id)));
+                else setSelectedIds(new Set());
+              }} 
+            />
           </div>
           <div className="hidden sm:block">Code</div>
           <div>Subject</div>
@@ -344,71 +504,152 @@ export default function AdminTickets() {
           <div>Status</div>
           <div className="hidden sm:block">Created</div>
         </div>
+        
         {loading && <TableSkeleton rows={5} cols={8} />}
+        
         {!loading && items.length === 0 && (
-          <div className="card-body text-sm">No tickets</div>
+          <div className="card-body text-center py-12">
+            <div className="text-muted-foreground">No tickets found</div>
+            <button 
+              className="btn btn-primary mt-4"
+              onClick={() => setShowCreate(true)}
+            >
+              Create Your First Ticket
+            </button>
+          </div>
         )}
-        {!loading && items.map((t) => (
-          <Link key={t.id} href={`/admin/tickets/${t.id}`} className="table-row grid-cols-8 text-xs md:text-sm">
-            <div>
-              <input
-                type="checkbox"
-                checked={selectedIds.has(t.id)}
-                onChange={(e) => toggleSelected(t.id, e.target.checked)}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
-            <div className="hidden sm:block">{t.ticket_code || t.code || t.id}</div>
-            <div className="truncate">{t.subject}</div>
-            <div className="truncate hidden md:block">{t.requester_email || "-"}</div>
-            <div className="truncate hidden lg:block">{t.assignee?.email || "Unassigned"}</div>
-            <div className="hidden sm:block">{t.priority?.name || t.priority_id}</div>
-            <div className="capitalize">{t.status}</div>
-            <div className="hidden sm:block">
-              {t.created_at ? new Date(t.created_at).toLocaleString() : ""}
-              {t.created_at && (
-                <span className="ml-2 chip">{formatSince(t.created_at)}</span>
-              )}
-            </div>
-          </Link>
-        ))}
+        
+        {!loading && items.map((t) => {
+          const statusClass = STATUSES.find(s => s.value === t.status)?.class || "status-new";
+          
+          return (
+            <Link 
+              key={t.id} 
+              href={`/admin/tickets/${t.id}`} 
+              className="table-row grid-cols-8"
+            >
+              <div>
+                <input
+                  type="checkbox"
+                  checked={selectedIds.has(t.id)}
+                  onChange={(e) => toggleSelected(t.id, e.target.checked)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+              <div className="hidden sm:block font-mono text-xs">
+                {t.ticket_code || t.code || t.id}
+              </div>
+              <div className="truncate font-medium">{t.subject}</div>
+              <div className="truncate hidden md:block text-sm">
+                {t.requester_email || "-"}
+              </div>
+              <div className="truncate hidden lg:block text-sm">
+                {t.assignee?.email || "Unassigned"}
+              </div>
+              <div className="hidden sm:block">
+                {t.priority?.name || t.priority_id}
+              </div>
+              <div>
+                <span className={`status-badge ${statusClass}`}>
+                  {t.status}
+                </span>
+              </div>
+              <div className="hidden sm:block text-xs text-muted-foreground">
+                {t.created_at ? new Date(t.created_at).toLocaleDateString() : ""}
+                {t.created_at && (
+                  <div className="text-xs mt-1">{formatSince(t.created_at)} ago</div>
+                )}
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
-      <div className="mt-3 flex items-center justify-between text-sm">
-        <div>
-          {pagination ? (
-            <span>
-              Page {pagination.currentPage} of {pagination.totalPages} • {pagination.totalCount} results
-            </span>
-          ) : null}
+      {/* Pagination */}
+      {pagination && pagination.totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-sm text-muted-foreground">
+            Showing {(page - 1) * limit + 1} to {Math.min(page * limit, pagination.totalCount)} of {pagination.totalCount} results
+          </div>
+          <div className="flex items-center gap-2">
+            <button 
+              className="btn btn-secondary" 
+              disabled={!pagination?.hasPrev} 
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              Previous
+            </button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    className={`btn btn-ghost min-w-[40px] ${page === pageNum ? 'bg-primary text-primary-foreground' : ''}`}
+                    onClick={() => setPage(pageNum)}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+              {pagination.totalPages > 5 && <span className="px-2">...</span>}
+            </div>
+            <button 
+              className="btn btn-secondary" 
+              disabled={!pagination?.hasNext} 
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="btn" disabled={!pagination?.hasPrev} onClick={() => setPage((p) => Math.max(1, p - 1))}>Prev</button>
-          <button className="btn" disabled={!pagination?.hasNext} onClick={() => setPage((p) => p + 1)}>Next</button>
-        </div>
-      </div>
+      )}
 
+      {/* Create Ticket Modal */}
       {showCreate && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4">
-          <form onSubmit={createTicket} className="card w-full max-w-2xl">
-            <div className="card-body space-y-3">
-              <div className="text-lg font-semibold">New Ticket</div>
-              <div className="grid md:grid-cols-2 gap-3">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <form onSubmit={createTicket} className="card w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="card-header">
+              <h2 className="text-lg font-semibold">Create New Ticket</h2>
+            </div>
+            <div className="card-body space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm">Subject</label>
-                  <input className="input" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} required />
+                  <label className="text-sm font-medium mb-1 block">Subject *</label>
+                  <input 
+                    className="input" 
+                    value={form.subject} 
+                    onChange={(e) => setForm({ ...form, subject: e.target.value })} 
+                    required 
+                  />
                 </div>
                 <div>
-                  <label className="text-sm">Requester Email</label>
-                  <input type="email" className="input" value={form.requester_email} onChange={(e) => setForm({ ...form, requester_email: e.target.value })} required />
+                  <label className="text-sm font-medium mb-1 block">Requester Email *</label>
+                  <input 
+                    type="email" 
+                    className="input" 
+                    value={form.requester_email} 
+                    onChange={(e) => setForm({ ...form, requester_email: e.target.value })} 
+                    required 
+                  />
                 </div>
                 <div>
-                  <label className="text-sm">Requester Name</label>
-                  <input className="input" value={form.requester_name} onChange={(e) => setForm({ ...form, requester_name: e.target.value })} required />
+                  <label className="text-sm font-medium mb-1 block">Requester Name *</label>
+                  <input 
+                    className="input" 
+                    value={form.requester_name} 
+                    onChange={(e) => setForm({ ...form, requester_name: e.target.value })} 
+                    required 
+                  />
                 </div>
                 <div>
-                  <label className="text-sm">Priority</label>
-                  <select className="select" value={form.priority_id} onChange={(e) => setForm({ ...form, priority_id: e.target.value })} required>
+                  <label className="text-sm font-medium mb-1 block">Priority *</label>
+                  <select 
+                    className="select" 
+                    value={form.priority_id} 
+                    onChange={(e) => setForm({ ...form, priority_id: e.target.value })} 
+                    required
+                  >
                     <option value="">Select priority</option>
                     {priorities.map((p) => (
                       <option key={p.id} value={p.id}>{p.name}</option>
@@ -416,8 +657,12 @@ export default function AdminTickets() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-sm">Assignee</label>
-                  <select className="select" value={form.assignee_id} onChange={(e) => setForm({ ...form, assignee_id: e.target.value })}>
+                  <label className="text-sm font-medium mb-1 block">Assignee</label>
+                  <select 
+                    className="select" 
+                    value={form.assignee_id} 
+                    onChange={(e) => setForm({ ...form, assignee_id: e.target.value })}
+                  >
                     <option value="">Unassigned</option>
                     {agents.map((a) => (
                       <option key={a.id} value={a.id}>{a.email}</option>
@@ -426,31 +671,69 @@ export default function AdminTickets() {
                 </div>
               </div>
               <div>
-                <label className="text-sm">Description</label>
-                <textarea className="input min-h-24" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+                <label className="text-sm font-medium mb-1 block">Description</label>
+                <textarea 
+                  className="textarea" 
+                  value={form.description} 
+                  onChange={(e) => setForm({ ...form, description: e.target.value })} 
+                  placeholder="Describe the issue in detail..."
+                />
               </div>
               <div>
-                <label className="text-sm">Attachments (optional, images)</label>
-                <div className="flex items-center gap-2">
-                  <input type="file" accept="image/*" multiple onChange={onTempUpload} disabled={fileUploading} />
-                  <button type="button" className="btn" onClick={() => document.querySelector('input[type=file]')?.click()} disabled={fileUploading}>{fileUploading ? 'Uploading…' : 'Choose files'}</button>
+                <label className="text-sm font-medium mb-1 block">Attachments</label>
+                <div className="flex items-center gap-2 mb-2">
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    multiple 
+                    onChange={onTempUpload} 
+                    disabled={fileUploading} 
+                    className="hidden" 
+                    id="file-upload"
+                  />
+                  <label 
+                    htmlFor="file-upload" 
+                    className="btn btn-secondary cursor-pointer"
+                  >
+                    {fileUploading ? 'Uploading...' : 'Choose Files'}
+                  </label>
+                  <span className="text-sm text-muted-foreground">
+                    {fileUploading ? 'Uploading images...' : 'PNG, JPG, GIF up to 10MB'}
+                  </span>
                 </div>
-                <div className="text-xs opacity-70 mt-1">Previews below are saved on create; duplicates are removed.</div>
                 {tempUrls.length > 0 && (
-                  <div className="grid grid-cols-3 gap-2 mt-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
                     {tempUrls.map((url) => (
-                      <div key={url} className="relative group border rounded overflow-hidden">
-                        <img src={url} alt="preview" className="w-full h-24 object-cover" />
-                        <button type="button" className="absolute top-1 right-1 hidden group-hover:block btn" onClick={() => setTempUrls((u) => u.filter((x) => x !== url))}>Remove</button>
+                      <div key={url} className="relative group border rounded-md overflow-hidden">
+                        <img src={url} alt="preview" className="w-full h-20 object-cover" />
+                        <button 
+                          type="button" 
+                          className="absolute top-1 right-1 btn btn-destructive btn-sm rounded-full p-1"
+                          onClick={() => setTempUrls((u) => u.filter((x) => x !== url))}
+                        >
+                          ×
+                        </button>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-              <div className="flex items-center justify-end gap-2">
-                <button type="button" className="btn" onClick={() => setShowCreate(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary" disabled={creating}>{creating ? "Creating..." : "Create"}</button>
-              </div>
+            </div>
+            <div className="card-footer flex justify-end gap-3">
+              <button 
+                type="button" 
+                className="btn btn-secondary" 
+                onClick={() => setShowCreate(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                className="btn btn-primary" 
+                disabled={creating}
+              >
+                {creating ? "Creating..." : "Create Ticket"}
+              </button>
             </div>
           </form>
         </div>
@@ -469,35 +752,151 @@ function formatSince(dateStr) {
   return `${days}d`;
 }
 
-function MobileActions({ agents, assigneeId, setAssigneeId, bulkAssign, bulkStatus, canBulk, exportCsv }) {
-  const [open, setOpen] = useState(false);
+// app/(admin)/tickets/page.js (Updated Mobile Section)
+// Add this component for mobile card view
+function MobileTicketCard({ ticket, isSelected, onSelect }) {
+  const statusClass = STATUSES.find(s => s.value === ticket.status)?.class || "status-new";
+  
   return (
-    <div className="inline-block">
-      <button className="btn ml-2" onClick={() => setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={open}>Actions ▾</button>
-      {open && (
-        <div role="menu" className="absolute right-0 mt-2 w-64 card">
-          <div className="card-body space-y-2">
+    <div className="card hover:shadow-md transition-shadow">
+      <div className="card-body space-y-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={(e) => onSelect(ticket.id, e.target.checked)}
+              className="mt-1"
+            />
             <div>
-              <div className="text-xs opacity-70 mb-1">Assign to</div>
-              <select className="select" value={assigneeId} onChange={(e) => setAssigneeId(e.target.value)}>
-                <option value="">Pick agent…</option>
-                {agents.map((a) => (
-                  <option key={a.id} value={a.id}>{a.email}</option>
-                ))}
-              </select>
-              <button className="btn w-full mt-2" onClick={() => { bulkAssign(); setOpen(false); }} disabled={!canBulk || !assigneeId}>Bulk assign</button>
+              <div className="font-mono text-sm text-primary font-medium">
+                {ticket.ticket_code || ticket.code || `#${ticket.id}`}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {ticket.created_at ? new Date(ticket.created_at).toLocaleDateString() : ''}
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <button className="btn flex-1" onClick={() => { bulkStatus('open'); setOpen(false); }} disabled={!canBulk}>Open</button>
-              <button className="btn flex-1" onClick={() => { bulkStatus('resolved'); setOpen(false); }} disabled={!canBulk}>Resolve</button>
-              <button className="btn flex-1" onClick={() => { bulkStatus('closed'); setOpen(false); }} disabled={!canBulk}>Close</button>
+          </div>
+          <span className={`status-badge ${statusClass}`}>
+            {ticket.status}
+          </span>
+        </div>
+        
+        <div className="font-medium text-foreground">{ticket.subject}</div>
+        
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-4">
+            <div>
+              <div className="text-xs text-muted-foreground">Priority</div>
+              <div>{ticket.priority?.name || ticket.priority_id || 'N/A'}</div>
             </div>
-            <button className="btn w-full" onClick={() => { exportCsv(); setOpen(false); }}>Export CSV</button>
+            <div>
+              <div className="text-xs text-muted-foreground">Assignee</div>
+              <div>{ticket.assignee?.email?.split('@')[0] || 'Unassigned'}</div>
+            </div>
+          </div>
+          
+          <div className="text-right">
+            <div className="text-xs text-muted-foreground">Updated</div>
+            <div>{ticket.updated_at ? formatSince(ticket.updated_at) : 'N/A'} ago</div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
 
+// Add this component for bottom sheet filter
+function MobileFilterSheet({ isOpen, onClose, filters, onFilterChange, agents, priorities }) {
+  if (!isOpen) return null;
 
+  return (
+    <div className="fixed inset-0 z-50 md:hidden">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="absolute bottom-0 left-0 right-0 bg-background rounded-t-2xl p-6 max-h-[80vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold">Filters</h3>
+          <button onClick={onClose} className="btn btn-ghost p-2">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm font-medium mb-2 block">Search</label>
+            <input
+              className="input"
+              placeholder="Search tickets..."
+              value={filters.search}
+              onChange={(e) => onFilterChange('search', e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">Status</label>
+            <select 
+              className="select" 
+              value={filters.status} 
+              onChange={(e) => onFilterChange('status', e.target.value)}
+            >
+              <option value="">All Status</option>
+              {STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">Priority</label>
+            <select 
+              className="select" 
+              value={filters.priorityId} 
+              onChange={(e) => onFilterChange('priorityId', e.target.value)}
+            >
+              <option value="">All Priorities</option>
+              {priorities.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">Assignee</label>
+            <select 
+              className="select" 
+              value={filters.assigneeId} 
+              onChange={(e) => onFilterChange('assigneeId', e.target.value)}
+            >
+              <option value="">Any Assignee</option>
+              {agents.map((a) => (
+                <option key={a.id} value={a.id}>{a.email}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">Items per page</label>
+            <select 
+              className="select" 
+              value={filters.limit} 
+              onChange={(e) => onFilterChange('limit', Number(e.target.value))}
+            >
+              {PAGE_SIZE_OPTIONS.map((n) => (
+                <option key={n} value={n}>{n} / page</option>
+              ))}
+            </select>
+          </div>
+
+          <button 
+            className="btn btn-primary w-full mt-6"
+            onClick={onClose}
+          >
+            Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
