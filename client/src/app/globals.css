@@ -226,3 +226,64 @@ body {
 .file-type-other {
   @apply bg-gray-100 text-gray-800;
 }
+
+/* Add these styles to your global.css */
+.card-body {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.card-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.card-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 3px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-muted-foreground);
+}
+
+/* Smooth scrolling */
+.card-body {
+  scroll-behavior: smooth;
+}
+
+/* Prevent horizontal scroll */
+.card-body {
+  overflow-x: hidden;
+}
+
+/* Custom scroll for tags and image containers */
+.max-h-32, .max-h-40 {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) var(--color-muted);
+}
+
+.max-h-32::-webkit-scrollbar,
+.max-h-40::-webkit-scrollbar {
+  width: 4px;
+}
+
+.max-h-32::-webkit-scrollbar-track,
+.max-h-40::-webkit-scrollbar-track {
+  background: var(--color-muted);
+  border-radius: 2px;
+}
+
+.max-h-32::-webkit-scrollbar-thumb,
+.max-h-40::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 2px;
+}
+
+.max-h-32::-webkit-scrollbar-thumb:hover,
+.max-h-40::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-muted-foreground);
+}

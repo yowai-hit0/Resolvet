@@ -194,7 +194,9 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "304": {}
+        },
         "tags": []
       },
       "post": {
@@ -220,19 +222,8 @@
             "required": true
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string",
-              "example": "\u001b\u001e\"\u0000�Ϧ���睵�J��R�i\u001b##\u0001\u0002\u0019\u001c$��\u0019���\u000b�։�Y�H���/�ZS��\u0014QO��%�Hi���dR�k�6\u001a��x�t=�o<{\u001539j����P��{�n\r\u0011P0F ��\u0001_��n�\u0015�\u0015R\u0000��2��z�\u0002���o��Z�?�p\f\b\u001c\u000e�\t�\u0010�n�ƥ����J�#\u0010\b���VӺ\u0000�w{��5n���\u0005��\u0010SNǊ�\u000fe�?��TB?���<�@`��4�ظ���S\u0006���[z>���էL����ŋ�F@�u\u001d���k\u0004��%��Ų��\u0018����?�\u0018Z_\u0001A0�߰�\r7�3��Aa�V�-\u0010�o��\u0014�?��-jC�5�G�4�S��̢��8eR\u0011u�\tp��=繹��hS\u0000�\u0004|)iXb�K\u0016\u0004��M,�$A��%~N�\b���}��i+\u0015�-�\u0012�@�յ���:\u0002\u0001�\u000f��\u0012�\u001f�R��/\"U�\u001b<f\u001b�Kc|\"�����3~�[�\u0001�2\\�\u0002�\u0014�V?\u0014�w#G3Y��u�KM��%��\"k]�\u0001\u001e\u001f\b�>5\u001e�,��G(�\u001f�9�y��<��\u0017 �J{���|\u0006�}.�O6%q�\u00042C��P��Z��g�\u000bn�\tj��S)\u0002ۚ#�������u�㔧1�\u001c��n�ۯ�\u000bʥ#\u001d9�>� =h�{.Pkʄx�+$cB�\u0000�\rq�:\u001ax������\u0002w�\u001d2G-7���\u0003��H�e�&\u0010�s�>�\b�!�\u0016�RƵ����̞\u0018SZ��،!p�\u0014j@+���\n��[,���\u001e����.�\u000e{�w�}\u000bg�|�y��Շ�3��q'�Qg\u001e\"�\u0019�\u0007���2\u001c�r���/��m����������-\u0002�H�|��\u0011PH!eC`Bl��\"̡��\fUM##�AC.ޞ�ƁY\u0018}\u0004�t��N��R\u0004��/\u0003C����!�X�dΚC{\t�\"�l\u0006��I��#���\u0014�\u0010i�}8����%�L�!H2�aKI\u0014\u000e��ZrDSJܠ\u001c�\u00127\fQ��Tq�|�2\u0004�\u0011�F$'�\u0005\u0001o/�#��4�B�\u001e.��\u0012�6�\u0004o\u0006wژ�U{\u000b����ͬ}7�:<�@�,C�Q8�]C_D6f�\u0005�F�)���\\������.W�邘�**,��t�G\u0012Į��Si-��eD\u001f7�k0k�5TsjK#\r^�[\r*C�db;�1��ȃ�R9ˬAm�Kʤ��M�Xi-!\u0011��5�5JM�v�W��cP\u001fB����E&ф��ۡV(9u�k�\u00021a\u001b�\\\u000bl�~_͔�mKn$F\u000b���\u001bԜ\u0011\u00053Z-\u0013(\u00195K�\u0012)��F\u000fʥ\b`��%^���:<J�\u001b��V%]�SX-�����E��\u001b*,��EH�i\\.�B�:)n��@����ZÔ\u0002���d\u0010�?\"��\\�Ϛ��\r(\u0015��Ő8�[�iDj�E�P)u\f�O��2dE}\u0019jMM�d�sӗC�E�\u0007\u000f�TWYj�%�\u001b\u000f��R�\fʍ�%\b\u0011�\u0019ʣs�����VAZt㔂�d^\rI��C�M�$�+�ċ\u0001�*<�uyڻ{MCyڧc��3A�4��6ThC��l�E�g���\"{-�\u0006���)���\u0016V\u0013�\n~�E�RR�\"v�Y\u0003���J>�'sjY{�9\u0018����\u0014/��_�o�0�{���Y\u000f����[oqy\u000f\u000f\u0000\u001cRX�u����x\u00108re\u0006 ���w=m�n)>�p*{��R�=�cK\u000ePU\u0018�n{|\u0000"
-            }
-          }
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       },
       "put": {
         "summary": "/api/v1/tickets/{id}",
@@ -319,36 +310,8 @@
             "required": true
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "statusCode": {
-                  "type": "number",
-                  "example": 200
-                },
-                "data": {
-                  "type": "object",
-                  "properties": {}
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Attachment deleted successfully"
-                },
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                }
-              }
-            }
-          }
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       }
     },
     "/api/v1/tickets/attachments/temp/images": {
