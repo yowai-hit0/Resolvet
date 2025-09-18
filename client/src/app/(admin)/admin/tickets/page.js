@@ -1,7 +1,7 @@
 // app/(admin)/tickets/page.js
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Link from "next/link";
 import { TicketsAPI, UsersAPI, AdminAPI, api, PrioritiesAPI } from "@/lib/api";
 import { useToastStore } from "@/store/ui";
@@ -165,6 +165,31 @@ function MobileFilterSheet({ isOpen, onClose, filters, onFilterChange, agents, p
   );
 }
 
+// Add this component for image previews
+function ImagePreview({ url, onRemove, showRemove = true }) {
+  return (
+    <div className="relative group">
+      <img 
+        src={url} 
+        alt="Preview" 
+        className="w-20 h-20 object-cover rounded border"
+      />
+      {showRemove && (
+        <button
+          type="button"
+          aria-label="Remove image"
+          className="absolute -top-2 -right-2 bg-black/80 hover:bg-black text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg ring-2 ring-white"
+          onClick={() => onRemove(url)}
+        >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function AdminTickets() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -176,6 +201,7 @@ export default function AdminTickets() {
   const [assigneeId, setAssigneeId] = useState("");
   const [agents, setAgents] = useState([]);
   const [priorities, setPriorities] = useState([]);
+  const [availableTags, setAvailableTags] = useState([]);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [pagination, setPagination] = useState();
   const [showCreate, setShowCreate] = useState(false);
@@ -266,6 +292,15 @@ export default function AdminTickets() {
         setPriorities(list);
       })
       .catch(() => setPriorities([]));
+    // load tags for selection
+    api.get("/tags")
+      .then((r) => {
+        const payload = r.data;
+        const candidates = [payload?.data?.tags, payload?.data, payload?.tags, payload];
+        const list = candidates.find((v) => Array.isArray(v)) || [];
+        setAvailableTags(list);
+      })
+      .catch(() => setAvailableTags([]));
   }, []);
 
   useEffect(() => {
@@ -275,28 +310,68 @@ export default function AdminTickets() {
     } catch {}
   }, []);
 
+
+  const handleCloseCreateModal = () => {
+    const resetFormState = () => {
+      setForm({ subject: "", description: "", requester_email: "", requester_name: "", priority_id: "", assignee_id: "", tag_ids: [] });
+      setFiles([]);
+      setTempUrls([]);
+      // reset hidden file input if present
+      try { const input = document.getElementById('file-upload'); if (input) input.value = ""; } catch {}
+    };
+    if (tempUrls.length > 0) {
+      // Always cleanup temporary uploads on cancel
+      cleanupTempFiles(tempUrls).finally(() => {
+        resetFormState();
+        setShowCreate(false);
+      });
+    } else {
+      resetFormState();
+      setShowCreate(false);
+    }
+  };
+
   const persistViews = (views) => {
     setSavedViews(views);
     try { localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(views)); } catch {}
   };
 
-  const onTempUpload = async (e) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
-    setFileUploading(true);
-    try {
-      const fd = new FormData();
-      files.forEach((f) => fd.append('images', f));
-      const r = await api.post('/tickets/attachments/temp/images', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-      const urls = r?.data?.data?.urls || r?.data?.urls || [];
-      setTempUrls((prev) => Array.from(new Set([...(prev || []), ...urls])));
-      showToast('Uploaded successfully', 'success');
-    } catch (err) {
-      showToast('Upload failed', 'error');
-    } finally {
-      setFileUploading(false);
-    }
-  };
+const onTempUpload = async (e) => {
+  const files = Array.from(e.target.files || []);
+  if (files.length === 0) return;
+  
+  // Validate image files only
+  const imageFiles = files.filter(file => file.type.startsWith('image/'));
+  if (imageFiles.length !== files.length) {
+    showToast('Only image files are allowed', 'error');
+    return;
+  }
+  
+  // Check file size (5MB max)
+  const oversizedFiles = imageFiles.filter(file => file.size > 5 * 1024 * 1024);
+  if (oversizedFiles.length > 0) {
+    showToast('Some files exceed the 5MB limit', 'error');
+    return;
+  }
+  
+  setFileUploading(true);
+  try {
+    const fd = new FormData();
+    imageFiles.forEach((f) => fd.append('images', f));
+    
+    const r = await api.post('/tickets/attachments/temp/images', fd, { 
+      headers: { 'Content-Type': 'multipart/form-data' } 
+    });
+    
+    const urls = r?.data?.data?.urls || r?.data?.urls || [];
+    setTempUrls((prev) => Array.from(new Set([...(prev || []), ...urls])));
+    showToast('Images uploaded successfully', 'success');
+  } catch (err) {
+    showToast('Upload failed', 'error');
+  } finally {
+    setFileUploading(false);
+  }
+};
 
   const saveCurrentAsView = () => {
     if (!newViewName.trim()) return;
@@ -376,34 +451,59 @@ export default function AdminTickets() {
     });
   };
 
-  const createTicket = async (e) => {
-    e.preventDefault();
-    setCreating(true);
-    try {
-      const payload = {
-        subject: form.subject,
-        description: form.description,
-        requester_email: form.requester_email,
-        requester_name: form.requester_name,
-        priority_id: Number(form.priority_id),
-        assignee_id: form.assignee_id ? Number(form.assignee_id) : undefined,
-        tag_ids: form.tag_ids,
-      };
-      const created = await api.post("/tickets", { ...payload, image_urls: tempUrls });
-      const ticketId = created?.data?.data?.ticket?.id || created?.data?.ticket?.id;
-      showToast("Ticket created successfully", "success");
-      setShowCreate(false);
-      setForm({ subject: "", description: "", requester_email: "", requester_name: "", priority_id: "", assignee_id: "", tag_ids: [] });
-      setFiles([]);
-      setTempUrls([]);
-      TicketsAPI.list(queryParams).then((d) => {
-        const rows = d?.data?.tickets || d?.tickets || [];
-        setItems(rows);
-      });
-    } finally {
-      setCreating(false);
-    }
-  };
+  const cleanupTempFiles = async (urls) => {
+  try {
+    // Use POST to avoid DELETE-with-body issues in some environments
+    await api.post('/tickets/attachments/temp/delete', { urls });
+  } catch (error) {
+    console.error('Failed to cleanup temp files:', error);
+  }
+};
+
+const removeTempImage = (urlToRemove) => {
+  setTempUrls(prev => prev.filter(url => url !== urlToRemove));
+  
+  // Also delete from Cloudinary
+  api.post('/tickets/attachments/temp/delete', { urls: [urlToRemove] })
+    .catch(err => console.error('Failed to delete temp image:', err));
+};
+
+// Update the createTicket function to handle file cleanup
+const createTicket = async (e) => {
+  e.preventDefault();
+  setCreating(true);
+  
+  try {
+    const payload = {
+      subject: form.subject,
+      description: form.description,
+      requester_email: form.requester_email,
+      requester_name: form.requester_name,
+      priority_id: Number(form.priority_id),
+      assignee_id: form.assignee_id ? Number(form.assignee_id) : undefined,
+      tag_ids: form.tag_ids,
+      image_urls: tempUrls // This will attach the pre-uploaded images
+    };
+    
+    const created = await api.post("/tickets", payload);
+    showToast("Ticket created successfully", "success");
+    
+    // Reset form and clear temp URLs
+    setForm({ subject: "", description: "", requester_email: "", requester_name: "", priority_id: "", assignee_id: "", tag_ids: [] });
+    setTempUrls([]);
+    setShowCreate(false);
+    
+    // Reload tickets list
+    TicketsAPI.list(queryParams).then((d) => {
+      const rows = d?.data?.tickets || d?.tickets || [];
+      setItems(rows);
+    });
+  } catch (error) {
+    showToast("Failed to create ticket", "error");
+  } finally {
+    setCreating(false);
+  }
+};
 
   return (
     <div className="space-y-6">
@@ -724,8 +824,8 @@ export default function AdminTickets() {
 
       {/* Create Ticket Modal */}
       {showCreate && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <form onSubmit={createTicket} className="card w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-2 sm:p-4 z-50">
+          <form onSubmit={createTicket} className="card w-full max-w-[95vw] md:max-w-2xl max-h-[92vh] overflow-y-auto">
             <div className="card-header">
               <h2 className="text-lg font-semibold">Create New Ticket</h2>
             </div>
@@ -787,6 +887,34 @@ export default function AdminTickets() {
                   </select>
                 </div>
               </div>
+            {/* Tags selection */}
+            <div>
+              <label className="text-sm font-medium mb-1 block">Tags</label>
+              <div className="flex flex-wrap gap-2">
+                {availableTags.map((t) => {
+                  const checked = (form.tag_ids || []).includes(t.id);
+                  return (
+                    <label key={t.id} className={`chip cursor-pointer select-none ${checked ? 'bg-primary text-primary-foreground' : ''}`}>
+                      <input
+                        type="checkbox"
+                        className="mr-1"
+                        checked={checked}
+                        onChange={() => {
+                          const current = new Set(form.tag_ids || []);
+                          if (current.has(t.id)) current.delete(t.id);
+                          else current.add(t.id);
+                          setForm({ ...form, tag_ids: Array.from(current) });
+                        }}
+                      />
+                      {t.name}
+                    </label>
+                  );
+                })}
+                {availableTags.length === 0 && (
+                  <span className="text-sm text-muted-foreground">No tags available</span>
+                )}
+              </div>
+            </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">Description</label>
                 <textarea 
@@ -798,7 +926,21 @@ export default function AdminTickets() {
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">Attachments</label>
-                <div className="flex items-center gap-2 mb-2">
+                
+                {/* Image previews */}
+                {tempUrls.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {tempUrls.map((url) => (
+                      <ImagePreview 
+                        key={url} 
+                        url={url} 
+                        onRemove={removeTempImage}
+                      />
+                    ))}
+                  </div>
+                )}
+                
+                <div className="flex items-center gap-2">
                   <input 
                     type="file" 
                     accept="image/*" 
@@ -812,38 +954,22 @@ export default function AdminTickets() {
                     htmlFor="file-upload" 
                     className="btn btn-secondary cursor-pointer"
                   >
-                    {fileUploading ? 'Uploading...' : 'Choose Files'}
+                    {fileUploading ? 'Uploading...' : 'Choose Images'}
                   </label>
                   <span className="text-sm text-muted-foreground">
-                    {fileUploading ? 'Uploading images...' : 'PNG, JPG, GIF up to 10MB'}
+                    {fileUploading ? 'Uploading images...' : 'PNG, JPG, GIF up to 5MB'}
                   </span>
                 </div>
-                {tempUrls.length > 0 && (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
-                    {tempUrls.map((url) => (
-                      <div key={url} className="relative group border rounded-md overflow-hidden">
-                        <img src={url} alt="preview" className="w-full h-20 object-cover" />
-                        <button 
-                          type="button" 
-                          className="absolute top-1 right-1 btn btn-destructive btn-sm rounded-full p-1"
-                          onClick={() => setTempUrls((u) => u.filter((x) => x !== url))}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
             <div className="card-footer flex justify-end gap-3">
-              <button 
-                type="button" 
-                className="btn btn-secondary" 
-                onClick={() => setShowCreate(false)}
-              >
-                Cancel
-              </button>
+            <button 
+              type="button" 
+              className="btn btn-secondary" 
+              onClick={handleCloseCreateModal}
+            >
+              Cancel
+            </button>
               <button 
                 type="submit" 
                 className="btn btn-primary" 

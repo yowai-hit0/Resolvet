@@ -25,6 +25,25 @@ const hasTicketUpdateAccess = (user, ticket) => {
   return false;
 };
 
+const cleanupTempUploads = async (urls) => {
+  try {
+    await Promise.all(
+      urls.map(async (url) => {
+        try {
+          const urlParts = url.split('/');
+          const publicIdWithExt = urlParts.slice(urlParts.indexOf('resolvet'), urlParts.length).join('/');
+          const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
+          await cloudinary.uploader.destroy(publicId);
+        } catch (error) {
+          console.warn('Failed to delete temporary upload:', error);
+        }
+      })
+    );
+  } catch (error) {
+    console.error('Error in cleanupTempUploads:', error);
+  }
+};
+
 export const getAllTickets = asyncHandler(async (req, res) => {
   const {
     page = 1,
@@ -309,7 +328,7 @@ export const createTicket = asyncHandler(async (req, res) => {
     tag_ids,
     image_urls
   } = req.body;
-
+  let tempUrlsToCleanup = image_urls || [];
   // Verify priority exists
   const priority = await prisma.ticketPriority.findUnique({
     where: { id: priority_id }
@@ -394,25 +413,32 @@ export const createTicket = asyncHandler(async (req, res) => {
       });
     }
 
-    // Attach pre-uploaded image urls if provided (dedup)
-    if (image_urls && Array.isArray(image_urls) && image_urls.length > 0) {
-      const uniqueUrls = Array.from(new Set(image_urls.filter(Boolean)));
-      if (uniqueUrls.length > 0) {
-        await tx.attachment.createMany({
-          data: uniqueUrls.map((url) => ({
-            original_filename: url.split('/').pop() || 'image',
-            stored_filename: url,
-            mime_type: 'image',
-            size: BigInt(0),
-            ticket_id: newTicket.id,
-            uploaded_by_id: req.user.id
-          }))
-        });
+       // Attach pre-uploaded image urls if provided
+      if (image_urls && Array.isArray(image_urls) && image_urls.length > 0) {
+        const uniqueUrls = Array.from(new Set(image_urls.filter(Boolean)));
+        if (uniqueUrls.length > 0) {
+          await tx.attachment.createMany({
+            data: uniqueUrls.map((url) => ({
+              original_filename: url.split('/').pop() || 'image',
+              stored_filename: url,
+              mime_type: 'image',
+              size: BigInt(0),
+              ticket_id: newTicket.id,
+              uploaded_by_id: req.user.id
+            }))
+          });
+          // Clear temp URLs since they're now attached to a ticket
+          tempUrlsToCleanup = tempUrlsToCleanup.filter(url => !uniqueUrls.includes(url));
+        }
       }
-    }
 
     return newTicket;
   });
+
+  if (tempUrlsToCleanup.length > 0) {
+    await cleanupTempUploads(tempUrlsToCleanup);
+   }
+
 
   const response = ApiResponse.created(
     { ticket },
@@ -798,10 +824,28 @@ export const uploadTempTicketImages = asyncHandler(async (req, res) => {
   if (!req.files || req.files.length === 0) {
     throw ApiError.badRequest('No image files provided');
   }
-  // Files are already uploaded to cloudinary by multer storage; each file has path/secure_url
-  const urls = req.files.map((f) => f.path || f.secure_url).filter(Boolean);
-  const response = ApiResponse.success({ urls: Array.from(new Set(urls)) }, 'Images uploaded');
-  return res.status(response.statusCode).json(response);
+  try {
+    // Explicitly upload incoming buffers to Cloudinary and return their secure URLs
+    const uploads = await Promise.all(
+      req.files.map((file) => new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: 'resolvet/temp', resource_type: 'image' },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result.secure_url);
+          }
+        );
+        stream.end(file.buffer);
+      }))
+    );
+
+    const uniqueUrls = Array.from(new Set(uploads.filter(Boolean)));
+    const response = ApiResponse.success({ urls: uniqueUrls }, 'Images uploaded');
+    return res.status(response.statusCode).json(response);
+  } catch (err) {
+    console.error('Temp upload failed:', err);
+    throw ApiError.internal(err?.message || 'Image upload failed');
+  }
 });
 
 export const getTicketStats = asyncHandler(async (req, res) => {
@@ -924,5 +968,18 @@ export const deleteTicketPriority = asyncHandler(async (req, res) => {
   }
   await prisma.ticketPriority.delete({ where: { id: priorityId } });
   const response = ApiResponse.success({}, 'Priority deleted successfully');
+  return res.status(response.statusCode).json(response);
+});
+
+export const deleteTempUploads = asyncHandler(async (req, res) => {
+  const { urls } = req.body;
+  
+  if (!urls || !Array.isArray(urls)) {
+    throw ApiError.badRequest('URLs array is required');
+  }
+
+  await cleanupTempUploads(urls);
+  
+  const response = ApiResponse.success({}, 'Temporary uploads deleted successfully');
   return res.status(response.statusCode).json(response);
 });

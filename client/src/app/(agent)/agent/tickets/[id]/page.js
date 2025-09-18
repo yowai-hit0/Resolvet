@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { TicketsAPI, AgentAPI, api } from "@/lib/api";
 import { useToastStore } from "@/store/ui";
+import { useAuthStore } from "@/store/auth";
 import Attachments from "@/components/Attachments";
 
 const STATUS_OPTIONS = [
@@ -16,6 +17,7 @@ const STATUS_OPTIONS = [
 
 export default function AgentTicketDetail() {
   const { id } = useParams();
+  const { user } = useAuthStore();
   const [ticket, setTicket] = useState();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -385,6 +387,7 @@ export default function AgentTicketDetail() {
                 items={ticket.attachments || []}
                 onUploaded={load}
                 onDeleted={load}
+                mode={(user?.role === 'admin' || user?.role === 'agent') ? 'edit' : 'view'}
               />
             </div>
           </div>

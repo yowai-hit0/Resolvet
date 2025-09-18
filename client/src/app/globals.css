@@ -170,3 +170,59 @@ body {
 .login-link {
   @apply text-primary font-medium hover:text-primary-hover transition-colors;
 }
+
+
+.upload-progress {
+  @apply w-full bg-gray-200 rounded-full h-1.5;
+}
+
+.upload-progress-bar {
+  @apply bg-primary h-1.5 rounded-full transition-all duration-300;
+}
+
+/* Hover effects for file cards */
+.file-card {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.file-card:hover {
+  @apply shadow-md transform -translate-y-0.5;
+}
+
+/* Preview modal styles */
+.preview-modal {
+  @apply fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4;
+}
+
+.preview-content {
+  @apply max-w-3xl w-full bg-white rounded-lg overflow-hidden;
+}
+
+/* Loading states for file operations */
+.file-loading {
+  @apply opacity-60 pointer-events-none;
+}
+
+/* Responsive file grid */
+.file-grid {
+  @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3;
+}
+
+@media (max-width: 640px) {
+  .file-grid {
+    @apply grid-cols-2;
+  }
+}
+
+/* File type indicators */
+.file-type-image {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.file-type-document {
+  @apply bg-green-100 text-green-800;
+}
+
+.file-type-other {
+  @apply bg-gray-100 text-gray-800;
+}

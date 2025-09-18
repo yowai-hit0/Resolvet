@@ -6,7 +6,8 @@ import {
   createTicket,
   updateTicket,
   addComment,
-  getTicketStats
+  getTicketStats,
+  deleteTempUploads
 } from '../controllers/ticketController.js';
 import { authenticate, authorize } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
@@ -58,5 +59,7 @@ router.delete('/:id/attachments/:attachmentId', authorize(['admin', 'agent']), d
 
 // Temp pre-create upload (authenticated users)
 router.post('/attachments/temp/images', uploadMultipleImages, uploadTempTicketImages);
-
+router.delete('/attachments/temp', authorize(['admin', 'agent', 'customer']), deleteTempUploads);
+// Convenience POST endpoint to support clients that cannot send DELETE with body
+router.post('/attachments/temp/delete', authorize(['admin', 'agent', 'customer']), deleteTempUploads);
 export default router;

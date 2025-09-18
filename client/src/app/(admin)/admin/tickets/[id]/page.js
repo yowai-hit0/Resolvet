@@ -435,6 +435,7 @@ export default function TicketDetail() {
                 items={ticket.attachments || []}
                 onUploaded={load}
                 onDeleted={load}
+                mode={(user?.role === 'admin' || user?.role === 'agent') ? 'edit' : 'view'}
               />
             </div>
           </div>
