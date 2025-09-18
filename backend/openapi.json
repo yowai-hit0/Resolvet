@@ -71,7 +71,9 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "304": {}
+        },
         "tags": []
       }
     },
@@ -220,7 +222,9 @@
             "required": true
           }
         ],
-        "responses": {},
+        "responses": {
+          "304": {}
+        },
         "tags": []
       },
       "put": {
@@ -235,135 +239,8 @@
             "required": true
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "statusCode": {
-                  "type": "number",
-                  "example": 200
-                },
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "ticket": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "number",
-                          "example": 3
-                        },
-                        "ticket_code": {
-                          "type": "string",
-                          "example": "RES-367546MM80"
-                        },
-                        "subject": {
-                          "type": "string",
-                          "example": "documentation issue"
-                        },
-                        "description": {
-                          "type": "string",
-                          "example": "Customer support tickets systemadsjf;akjsdfja;dkjf"
-                        },
-                        "requester_email": {
-                          "type": "string",
-                          "example": "patrivy0@gmail.com"
-                        },
-                        "requester_name": {
-                          "type": "string",
-                          "example": "John Doe"
-                        },
-                        "status": {
-                          "type": "string",
-                          "example": "resolved"
-                        },
-                        "created_at": {
-                          "type": "string",
-                          "example": "2025-09-16T08:29:27.548Z"
-                        },
-                        "updated_at": {
-                          "type": "string",
-                          "example": "2025-09-18T08:05:45.259Z"
-                        },
-                        "resolved_at": {
-                          "type": "string",
-                          "example": "2025-09-17T07:23:01.034Z"
-                        },
-                        "closed_at": {
-                          "type": "null",
-                          "example": null
-                        },
-                        "created_by_id": {
-                          "type": "number",
-                          "example": 1
-                        },
-                        "assignee_id": {
-                          "type": "number",
-                          "example": 2
-                        },
-                        "priority_id": {
-                          "type": "number",
-                          "example": 2
-                        },
-                        "priority": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "number",
-                              "example": 2
-                            },
-                            "name": {
-                              "type": "string",
-                              "example": "High"
-                            }
-                          }
-                        },
-                        "assignee": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "number",
-                              "example": 2
-                            },
-                            "first_name": {
-                              "type": "string",
-                              "example": "Jane"
-                            },
-                            "last_name": {
-                              "type": "string",
-                              "example": "Smith"
-                            }
-                          }
-                        },
-                        "tags": {
-                          "type": "array",
-                          "items": {},
-                          "example": [
-                            null
-                          ]
-                        }
-                      }
-                    }
-                  }
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Ticket updated successfully"
-                },
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                }
-              }
-            }
-          }
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       }
     },
     "/api/v1/tickets/{id}/comments": {
@@ -579,7 +456,9 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "304": {}
+        },
         "tags": []
       },
       "post": {

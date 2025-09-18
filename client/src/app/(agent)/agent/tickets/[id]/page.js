@@ -14,6 +14,14 @@ const STATUS_OPTIONS = [
   { value: "closed", label: "Closed", class: "status-closed" },
 ];
 
+// Mock priorities data - replace with your actual priorities if available
+const PRIORITY_OPTIONS = [
+  { id: 1, name: "Low" },
+  { id: 2, name: "Medium" },
+  { id: 3, name: "High" },
+  { id: 4, name: "Urgent" },
+];
+
 export default function AgentTicketDetail() {
   const { id } = useParams();
   const [ticket, setTicket] = useState();
@@ -21,13 +29,21 @@ export default function AgentTicketDetail() {
   const [saving, setSaving] = useState(false);
   const [comment, setComment] = useState("");
   const [showAllComments, setShowAllComments] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editData, setEditData] = useState({});
   const showToast = useToastStore((s) => s.show);
 
   const load = async () => {
     setLoading(true);
     try {
       const d = await TicketsAPI.get(id);
-      setTicket(d?.data?.ticket || d?.ticket || d);
+      const ticketData = d?.data?.ticket || d?.ticket || d;
+      setTicket(ticketData);
+      setEditData({
+        status: ticketData.status,
+        priority_id: ticketData.priority?.id || ticketData.priority_id,
+        tags: ticketData.tags || [],
+      });
     } finally {
       setLoading(false);
     }
@@ -35,34 +51,52 @@ export default function AgentTicketDetail() {
 
   useEffect(() => { if (id) load(); }, [id]);
 
-  const setStatus = async (status) => {
+  const handleEditToggle = () => {
+    if (isEditing) {
+      // Cancel editing
+      setEditData({
+        status: ticket.status,
+        priority_id: ticket.priority?.id || ticket.priority_id,
+        tags: ticket.tags || [],
+      });
+    }
+    setIsEditing(!isEditing);
+  };
+
+  const handleSave = async () => {
     setSaving(true);
-    const prev = ticket;
-    setTicket({ ...ticket, status });
     try {
-      await AgentAPI.setStatus(id, status);
-      showToast("Status updated", "success");
-    } catch {
-      setTicket(prev);
-      showToast("Failed to update status", "error");
+      // Update status if changed
+      if (editData.status !== ticket.status) {
+        await AgentAPI.setStatus(id, editData.status);
+      }
+      
+      // Update priority if changed
+      if (editData.priority_id !== (ticket.priority?.id || ticket.priority_id)) {
+        await AgentAPI.setPriority(id, Number(editData.priority_id));
+      }
+      
+      // Update tags if changed (you'll need to implement this API call)
+      // if (JSON.stringify(editData.tags) !== JSON.stringify(ticket.tags || [])) {
+      //   await AgentAPI.setTags(id, editData.tags);
+      // }
+      
+      showToast("Ticket updated successfully", "success");
+      await load(); // Reload to get fresh data
+      setIsEditing(false);
+    } catch (error) {
+      showToast("Failed to update ticket", "error");
+      console.error("Update error:", error);
     } finally {
       setSaving(false);
     }
   };
 
-  const setPriority = async (priority_id) => {
-    setSaving(true);
-    const prev = ticket;
-    setTicket({ ...ticket, priority_id });
-    try {
-      await AgentAPI.setPriority(id, Number(priority_id));
-      showToast("Priority updated", "success");
-    } catch {
-      setTicket(prev);
-      showToast("Failed to update priority", "error");
-    } finally {
-      setSaving(false);
-    }
+  const handleFieldChange = (field, value) => {
+    setEditData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const addComment = async () => {
@@ -87,13 +121,42 @@ export default function AgentTicketDetail() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-foreground">Ticket Details</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-foreground">Ticket Details</h1>
+        <div className="flex gap-2">
+          {isEditing ? (
+            <>
+              <button 
+                className="btn btn-secondary" 
+                onClick={handleEditToggle}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn btn-primary" 
+                onClick={handleSave}
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Save Changes"}
+              </button>
+            </>
+          ) : (
+            <button 
+              className="btn btn-primary" 
+              onClick={handleEditToggle}
+            >
+              Edit Ticket
+            </button>
+          )}
+        </div>
+      </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* Left Column */}
         <div className="space-y-4">
           <div className="card">
-            <div className="card-header">
+            <div className="card-header flex justify-between items-center">
               <h2 className="font-semibold">Ticket Information</h2>
             </div>
             <div className="card-body space-y-4">
@@ -104,16 +167,22 @@ export default function AgentTicketDetail() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground mb-1 block">Status</label>
-                  <select
-                    className="select"
-                    value={ticket.status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    disabled={saving}
-                  >
-                    {STATUS_OPTIONS.map((s) => (
-                      <option key={s.value} value={s.value}>{s.label}</option>
-                    ))}
-                  </select>
+                  {isEditing ? (
+                    <select
+                      className="select"
+                      value={editData.status}
+                      onChange={(e) => handleFieldChange("status", e.target.value)}
+                      disabled={saving}
+                    >
+                      {STATUS_OPTIONS.map((s) => (
+                        <option key={s.value} value={s.value}>{s.label}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className={`chip ${STATUS_OPTIONS.find(s => s.value === ticket.status)?.class || ''}`}>
+                      {ticket.status}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -125,18 +194,51 @@ export default function AgentTicketDetail() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-muted-foreground mb-1 block">Priority</label>
-                  <input
-                    className="input"
-                    defaultValue={ticket.priority?.id || ticket.priority_id || ""}
-                    onBlur={(e) => e.target.value && setPriority(e.target.value)}
-                    disabled={saving}
-                    placeholder="Priority ID"
-                  />
+                  {isEditing ? (
+                    <select
+                      className="select"
+                      value={editData.priority_id}
+                      onChange={(e) => handleFieldChange("priority_id", e.target.value)}
+                      disabled={saving}
+                    >
+                      <option value="">Select Priority</option>
+                      {PRIORITY_OPTIONS.map((p) => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="chip">
+                      {ticket.priority?.name || `Priority ${ticket.priority_id}`}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground mb-1 block">Assignee</label>
                   <div className="chip">{ticket.assignee?.email || "Unassigned"}</div>
                 </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-1 block">Tags</label>
+                {isEditing ? (
+                  <input
+                    className="input"
+                    value={editData.tags.join(", ")}
+                    onChange={(e) => handleFieldChange("tags", e.target.value.split(",").map(tag => tag.trim()))}
+                    placeholder="Comma-separated tags"
+                    disabled={saving}
+                  />
+                ) : (
+                  <div className="flex flex-wrap gap-1">
+                    {ticket.tags?.length > 0 ? (
+                      ticket.tags.map((tag, index) => (
+                        <span key={index} className="chip">{tag}</span>
+                      ))
+                    ) : (
+                      <span className="text-muted-foreground">No tags</span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -11,9 +11,17 @@ export default function Attachments({ ticketId, onUploaded, onDeleted, items }) 
   const upload = async (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
+    
+    // Validate image files only
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
+    if (imageFiles.length !== files.length) {
+      alert("Only image files are allowed");
+      return;
+    }
+    
     setLoading(true);
     try {
-      for (const file of files) {
+      for (const file of imageFiles) {
         const formData = new FormData();
         formData.append("image", file);
         await api.post(`/tickets/${ticketId}/attachments/image`, formData, {
@@ -38,25 +46,46 @@ export default function Attachments({ ticketId, onUploaded, onDeleted, items }) 
   };
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        <input ref={fileRef} type="file" accept="image/*" multiple onChange={upload} disabled={loading} />
-        <span className="text-xs opacity-70">Upload images after ticket creation.</span>
+    <div className="space-y-4">
+      <div className="flex flex-col gap-2">
+        <label className="btn btn-secondary cursor-pointer text-center">
+          <span>Upload Images</span>
+          <input 
+            ref={fileRef} 
+            type="file" 
+            accept="image/*" 
+            multiple 
+            onChange={upload} 
+            disabled={loading}
+            className="hidden"
+          />
+        </label>
+        <span className="text-xs text-muted-foreground">Only image files are allowed</span>
       </div>
-      <div className="grid grid-cols-3 gap-2">
-        {(items || []).map((a) => (
-          <div key={a.id} className="border rounded p-2 text-xs">
-            <button className="block w-full" onClick={() => setPreview(a.stored_filename)}>
-              <img src={a.stored_filename} alt={a.original_filename} className="w-full h-24 object-cover rounded" />
-            </button>
-            <div className="mt-1 truncate">{a.original_filename}</div>
-            <button className="btn w-full mt-1" onClick={() => remove(a.id)} disabled={loading}>Delete</button>
-          </div>
-        ))}
-      </div>
+      
+      {(items || []).length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {(items || []).map((a) => (
+            <div key={a.id} className="border rounded-lg p-3 text-xs">
+              <button className="block w-full" onClick={() => setPreview(a.stored_filename)}>
+                <img src={a.stored_filename} alt={a.original_filename} className="w-full h-24 object-cover rounded" />
+              </button>
+              <div className="mt-2 truncate">{a.original_filename}</div>
+              <button 
+                className="btn btn-destructive w-full mt-2 text-xs py-1" 
+                onClick={() => remove(a.id)} 
+                disabled={loading}
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      
       {preview && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center" onClick={() => setPreview(null)}>
-          <div className="max-w-3xl w-full p-2" onClick={(e) => e.stopPropagation()}>
+          <div className="max-w-3xl w-full p-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-end mb-2">
               <button className="btn" onClick={() => setPreview(null)}>Close</button>
             </div>
@@ -67,5 +96,3 @@ export default function Attachments({ ticketId, onUploaded, onDeleted, items }) 
     </div>
   );
 }
-
-
