@@ -33,77 +33,7 @@
     "/api/v1/users/me": {
       "get": {
         "summary": "/api/v1/users/me",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "user": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "number",
-                              "example": 1
-                            },
-                            "email": {
-                              "type": "string",
-                              "example": "admin@resolveit.com"
-                            },
-                            "first_name": {
-                              "type": "string",
-                              "example": "Maria"
-                            },
-                            "last_name": {
-                              "type": "string",
-                              "example": "Garcia"
-                            },
-                            "role": {
-                              "type": "string",
-                              "example": "admin"
-                            },
-                            "is_active": {
-                              "type": "boolean",
-                              "example": true
-                            },
-                            "created_at": {
-                              "type": "string",
-                              "example": "2025-09-15T11:49:59.152Z"
-                            },
-                            "updated_at": {
-                              "type": "string",
-                              "example": "2025-09-15T11:49:59.152Z"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Current user retrieved successfully"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -246,11 +176,7 @@
             }
           }
         ],
-        "responses": {
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "put": {
@@ -397,7 +323,11 @@
     "/api/v1/agent/tickets": {
       "get": {
         "summary": "/api/v1/agent/tickets",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },
@@ -445,11 +375,7 @@
     "/api/v1/tags": {
       "get": {
         "summary": "/api/v1/tags",
-        "responses": {
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "post": {
@@ -493,32 +419,7 @@
     "/api/v1/health": {
       "get": {
         "summary": "/api/v1/health",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Server is running successfully"
-                    },
-                    "timestamp": {
-                      "type": "string",
-                      "example": "2025-09-17T17:55:32.761Z"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       }
     }

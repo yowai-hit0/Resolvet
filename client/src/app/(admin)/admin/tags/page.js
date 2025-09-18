@@ -1,8 +1,10 @@
+// app/(admin)/tags/page.js
 "use client";
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { PrioritiesAPI } from "@/lib/api";
+import { useToastStore } from "@/store/ui";
 
 export default function TagsPage() {
   const [tags, setTags] = useState([]);
@@ -13,6 +15,8 @@ export default function TagsPage() {
   const [pName, setPName] = useState("");
   const [pEditId, setPEditId] = useState();
   const [pEditName, setPEditName] = useState("");
+  const [activeTab, setActiveTab] = useState("tags");
+  const showToast = useToastStore((s) => s.show);
 
   const load = () => {
     api.get("/tags").then((r) => {
@@ -25,8 +29,10 @@ export default function TagsPage() {
       ];
       const list = candidates.find((v) => Array.isArray(v)) || [];
       setTags(list);
+    }).catch(() => {
+      showToast("Failed to load tags", "error");
     });
-    // priorities (public GET per requirement)
+    
     PrioritiesAPI.list()
       .then((r) => {
         const payload = r;
@@ -34,119 +40,247 @@ export default function TagsPage() {
         const list = candidates.find((v) => Array.isArray(v)) || [];
         setPriorities(list);
       })
-      .catch(() => setPriorities([]));
+      .catch(() => {
+        setPriorities([]);
+        showToast("Failed to load priorities", "error");
+      });
   };
 
   useEffect(() => {
     load();
   }, []);
 
-  const create = async (e) => {
+  const createTag = async (e) => {
     e.preventDefault();
     if (!name.trim()) return;
-    await api.post("/tags", { name });
-    setName("");
-    load();
+    try {
+      await api.post("/tags", { name });
+      setName("");
+      load();
+      showToast("Tag created successfully", "success");
+    } catch {
+      showToast("Failed to create tag", "error");
+    }
   };
 
-  const saveEdit = async (tagId) => {
+  const saveTagEdit = async (tagId) => {
     if (!editingName.trim()) return;
-    await api.put(`/tags/${tagId}`, { name: editingName });
-    setEditingId(undefined);
-    setEditingName("");
-    load();
+    try {
+      await api.put(`/tags/${tagId}`, { name: editingName });
+      setEditingId(undefined);
+      setEditingName("");
+      load();
+      showToast("Tag updated successfully", "success");
+    } catch {
+      showToast("Failed to update tag", "error");
+    }
   };
 
-  const remove = async (tagId) => {
-    await api.delete(`/tags/${tagId}`);
-    load();
+  const removeTag = async (tagId) => {
+    try {
+      await api.delete(`/tags/${tagId}`);
+      load();
+      showToast("Tag deleted successfully", "success");
+    } catch {
+      showToast("Failed to delete tag", "error");
+    }
   };
 
   const createPriority = async (e) => {
     e.preventDefault();
     if (!pName.trim()) return;
-    await PrioritiesAPI.create({ name: pName });
-    setPName("");
-    load();
+    try {
+      await PrioritiesAPI.create({ name: pName });
+      setPName("");
+      load();
+      showToast("Priority created successfully", "success");
+    } catch {
+      showToast("Failed to create priority", "error");
+    }
   };
 
   const savePriority = async (id) => {
     if (!pEditName.trim()) return;
-    await PrioritiesAPI.update(id, { name: pEditName });
-    setPEditId(undefined);
-    setPEditName("");
-    load();
+    try {
+      await PrioritiesAPI.update(id, { name: pEditName });
+      setPEditId(undefined);
+      setPEditName("");
+      load();
+      showToast("Priority updated successfully", "success");
+    } catch {
+      showToast("Failed to update priority", "error");
+    }
   };
 
   const deletePriority = async (id) => {
-    await PrioritiesAPI.remove(id);
-    load();
+    try {
+      await PrioritiesAPI.remove(id);
+      load();
+      showToast("Priority deleted successfully", "success");
+    } catch {
+      showToast("Failed to delete priority", "error");
+    }
   };
 
   return (
-    <div className="space-y-4">
-      <form onSubmit={create} className="flex gap-2">
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="border rounded px-3 py-2 text-black"
-          placeholder="New tag name"
-        />
-        <button className="border rounded px-3">Add</button>
-      </form>
-      <div className="border rounded">
-        {Array.isArray(tags) && tags.map((t) => (
-          <div key={t.id} className="px-3 py-2 border-t first:border-t-0 flex items-center gap-2">
-            {editingId === t.id ? (
-              <>
-                <input className="input max-w-64" value={editingName} onChange={(e) => setEditingName(e.target.value)} />
-                <button className="btn" onClick={() => saveEdit(t.id)}>Save</button>
-                <button className="btn" onClick={() => { setEditingId(undefined); setEditingName(""); }}>Cancel</button>
-              </>
-            ) : (
-              <>
-                <span className="flex-1">{t.name}</span>
-                <button className="btn" onClick={() => { setEditingId(t.id); setEditingName(t.name); }}>Edit</button>
-                <button className="btn" onClick={() => remove(t.id)}>Delete</button>
-              </>
-            )}
-          </div>
-        ))}
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold text-foreground">Tags & Priorities</h1>
+
+      {/* Tab Navigation */}
+      <div className="flex border-b">
+        <button
+          className={`px-4 py-2 font-medium ${activeTab === "tags" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}
+          onClick={() => setActiveTab("tags")}
+        >
+          Tags
+        </button>
+        <button
+          className={`px-4 py-2 font-medium ${activeTab === "priorities" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}
+          onClick={() => setActiveTab("priorities")}
+        >
+          Priorities
+        </button>
       </div>
 
-      <div className="pt-4">
-        <div className="font-medium mb-2">Priorities</div>
-        <form onSubmit={createPriority} className="flex gap-2 mb-2">
-          <input
-            value={pName}
-            onChange={(e) => setPName(e.target.value)}
-            className="border rounded px-3 py-2 text-black"
-            placeholder="New priority name"
-          />
-          <button className="border rounded px-3">Add</button>
-        </form>
-        <div className="border rounded">
-          {Array.isArray(priorities) && priorities.map((p) => (
-            <div key={p.id} className="px-3 py-2 border-t first:border-t-0 flex items-center gap-2">
-              {pEditId === p.id ? (
-                <>
-                  <input className="input max-w-64" value={pEditName} onChange={(e) => setPEditName(e.target.value)} />
-                  <button className="btn" onClick={() => savePriority(p.id)}>Save</button>
-                  <button className="btn" onClick={() => { setPEditId(undefined); setPEditName(""); }}>Cancel</button>
-                </>
+      {/* Tags Tab */}
+      {activeTab === "tags" && (
+        <div className="space-y-4">
+          <form onSubmit={createTag} className="flex gap-2">
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="input flex-1"
+              placeholder="New tag name"
+            />
+            <button className="btn btn-primary">Add Tag</button>
+          </form>
+
+          <div className="card">
+            <div className="card-header">
+              <h2 className="font-semibold">Tags</h2>
+            </div>
+            <div className="card-body p-0">
+              {Array.isArray(tags) && tags.length > 0 ? (
+                tags.map((t) => (
+                  <div key={t.id} className="px-6 py-4 border-b last:border-b-0 flex items-center gap-3">
+                    {editingId === t.id ? (
+                      <>
+                        <input 
+                          className="input flex-1" 
+                          value={editingName} 
+                          onChange={(e) => setEditingName(e.target.value)} 
+                        />
+                        <button 
+                          className="btn btn-primary" 
+                          onClick={() => saveTagEdit(t.id)}
+                        >
+                          Save
+                        </button>
+                        <button 
+                          className="btn btn-secondary" 
+                          onClick={() => { setEditingId(undefined); setEditingName(""); }}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <span className="flex-1 font-medium">{t.name}</span>
+                        <button 
+                          className="btn btn-ghost" 
+                          onClick={() => { setEditingId(t.id); setEditingName(t.name); }}
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          className="btn btn-destructive" 
+                          onClick={() => removeTag(t.id)}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </div>
+                ))
               ) : (
-                <>
-                  <span className="flex-1">{p.name}</span>
-                  <button className="btn" onClick={() => { setPEditId(p.id); setPEditName(p.name); }}>Edit</button>
-                  <button className="btn" onClick={() => deletePriority(p.id)}>Delete</button>
-                </>
+                <div className="px-6 py-8 text-center text-muted-foreground">
+                  No tags created yet
+                </div>
               )}
             </div>
-          ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Priorities Tab */}
+      {activeTab === "priorities" && (
+        <div className="space-y-4">
+          <form onSubmit={createPriority} className="flex gap-2">
+            <input
+              value={pName}
+              onChange={(e) => setPName(e.target.value)}
+              className="input flex-1"
+              placeholder="New priority name"
+            />
+            <button className="btn btn-primary">Add Priority</button>
+          </form>
+
+          <div className="card">
+            <div className="card-header">
+              <h2 className="font-semibold">Priorities</h2>
+            </div>
+            <div className="card-body p-0">
+              {Array.isArray(priorities) && priorities.length > 0 ? (
+                priorities.map((p) => (
+                  <div key={p.id} className="px-6 py-4 border-b last:border-b-0 flex items-center gap-3">
+                    {pEditId === p.id ? (
+                      <>
+                        <input 
+                          className="input flex-1" 
+                          value={pEditName} 
+                          onChange={(e) => setPEditName(e.target.value)} 
+                        />
+                        <button 
+                          className="btn btn-primary" 
+                          onClick={() => savePriority(p.id)}
+                        >
+                          Save
+                        </button>
+                        <button 
+                          className="btn btn-secondary" 
+                          onClick={() => { setPEditId(undefined); setPEditName(""); }}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <span className="flex-1 font-medium">{p.name}</span>
+                        <button 
+                          className="btn btn-ghost" 
+                          onClick={() => { setPEditId(p.id); setPEditName(p.name); }}
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          className="btn btn-destructive" 
+                          onClick={() => deletePriority(p.id)}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="px-6 py-8 text-center text-muted-foreground">
+                  No priorities created yet
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
-

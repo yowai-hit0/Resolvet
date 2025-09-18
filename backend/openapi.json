@@ -49,75 +49,8 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "statusCode": {
-                  "type": "number",
-                  "example": 200
-                },
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "user": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "number",
-                          "example": 1
-                        },
-                        "email": {
-                          "type": "string",
-                          "example": "admin@resolveit.com"
-                        },
-                        "first_name": {
-                          "type": "string",
-                          "example": "Maria"
-                        },
-                        "last_name": {
-                          "type": "string",
-                          "example": "Garcia"
-                        },
-                        "role": {
-                          "type": "string",
-                          "example": "admin"
-                        },
-                        "is_active": {
-                          "type": "boolean",
-                          "example": true
-                        },
-                        "created_at": {
-                          "type": "string",
-                          "example": "2025-09-15T11:49:59.152Z"
-                        },
-                        "updated_at": {
-                          "type": "string",
-                          "example": "2025-09-15T11:49:59.152Z"
-                        }
-                      }
-                    }
-                  }
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Current user retrieved successfully"
-                },
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                }
-              }
-            }
-          },
-          "304": {}
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       }
     },
     "/api/v1/users/stats": {
@@ -287,9 +220,7 @@
             "required": true
           }
         ],
-        "responses": {
-          "304": {}
-        },
+        "responses": {},
         "tags": []
       },
       "put": {
@@ -465,7 +396,9 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "304": {}
+        },
         "tags": []
       }
     },
@@ -521,9 +454,7 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "304": {}
-        },
+        "responses": {},
         "tags": []
       },
       "post": {
@@ -575,32 +506,8 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Server is running successfully"
-                },
-                "timestamp": {
-                  "type": "string",
-                  "example": "2025-09-17T17:55:32.761Z"
-                }
-              }
-            }
-          }
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       }
     }
   },

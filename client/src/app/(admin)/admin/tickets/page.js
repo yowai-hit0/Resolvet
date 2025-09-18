@@ -16,6 +16,155 @@ const STATUSES = [
   { value: "closed", label: "Closed", class: "status-closed" },
 ];
 
+// Mobile Ticket Card Component
+function MobileTicketCard({ ticket, isSelected, onSelect }) {
+  const statusClass = STATUSES.find(s => s.value === ticket.status)?.class || "status-new";
+  
+  return (
+    <Link href={`/admin/tickets/${ticket.id}`} className="card hover:shadow-md transition-shadow block">
+      <div className="card-body space-y-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={(e) => onSelect(ticket.id, e.target.checked)}
+              className="mt-1"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <div>
+              <div className="font-mono text-sm text-primary font-medium">
+                {ticket.ticket_code || ticket.code || `#${ticket.id}`}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                {ticket.created_at ? new Date(ticket.created_at).toLocaleDateString() : ''}
+              </div>
+            </div>
+          </div>
+          <span className={`status-badge ${statusClass}`}>
+            {ticket.status}
+          </span>
+        </div>
+        
+        <div className="font-medium text-foreground line-clamp-2">{ticket.subject}</div>
+        
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-4">
+            <div>
+              <div className="text-xs text-muted-foreground">Priority</div>
+              <div>{ticket.priority?.name || ticket.priority_id || 'N/A'}</div>
+            </div>
+            <div>
+              <div className="text-xs text-muted-foreground">Assignee</div>
+              <div className="max-w-[80px] truncate">{ticket.assignee?.email?.split('@')[0] || 'Unassigned'}</div>
+            </div>
+          </div>
+          
+          <div className="text-right">
+            <div className="text-xs text-muted-foreground">Updated</div>
+            <div>{ticket.updated_at ? formatSince(ticket.updated_at) : 'N/A'} ago</div>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+// Mobile Filter Sheet Component
+function MobileFilterSheet({ isOpen, onClose, filters, onFilterChange, agents, priorities }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 md:hidden">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="absolute bottom-0 left-0 right-0 bg-background rounded-t-2xl p-6 max-h-[80vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold">Filters</h3>
+          <button onClick={onClose} className="btn btn-ghost p-2">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm font-medium mb-2 block">Search</label>
+            <input
+              className="input"
+              placeholder="Search tickets..."
+              value={filters.search}
+              onChange={(e) => onFilterChange('search', e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">Status</label>
+            <select 
+              className="select" 
+              value={filters.status} 
+              onChange={(e) => onFilterChange('status', e.target.value)}
+            >
+              <option value="">All Status</option>
+              {STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">Priority</label>
+            <select 
+              className="select" 
+              value={filters.priorityId} 
+              onChange={(e) => onFilterChange('priorityId', e.target.value)}
+            >
+              <option value="">All Priorities</option>
+              {priorities.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">Assignee</label>
+            <select 
+              className="select" 
+              value={filters.assigneeId} 
+              onChange={(e) => onFilterChange('assigneeId', e.target.value)}
+            >
+              <option value="">Any Assignee</option>
+              {agents.map((a) => (
+                <option key={a.id} value={a.id}>{a.email}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">Items per page</label>
+            <select 
+              className="select" 
+              value={filters.limit} 
+              onChange={(e) => onFilterChange('limit', Number(e.target.value))}
+            >
+              {PAGE_SIZE_OPTIONS.map((n) => (
+                <option key={n} value={n}>{n} / page</option>
+              ))}
+            </select>
+          </div>
+
+          <button 
+            className="btn btn-primary w-full mt-6"
+            onClick={onClose}
+          >
+            Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminTickets() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -41,6 +190,7 @@ export default function AdminTickets() {
   const [savedViews, setSavedViews] = useState([]);
   const [newViewName, setNewViewName] = useState("");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [mobileView, setMobileView] = useState('cards');
 
   // load persisted state
   useEffect(() => {
@@ -273,13 +423,27 @@ export default function AdminTickets() {
         </button>
       </div>
 
-      {/* Mobile Filters Toggle */}
-      <button 
-        className="btn btn-secondary mobile-only w-full"
-        onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-      >
-        {mobileFiltersOpen ? 'Hide Filters' : 'Show Filters'}
-      </button>
+      {/* Mobile View Toggle and Filters Button */}
+      <div className="mobile-only flex items-center gap-2 mb-4">
+        <button 
+          className={`btn btn-ghost ${mobileView === 'cards' ? 'bg-accent' : ''}`}
+          onClick={() => setMobileView('cards')}
+        >
+          Cards
+        </button>
+        <button 
+          className={`btn btn-ghost ${mobileView === 'table' ? 'bg-accent' : ''}`}
+          onClick={() => setMobileView('table')}
+        >
+          Table
+        </button>
+        <button 
+          className="btn btn-secondary ml-auto"
+          onClick={() => setMobileFiltersOpen(true)}
+        >
+          Filters
+        </button>
+      </div>
 
       {/* Filters Bar - Desktop */}
       <div className="desktop-only">
@@ -382,187 +546,140 @@ export default function AdminTickets() {
         </FiltersBar>
       </div>
 
-      {/* Mobile Filters */}
-      {mobileFiltersOpen && (
-        <div className="card mobile-only">
-          <div className="card-body space-y-3">
-            <h3 className="font-semibold">Filters</h3>
-            <input
-              className="input"
-              placeholder="Search tickets..."
-              value={search}
-              onChange={(e) => { setPage(1); setSearch(e.target.value); }}
-            />
-            <select 
-              className="select" 
-              value={status} 
-              onChange={(e) => { setPage(1); setStatus(e.target.value); }}
-            >
-              <option value="">All Status</option>
-              {STATUSES.map((s) => (
-                <option key={s.value} value={s.value}>{s.label}</option>
-              ))}
-            </select>
-            <select 
-              className="select" 
-              value={priorityId} 
-              onChange={(e) => { setPage(1); setPriorityId(e.target.value); }}
-            >
-              <option value="">All Priorities</option>
-              {priorities.map((p) => (
-                <option key={p.id} value={p.id}>{p.name}</option>
-              ))}
-            </select>
-            <select 
-              className="select" 
-              value={assigneeId} 
-              onChange={(e) => { setPage(1); setAssigneeId(e.target.value); }}
-            >
-              <option value="">Any Assignee</option>
-              {agents.map((a) => (
-                <option key={a.id} value={a.id}>{a.email}</option>
-              ))}
-            </select>
-            <select 
-              className="select" 
-              value={limit} 
-              onChange={(e) => { setPage(1); setLimit(Number(e.target.value)); }}
-            >
-              {PAGE_SIZE_OPTIONS.map((n) => (
-                <option key={n} value={n}>{n} / page</option>
-              ))}
-            </select>
-            
-            {/* Mobile bulk actions */}
-            <div className="pt-4 border-t">
-              <h4 className="font-medium mb-2">Bulk Actions</h4>
-              <select 
-                className="select mb-2" 
-                value={assigneeId} 
-                onChange={(e) => setAssigneeId(e.target.value)}
-              >
-                <option value="">Assign to...</option>
-                {agents.map((a) => (
-                  <option key={a.id} value={a.id}>{a.email}</option>
-                ))}
-              </select>
-              <button 
-                className="btn w-full mb-2" 
-                onClick={bulkAssign} 
-                disabled={selectedIds.size === 0 || !assigneeId}
-              >
-                Bulk Assign
-              </button>
-              <div className="grid grid-cols-3 gap-2">
-                <button 
-                  className="btn" 
-                  onClick={() => bulkStatus("open")} 
-                  disabled={selectedIds.size === 0}
-                >
-                  Open
-                </button>
-                <button 
-                  className="btn" 
-                  onClick={() => bulkStatus("resolved")} 
-                  disabled={selectedIds.size === 0}
-                >
-                  Resolve
-                </button>
-                <button 
-                  className="btn" 
-                  onClick={() => bulkStatus("closed")} 
-                  disabled={selectedIds.size === 0}
-                >
-                  Close
-                </button>
+      {/* Mobile Filter Bottom Sheet */}
+      <MobileFilterSheet
+        isOpen={mobileFiltersOpen}
+        onClose={() => setMobileFiltersOpen(false)}
+        filters={{ search, status, priorityId, assigneeId, limit }}
+        onFilterChange={(key, value) => {
+          setPage(1);
+          if (key === 'search') setSearch(value);
+          if (key === 'status') setStatus(value);
+          if (key === 'priorityId') setPriorityId(value);
+          if (key === 'assigneeId') setAssigneeId(value);
+          if (key === 'limit') setLimit(value);
+        }}
+        agents={agents}
+        priorities={priorities}
+      />
+
+      {/* Mobile Card View */}
+      {mobileView === 'cards' && (
+        <div className="mobile-only space-y-4">
+          {loading && Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="card">
+              <div className="card-body space-y-3">
+                <div className="skeleton h-4 w-1/3"></div>
+                <div className="skeleton h-6 w-full"></div>
+                <div className="skeleton h-4 w-2/3"></div>
               </div>
-              <button className="btn w-full mt-2" onClick={exportCsv}>
-                Export CSV
+            </div>
+          ))}
+          
+          {!loading && items.length === 0 && (
+            <div className="card-body text-center py-12">
+              <div className="text-muted-foreground">No tickets found</div>
+              <button 
+                className="btn btn-primary mt-4"
+                onClick={() => setShowCreate(true)}
+              >
+                Create Your First Ticket
               </button>
             </div>
-          </div>
+          )}
+          
+          {!loading && items.map((ticket) => (
+            <MobileTicketCard
+              key={ticket.id}
+              ticket={ticket}
+              isSelected={selectedIds.has(ticket.id)}
+              onSelect={toggleSelected}
+            />
+          ))}
         </div>
       )}
 
-      {/* Tickets Table */}
-      <div className="card overflow-x-auto">
-        <div className="table-head grid-cols-8">
-          <div>
-            <input 
-              type="checkbox" 
-              onChange={(e) => {
-                if (e.target.checked) setSelectedIds(new Set(items.map((t) => t.id)));
-                else setSelectedIds(new Set());
-              }} 
-            />
+      {/* Table View (hidden on mobile when in card view) */}
+      <div className={`${mobileView === 'table' ? 'mobile-only' : 'mobile-only hidden'} desktop-only`}>
+        <div className="card overflow-x-auto">
+          <div className="table-head grid-cols-8">
+            <div>
+              <input 
+                type="checkbox" 
+                onChange={(e) => {
+                  if (e.target.checked) setSelectedIds(new Set(items.map((t) => t.id)));
+                  else setSelectedIds(new Set());
+                }} 
+              />
+            </div>
+            <div className="hidden sm:block">Code</div>
+            <div>Subject</div>
+            <div className="hidden md:block">Requester</div>
+            <div className="hidden lg:block">Assignee</div>
+            <div className="hidden sm:block">Priority</div>
+            <div>Status</div>
+            <div className="hidden sm:block">Created</div>
           </div>
-          <div className="hidden sm:block">Code</div>
-          <div>Subject</div>
-          <div className="hidden md:block">Requester</div>
-          <div className="hidden lg:block">Assignee</div>
-          <div className="hidden sm:block">Priority</div>
-          <div>Status</div>
-          <div className="hidden sm:block">Created</div>
-        </div>
-        
-        {loading && <TableSkeleton rows={5} cols={8} />}
-        
-        {!loading && items.length === 0 && (
-          <div className="card-body text-center py-12">
-            <div className="text-muted-foreground">No tickets found</div>
-            <button 
-              className="btn btn-primary mt-4"
-              onClick={() => setShowCreate(true)}
-            >
-              Create Your First Ticket
-            </button>
-          </div>
-        )}
-        
-        {!loading && items.map((t) => {
-          const statusClass = STATUSES.find(s => s.value === t.status)?.class || "status-new";
           
-          return (
-            <Link 
-              key={t.id} 
-              href={`/admin/tickets/${t.id}`} 
-              className="table-row grid-cols-8"
-            >
-              <div>
-                <input
-                  type="checkbox"
-                  checked={selectedIds.has(t.id)}
-                  onChange={(e) => toggleSelected(t.id, e.target.checked)}
-                  onClick={(e) => e.stopPropagation()}
-                />
-              </div>
-              <div className="hidden sm:block font-mono text-xs">
-                {t.ticket_code || t.code || t.id}
-              </div>
-              <div className="truncate font-medium">{t.subject}</div>
-              <div className="truncate hidden md:block text-sm">
-                {t.requester_email || "-"}
-              </div>
-              <div className="truncate hidden lg:block text-sm">
-                {t.assignee?.email || "Unassigned"}
-              </div>
-              <div className="hidden sm:block">
-                {t.priority?.name || t.priority_id}
-              </div>
-              <div>
-                <span className={`status-badge ${statusClass}`}>
-                  {t.status}
-                </span>
-              </div>
-              <div className="hidden sm:block text-xs text-muted-foreground">
-                {t.created_at ? new Date(t.created_at).toLocaleDateString() : ""}
-                {t.created_at && (
-                  <div className="text-xs mt-1">{formatSince(t.created_at)} ago</div>
-                )}
-              </div>
-            </Link>
-          );
-        })}
+          {loading && <TableSkeleton rows={5} cols={8} />}
+          
+          {!loading && items.length === 0 && (
+            <div className="card-body text-center py-12">
+              <div className="text-muted-foreground">No tickets found</div>
+              <button 
+                className="btn btn-primary mt-4"
+                onClick={() => setShowCreate(true)}
+              >
+                Create Your First Ticket
+              </button>
+            </div>
+          )}
+          
+          {!loading && items.map((t) => {
+            const statusClass = STATUSES.find(s => s.value === t.status)?.class || "status-new";
+            
+            return (
+              <Link 
+                key={t.id} 
+                href={`/admin/tickets/${t.id}`} 
+                className="table-row grid-cols-8"
+              >
+                <div>
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(t.id)}
+                    onChange={(e) => toggleSelected(t.id, e.target.checked)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+                <div className="hidden sm:block font-mono text-xs">
+                  {t.ticket_code || t.code || t.id}
+                </div>
+                <div className="truncate font-medium">{t.subject}</div>
+                <div className="truncate hidden md:block text-sm">
+                  {t.requester_email || "-"}
+                </div>
+                <div className="truncate hidden lg:block text-sm">
+                  {t.assignee?.email || "Unassigned"}
+                </div>
+                <div className="hidden sm:block">
+                  {t.priority?.name || t.priority_id}
+                </div>
+                <div>
+                  <span className={`status-badge ${statusClass}`}>
+                    {t.status}
+                  </span>
+                </div>
+                <div className="hidden sm:block text-xs text-muted-foreground">
+                  {t.created_at ? new Date(t.created_at).toLocaleDateString() : ""}
+                  {t.created_at && (
+                    <div className="text-xs mt-1">{formatSince(t.created_at)} ago</div>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
       {/* Pagination */}
@@ -750,153 +867,4 @@ function formatSince(dateStr) {
   if (hrs < 24) return `${hrs}h`;
   const days = Math.floor(hrs / 24);
   return `${days}d`;
-}
-
-// app/(admin)/tickets/page.js (Updated Mobile Section)
-// Add this component for mobile card view
-function MobileTicketCard({ ticket, isSelected, onSelect }) {
-  const statusClass = STATUSES.find(s => s.value === ticket.status)?.class || "status-new";
-  
-  return (
-    <div className="card hover:shadow-md transition-shadow">
-      <div className="card-body space-y-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              checked={isSelected}
-              onChange={(e) => onSelect(ticket.id, e.target.checked)}
-              className="mt-1"
-            />
-            <div>
-              <div className="font-mono text-sm text-primary font-medium">
-                {ticket.ticket_code || ticket.code || `#${ticket.id}`}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {ticket.created_at ? new Date(ticket.created_at).toLocaleDateString() : ''}
-              </div>
-            </div>
-          </div>
-          <span className={`status-badge ${statusClass}`}>
-            {ticket.status}
-          </span>
-        </div>
-        
-        <div className="font-medium text-foreground">{ticket.subject}</div>
-        
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-4">
-            <div>
-              <div className="text-xs text-muted-foreground">Priority</div>
-              <div>{ticket.priority?.name || ticket.priority_id || 'N/A'}</div>
-            </div>
-            <div>
-              <div className="text-xs text-muted-foreground">Assignee</div>
-              <div>{ticket.assignee?.email?.split('@')[0] || 'Unassigned'}</div>
-            </div>
-          </div>
-          
-          <div className="text-right">
-            <div className="text-xs text-muted-foreground">Updated</div>
-            <div>{ticket.updated_at ? formatSince(ticket.updated_at) : 'N/A'} ago</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Add this component for bottom sheet filter
-function MobileFilterSheet({ isOpen, onClose, filters, onFilterChange, agents, priorities }) {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 md:hidden">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="absolute bottom-0 left-0 right-0 bg-background rounded-t-2xl p-6 max-h-[80vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold">Filters</h3>
-          <button onClick={onClose} className="btn btn-ghost p-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium mb-2 block">Search</label>
-            <input
-              className="input"
-              placeholder="Search tickets..."
-              value={filters.search}
-              onChange={(e) => onFilterChange('search', e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium mb-2 block">Status</label>
-            <select 
-              className="select" 
-              value={filters.status} 
-              onChange={(e) => onFilterChange('status', e.target.value)}
-            >
-              <option value="">All Status</option>
-              {STATUSES.map((s) => (
-                <option key={s.value} value={s.value}>{s.label}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium mb-2 block">Priority</label>
-            <select 
-              className="select" 
-              value={filters.priorityId} 
-              onChange={(e) => onFilterChange('priorityId', e.target.value)}
-            >
-              <option value="">All Priorities</option>
-              {priorities.map((p) => (
-                <option key={p.id} value={p.id}>{p.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium mb-2 block">Assignee</label>
-            <select 
-              className="select" 
-              value={filters.assigneeId} 
-              onChange={(e) => onFilterChange('assigneeId', e.target.value)}
-            >
-              <option value="">Any Assignee</option>
-              {agents.map((a) => (
-                <option key={a.id} value={a.id}>{a.email}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium mb-2 block">Items per page</label>
-            <select 
-              className="select" 
-              value={filters.limit} 
-              onChange={(e) => onFilterChange('limit', Number(e.target.value))}
-            >
-              {PAGE_SIZE_OPTIONS.map((n) => (
-                <option key={n} value={n}>{n} / page</option>
-              ))}
-            </select>
-          </div>
-
-          <button 
-            className="btn btn-primary w-full mt-6"
-            onClick={onClose}
-          >
-            Apply Filters
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 }
