@@ -71,9 +71,7 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "304": {}
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -222,9 +220,7 @@
             "required": true
           }
         ],
-        "responses": {
-          "304": {}
-        },
+        "responses": {},
         "tags": []
       },
       "put": {
@@ -400,7 +396,9 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "304": {}
+        },
         "tags": []
       }
     },
@@ -456,9 +454,7 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "304": {}
-        },
+        "responses": {},
         "tags": []
       },
       "post": {

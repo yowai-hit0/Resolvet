@@ -57,7 +57,7 @@ function MobileTicketCard({ ticket }) {
 }
 
 // Mobile Filter Sheet Component
-function MobileFilterSheet({ isOpen, onClose, filters, onFilterChange }) {
+function MobileFilterSheet({ isOpen, onClose, filters, onFilterChange, priorities }) {
   if (!isOpen) return null;
 
   return (
@@ -99,13 +99,17 @@ function MobileFilterSheet({ isOpen, onClose, filters, onFilterChange }) {
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-2 block">Priority ID</label>
-            <input 
-              className="input" 
-              placeholder="Priority ID" 
+            <label className="text-sm font-medium mb-2 block">Priority</label>
+            <select 
+              className="select" 
               value={filters.priorityId} 
               onChange={(e) => onFilterChange('priorityId', e.target.value)}
-            />
+            >
+              <option value="">All Priorities</option>
+              {priorities.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -142,6 +146,7 @@ export default function MyTickets() {
   const [status, setStatus] = useState("");
   const [priorityId, setPriorityId] = useState("");
   const [pagination, setPagination] = useState();
+  const [priorities, setPriorities] = useState([]);
   const showToast = useToastStore((s) => s.show);
   const STORAGE_KEY = "agent_tickets_state";
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -159,6 +164,19 @@ export default function MyTickets() {
         setPriorityId(s.priorityId || "");
       }
     } catch {}
+  }, []);
+
+  // Load priorities
+  useEffect(() => {
+    AgentAPI.getPriorities()
+      .then((response) => {
+        const data = response?.data;
+        const prioritiesList = data?.priorities || data?.data?.priorities || data || [];
+        setPriorities(Array.isArray(prioritiesList) ? prioritiesList : []);
+      })
+      .catch(() => {
+        setPriorities([]);
+      });
   }, []);
 
   const queryParams = useMemo(() => ({
@@ -271,12 +289,16 @@ export default function MyTickets() {
                 <option key={s.value} value={s.value}>{s.label}</option>
               ))}
             </select>
-            <input
-              className="input max-w-40"
-              placeholder="Priority ID"
-              value={priorityId}
+            <select 
+              className="select max-w-40" 
+              value={priorityId} 
               onChange={(e) => { setPage(1); setPriorityId(e.target.value); }}
-            />
+            >
+              <option value="">All Priorities</option>
+              {priorities.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
             <select 
               className="select max-w-32" 
               value={limit} 
@@ -302,6 +324,7 @@ export default function MyTickets() {
           if (key === 'priorityId') setPriorityId(value);
           if (key === 'limit') setLimit(value);
         }}
+        priorities={priorities}
       />
 
       {/* Mobile Card View */}

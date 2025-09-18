@@ -14,14 +14,6 @@ const STATUS_OPTIONS = [
   { value: "closed", label: "Closed", class: "status-closed" },
 ];
 
-// Mock priorities data - replace with your actual priorities if available
-const PRIORITY_OPTIONS = [
-  { id: 1, name: "Low" },
-  { id: 2, name: "Medium" },
-  { id: 3, name: "High" },
-  { id: 4, name: "Urgent" },
-];
-
 export default function AgentTicketDetail() {
   const { id } = useParams();
   const [ticket, setTicket] = useState();
@@ -30,8 +22,14 @@ export default function AgentTicketDetail() {
   const [comment, setComment] = useState("");
   const [showAllComments, setShowAllComments] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState({});
   const showToast = useToastStore((s) => s.show);
+  const [allTags, setAllTags] = useState([]);
+  const [priorities, setPriorities] = useState([]);
+  const [editData, setEditData] = useState({
+    status: "",
+    priority_id: "",
+    tag_ids: []
+  });
 
   const load = async () => {
     setLoading(true);
@@ -42,22 +40,44 @@ export default function AgentTicketDetail() {
       setEditData({
         status: ticketData.status,
         priority_id: ticketData.priority?.id || ticketData.priority_id,
-        tags: ticketData.tags || [],
+        tag_ids: (ticketData.tags || []).map(t => t.id)
       });
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { if (id) load(); }, [id]);
+  useEffect(() => {
+    if (id) load();
+    
+    // Load available tags
+    api.get("/tags")
+      .then((r) => {
+        const payload = r.data;
+        const candidates = [payload?.data?.tags, payload?.data, payload?.tags, payload];
+        const list = candidates.find((v) => Array.isArray(v)) || [];
+        setAllTags(list);
+      })
+      .catch(() => setAllTags([]));
+    
+    // Load priorities
+    api.get("/tickets/priorities")
+      .then((r) => {
+        const payload = r.data;
+        const candidates = [payload?.data?.priorities, payload?.data, payload?.priorities, payload];
+        const list = candidates.find((v) => Array.isArray(v)) || [];
+        setPriorities(list);
+      })
+      .catch(() => setPriorities([]));
+  }, [id]);
 
   const handleEditToggle = () => {
     if (isEditing) {
-      // Cancel editing
+      // Cancel editing - reset to current ticket values
       setEditData({
         status: ticket.status,
         priority_id: ticket.priority?.id || ticket.priority_id,
-        tags: ticket.tags || [],
+        tag_ids: (ticket.tags || []).map(t => t.id)
       });
     }
     setIsEditing(!isEditing);
@@ -70,17 +90,18 @@ export default function AgentTicketDetail() {
       if (editData.status !== ticket.status) {
         await AgentAPI.setStatus(id, editData.status);
       }
-      
+
       // Update priority if changed
       if (editData.priority_id !== (ticket.priority?.id || ticket.priority_id)) {
         await AgentAPI.setPriority(id, Number(editData.priority_id));
       }
       
-      // Update tags if changed (you'll need to implement this API call)
-      // if (JSON.stringify(editData.tags) !== JSON.stringify(ticket.tags || [])) {
-      //   await AgentAPI.setTags(id, editData.tags);
-      // }
-      
+      // Update tags if changed - get current tag IDs from ticket
+      const currentTagIds = (ticket.tags || []).map(tag => tag.id);
+      if (JSON.stringify(editData.tag_ids.sort()) !== JSON.stringify(currentTagIds.sort())) {
+        await api.put(`/tickets/${id}`, { tag_ids: editData.tag_ids });
+      }
+
       showToast("Ticket updated successfully", "success");
       await load(); // Reload to get fresh data
       setIsEditing(false);
@@ -96,6 +117,15 @@ export default function AgentTicketDetail() {
     setEditData(prev => ({
       ...prev,
       [field]: value
+    }));
+  };
+
+  const toggleTag = (tagId) => {
+    setEditData(prev => ({
+      ...prev,
+      tag_ids: (prev.tag_ids || []).includes(tagId)
+        ? (prev.tag_ids || []).filter(id => id !== tagId)
+        : [...(prev.tag_ids || []), tagId]
     }));
   };
 
@@ -202,7 +232,7 @@ export default function AgentTicketDetail() {
                       disabled={saving}
                     >
                       <option value="">Select Priority</option>
-                      {PRIORITY_OPTIONS.map((p) => (
+                      {priorities.map((p) => (
                         <option key={p.id} value={p.id}>{p.name}</option>
                       ))}
                     </select>
@@ -221,18 +251,25 @@ export default function AgentTicketDetail() {
               <div>
                 <label className="text-sm font-medium text-muted-foreground mb-1 block">Tags</label>
                 {isEditing ? (
-                  <input
-                    className="input"
-                    value={editData.tags.join(", ")}
-                    onChange={(e) => handleFieldChange("tags", e.target.value.split(",").map(tag => tag.trim()))}
-                    placeholder="Comma-separated tags"
-                    disabled={saving}
-                  />
+                  <div className="flex flex-wrap gap-2">
+                    {allTags.map((tag) => (
+                      <label key={tag.id} className="chip cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="mr-1"
+                          checked={(editData.tag_ids || []).includes(tag.id)}
+                          onChange={() => toggleTag(tag.id)}
+                          disabled={saving}
+                        />
+                        {tag.name}
+                      </label>
+                    ))}
+                  </div>
                 ) : (
                   <div className="flex flex-wrap gap-1">
                     {ticket.tags?.length > 0 ? (
-                      ticket.tags.map((tag, index) => (
-                        <span key={index} className="chip">{tag}</span>
+                      ticket.tags.map((tag) => (
+                        <span key={tag.id} className="chip">{tag.name}</span>
                       ))
                     ) : (
                       <span className="text-muted-foreground">No tags</span>

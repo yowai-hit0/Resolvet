@@ -47,11 +47,7 @@
     "/api/v1/users": {
       "get": {
         "summary": "/api/v1/users",
-        "responses": {
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -180,11 +176,7 @@
             }
           }
         ],
-        "responses": {
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "put": {
@@ -331,7 +323,11 @@
     "/api/v1/agent/tickets": {
       "get": {
         "summary": "/api/v1/agent/tickets",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },
@@ -379,11 +375,7 @@
     "/api/v1/tags": {
       "get": {
         "summary": "/api/v1/tags",
-        "responses": {
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "post": {

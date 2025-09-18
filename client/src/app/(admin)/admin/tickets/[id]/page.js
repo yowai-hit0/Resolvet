@@ -1,7 +1,7 @@
 // app/(admin)/tickets/[id]/page.js
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { TicketsAPI, UsersAPI, api } from "@/lib/api";
 import { useToastStore } from "@/store/ui";
@@ -23,6 +23,7 @@ export default function TicketDetail() {
   const [saving, setSaving] = useState(false);
   const [agents, setAgents] = useState([]);
   const [allTags, setAllTags] = useState([]);
+  const [priorities, setPriorities] = useState([]);
   const [comment, setComment] = useState("");
   const [isInternal, setIsInternal] = useState(false);
   const [error, setError] = useState();
@@ -31,8 +32,12 @@ export default function TicketDetail() {
   const { user } = useAuthStore();
   const [editMode, setEditMode] = useState(false);
   const [showAllComments, setShowAllComments] = useState(false);
-
-  const selectedTagIds = useMemo(() => new Set((ticket?.tags || []).map((t) => t.id)), [ticket]);
+  const [editData, setEditData] = useState({
+    status: "",
+    priority_id: "",
+    assignee_id: "",
+    tag_ids: []
+  });
 
   const load = async () => {
     setLoading(true);
@@ -41,6 +46,13 @@ export default function TicketDetail() {
       const d = await TicketsAPI.get(id);
       const t = d?.data?.ticket || d?.ticket || d;
       setTicket(t);
+      // Initialize edit data with current values
+      setEditData({
+        status: t.status,
+        priority_id: t.priority?.id || t.priority_id || "",
+        assignee_id: t.assignee?.id || t.assignee_id || "",
+        tag_ids: (t.tags || []).map(tag => tag.id)
+      });
     } catch (e) {
       setError("Failed to load ticket");
     } finally {
@@ -57,6 +69,17 @@ export default function TicketDetail() {
     UsersAPI.list({ role: "agent", page: 1, limit: 100 })
       .then((d) => setAgents(d?.data?.users || d?.users || []))
       .catch(() => {});
+    
+    // Load priorities
+    api.get("/tickets/priorities")
+      .then((r) => {
+        const payload = r.data;
+        const candidates = [payload?.data?.priorities, payload?.data, payload?.priorities, payload];
+        const list = candidates.find((v) => Array.isArray(v)) || [];
+        setPriorities(list);
+      })
+      .catch(() => setPriorities([]));
+      
     api.get("/tags").then((r) => {
       const payload = r.data;
       const candidates = [payload?.data?.tags, payload?.data, payload?.tags, payload];
@@ -65,14 +88,13 @@ export default function TicketDetail() {
     }).catch(() => setAllTags([]));
   }, []);
 
-  let prevTicketForRollback = ticket;
-  const updateField = async (data) => {
+  const saveChanges = async () => {
     setSaving(true);
     setMessage(undefined);
     setError(undefined);
     try {
       // Enforce comment when closing
-      if (data.status === "closed") {
+      if (editData.status === "closed") {
         const hasComment = (ticket?.comments || []).length > 0 || comment.trim().length > 0;
         if (!hasComment) {
           setError("Add a comment before closing the ticket");
@@ -80,18 +102,18 @@ export default function TicketDetail() {
           return;
         }
       }
-      prevTicketForRollback = ticket;
-      // optimistic update
-      setTicket((prevT) => ({ ...prevT, ...data }));
-      const r = await api.put(`/tickets/${id}`, data);
-      const t = r.data?.data?.ticket || r.data?.ticket || r.data;
+
+      const r = await api.put(`/tickets/${id}`, editData);
+      await load();
+      // const t = r.data?.data?.ticket || r.data?.ticket || r.data;
+      // console.log(r);
       // If API doesn't echo, reload
-      if (!t) await load();
-      else setTicket((prev) => ({ ...prev, ...t }));
+      // if (!t) await load();
+      // else setTicket((prev) => ({ ...prev, ...t }));
+      
       showToast("Updated", "success");
+      setEditMode(false);
     } catch (e) {
-      // rollback
-      setTicket(prevTicketForRollback);
       setError(e?.response?.data?.message || "Update failed");
       showToast("Update failed", "error");
     } finally {
@@ -99,10 +121,31 @@ export default function TicketDetail() {
     }
   };
 
-  const toggleTag = async (tagId, checked) => {
-    const tag_ids = Array.from(selectedTagIds);
-    const next = checked ? Array.from(new Set([...tag_ids, tagId])) : tag_ids.filter((id) => id !== tagId);
-    await updateField({ tag_ids: next });
+  const handleFieldChange = (field, value) => {
+    setEditData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const toggleTag = (tagId) => {
+    setEditData(prev => ({
+      ...prev,
+      tag_ids: (prev.tag_ids || []).includes(tagId)
+        ? (prev.tag_ids || []).filter(id => id !== tagId)
+        : [...(prev.tag_ids || []), tagId]
+    }));
+  };
+
+  const cancelEdit = () => {
+    // Reset edit data to current ticket values
+    setEditData({
+      status: ticket.status,
+      priority_id: ticket.priority?.id || ticket.priority_id || "",
+      assignee_id: ticket.assignee?.id || ticket.assignee_id || "",
+      tag_ids: (ticket.tags || []).map(tag => tag.id)
+    });
+    setEditMode(false);
   };
 
   const addComment = async () => {
@@ -134,12 +177,33 @@ export default function TicketDetail() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-foreground">Ticket Details</h1>
-        <button 
-          className="btn btn-secondary"
-          onClick={() => setEditMode((v) => !v)}
-        >
-          {editMode ? "Done Editing" : "Edit Ticket"}
-        </button>
+        <div className="flex gap-2">
+          {editMode ? (
+            <>
+              <button 
+                className="btn btn-secondary"
+                onClick={cancelEdit}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn btn-primary"
+                onClick={saveChanges}
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Save Changes"}
+              </button>
+            </>
+          ) : (
+            <button 
+              className="btn btn-secondary"
+              onClick={() => setEditMode(true)}
+            >
+              Edit Ticket
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -163,8 +227,8 @@ export default function TicketDetail() {
                   {editMode ? (
                     <select
                       className="select"
-                      value={ticket.status}
-                      onChange={(e) => updateField({ status: e.target.value })}
+                      value={editData.status}
+                      onChange={(e) => handleFieldChange("status", e.target.value)}
                       disabled={saving}
                     >
                       {STATUS_OPTIONS.map((s) => (
@@ -188,16 +252,17 @@ export default function TicketDetail() {
                 <div>
                   <label className="text-sm font-medium text-muted-foreground mb-1 block">Priority</label>
                   {editMode ? (
-                    <input
-                      className="input"
-                      defaultValue={ticket.priority?.id || ticket.priority_id || ""}
-                      onBlur={(e) => {
-                        const v = e.target.value.trim();
-                        if (v) updateField({ priority_id: Number(v) });
-                      }}
-                      placeholder="Priority ID"
+                    <select
+                      className="select"
+                      value={editData.priority_id}
+                      onChange={(e) => handleFieldChange("priority_id", e.target.value ? Number(e.target.value) : null)}
                       disabled={saving}
-                    />
+                    >
+                      <option value="">Select Priority</option>
+                      {priorities.map((p) => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                      ))}
+                    </select>
                   ) : (
                     <div className="chip">{ticket.priority?.name || ticket.priority_id || "Not set"}</div>
                   )}
@@ -207,8 +272,8 @@ export default function TicketDetail() {
                   {editMode ? (
                     <select
                       className="select"
-                      value={ticket.assignee?.id || ticket.assignee_id || ""}
-                      onChange={(e) => updateField({ assignee_id: e.target.value ? Number(e.target.value) : null })}
+                      value={editData.assignee_id}
+                      onChange={(e) => handleFieldChange("assignee_id", e.target.value ? Number(e.target.value) : null)}
                       disabled={saving}
                     >
                       <option value="">Unassigned</option>
@@ -231,8 +296,8 @@ export default function TicketDetail() {
                         <input
                           type="checkbox"
                           className="mr-1"
-                          checked={selectedTagIds.has(t.id)}
-                          onChange={(e) => toggleTag(t.id, e.target.checked)}
+                          checked={(editData.tag_ids || []).includes(t.id)}
+                          onChange={() => toggleTag(t.id)}
                           disabled={saving}
                         />
                         {t.name}

@@ -87,6 +87,8 @@ export const AgentAPI = {
   myTickets: (params) => api.get("/agent/tickets", { params }).then((r) => r.data),
   setStatus: (id, status) => api.patch(`/agent/tickets/${id}/status`, { status }).then((r) => r.data),
   setPriority: (id, priority_id) => api.patch(`/agent/tickets/${id}/priority`, { priority_id }).then((r) => r.data),
+  setTags: (id, tag_ids) => api.put(`/agent/tickets/${id}`, {tag_ids}).then((r)=> r.data),
+  getPriorities: () => api.get("/tickets/priorities").then((r) => r.data),
 };
 
 export const UsersAPI = {
