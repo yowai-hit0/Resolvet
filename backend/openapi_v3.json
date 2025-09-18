@@ -103,7 +103,11 @@
     "/api/v1/tickets/stats": {
       "get": {
         "summary": "/api/v1/tickets/stats",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },
@@ -154,11 +158,7 @@
     "/api/v1/tickets": {
       "get": {
         "summary": "/api/v1/tickets",
-        "responses": {
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "post": {
@@ -327,7 +327,11 @@
     "/api/v1/admin/analytics/system": {
       "get": {
         "summary": "/api/v1/admin/analytics/system",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },

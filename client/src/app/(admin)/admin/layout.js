@@ -11,18 +11,26 @@ export default function AdminLayout({ children }) {
   
   return (
     <RequireAuth role="admin">
-      <div className="min-h-screen flex flex-col bg-background">
-        <Navbar title="Admin Dashboard" />
-        <div className="flex flex-1 relative">
-          <Sidebar role="admin" />
-          {/* Overlay for mobile sidebar */}
-          {sidebarOpen && (
-            <div 
-              className="fixed inset-0 bg-black/50 z-40 sm:hidden"
-              onClick={() => useUIStore.getState().setSidebarOpen(false)}
-            />
-          )}
-          <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-[1600px] w-full mx-auto transition-all duration-200">
+      <div className="min-h-screen bg-background">
+        {/* Navbar - fixed at top (highest z-index) */}
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <Navbar title="Admin Dashboard" />
+        </div>
+        
+        {/* Mobile overlay - below navbar but above content */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-30 md:hidden"
+            onClick={() => useUIStore.getState().setSidebarOpen(false)}
+          />
+        )}
+        
+        {/* Sidebar - fixed on left (above overlay) */}
+        <Sidebar role="admin" />
+        
+        {/* Main content - positioned with padding for navbar and sidebar */}
+        <div className="pt-16 md:pl-64 min-h-screen">
+          <main className="p-4 md:p-6 lg:p-8 max-w-[1600px] w-full mx-auto">
             {children}
           </main>
         </div>
