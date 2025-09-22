@@ -343,7 +343,9 @@ export const createCustomerTicket = asyncHandler(async (req, res) => {
   const {
     subject,
     description,
-    priority_id = 1
+    priority_id = 1,
+    requester_phone,
+    location
   } = req.body;
 
   // Get customer details for requester information
@@ -388,6 +390,8 @@ export const createCustomerTicket = asyncHandler(async (req, res) => {
         description,
         requester_email: customer.email,
         requester_name: `${customer.first_name} ${customer.last_name}`,
+        requester_phone,
+        location,
         priority_id,
         created_by_id: customerId,
         status: 'new'

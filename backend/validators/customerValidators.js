@@ -10,6 +10,26 @@ export const createCustomerTicketValidator = Joi.object({
     'string.min': 'Description must be at least 10 characters long',
     'any.required': 'Description is required'
   }),
+  requester_phone: Joi.string()
+    .pattern(/^\+?2507\d{8}$/)
+    .required()
+    .messages({
+      'string.pattern.base': 'Phone must be Rwanda format +2507XXXXXXXX',
+      'any.required': 'Requester phone is required'
+    }),
+  location: Joi.string().valid(
+    'Nyarugenge','Gasabo','Kicukiro',
+    'Musanze','Burera','Gakenke',
+    'Rubavu','Nyabihu','Rutsiro',
+    'Ngororero','Muhanga','Kamonyi',
+    'Ruhango','Nyanza','Huye',
+    'Gisagara','Nyaruguru','Nyamagabe',
+    'Karongi','Rusizi','Nyamasheke',
+    'Gicumbi','Rulindo','Bugesera',
+    'Ngoma','Kirehe','Kayonza','Rwamagana'
+  ).optional().messages({
+    'any.only': 'Location must be a valid Rwanda district'
+  }),
   priority_id: Joi.number().integer().min(1).default(1).messages({
     'number.base': 'Priority ID must be a number',
     'number.min': 'Priority ID must be at least 1'

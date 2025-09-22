@@ -10,14 +10,33 @@ export const createTicketValidator = Joi.object({
     'string.min': 'Description must be at least 10 characters long',
     'any.required': 'Description is required'
   }),
-  requester_email: Joi.string().email().required().messages({
-    'string.email': 'Please provide a valid email address',
-    'any.required': 'Requester email is required'
+  requester_email: Joi.string().email().optional().allow('', null).messages({
+    'string.email': 'Please provide a valid email address'
   }),
   requester_name: Joi.string().min(2).max(100).required().messages({
     'string.min': 'Requester name must be at least 2 characters long',
     'string.max': 'Requester name cannot exceed 100 characters',
     'any.required': 'Requester name is required'
+  }),
+  requester_phone: Joi.string()
+    .pattern(/^\+?2507\d{8}$/)
+    .required()
+    .messages({
+      'string.pattern.base': 'Phone must be Rwanda format +2507XXXXXXXX',
+      'any.required': 'Requester phone is required'
+    }),
+  location: Joi.string().valid(
+    'Nyarugenge','Gasabo','Kicukiro',
+    'Musanze','Burera','Gakenke',
+    'Rubavu','Nyabihu','Rutsiro',
+    'Ngororero','Muhanga','Kamonyi',
+    'Ruhango','Nyanza','Huye',
+    'Gisagara','Nyaruguru','Nyamagabe',
+    'Karongi','Rusizi','Nyamasheke',
+    'Gicumbi','Rulindo','Bugesera',
+    'Ngoma','Kirehe','Kayonza','Rwamagana'
+  ).optional().messages({
+    'any.only': 'Location must be a valid Rwanda district'
   }),
   priority_id: Joi.number().integer().min(1).required().messages({
     'number.base': 'Priority ID must be a number',
@@ -42,6 +61,28 @@ export const updateTicketValidator = Joi.object({
   }),
   description: Joi.string().min(10).optional().messages({
     'string.min': 'Description must be at least 10 characters long'
+  }),
+  requester_email: Joi.string().email().optional().allow('', null).messages({
+    'string.email': 'Please provide a valid email address'
+  }),
+  requester_phone: Joi.string()
+    .pattern(/^\+?2507\d{8}$/)
+    .optional()
+    .messages({
+      'string.pattern.base': 'Phone must be Rwanda format +2507XXXXXXXX'
+    }),
+  location: Joi.string().valid(
+    'Nyarugenge','Gasabo','Kicukiro',
+    'Musanze','Burera','Gakenke',
+    'Rubavu','Nyabihu','Rutsiro',
+    'Ngororero','Muhanga','Kamonyi',
+    'Ruhango','Nyanza','Huye',
+    'Gisagara','Nyaruguru','Nyamagabe',
+    'Karongi','Rusizi','Nyamasheke',
+    'Gicumbi','Rulindo','Bugesera',
+    'Ngoma','Kirehe','Kayonza','Rwamagana'
+  ).optional().messages({
+    'any.only': 'Location must be a valid Rwanda district'
   }),
   priority_id: Joi.number().integer().min(1).optional().messages({
     'number.base': 'Priority ID must be a number',

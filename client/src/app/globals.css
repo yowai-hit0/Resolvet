@@ -76,6 +76,28 @@ body {
 .input {
   @apply border border-border rounded-lg px-3.5 py-2.5 text-sm w-full bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition-all duration-150 ease-out;
 }
+.input.prefix-box {
+  @apply w-20 bg-muted text-foreground border-border cursor-not-allowed;
+}
+.chip.removable {
+  @apply pr-1.5;
+}
+.chip.removable button {
+  @apply ml-1 rounded-full px-1 text-xs hover:bg-gray-200 focus:outline-none;
+}
+
+/* Phone number split input */
+.phone-field {
+  @apply flex items-center gap-2;
+}
+.phone-prefix {
+  @apply inline-flex items-center justify-center bg-gray-100 text-foreground border border-border rounded-lg text-sm font-mono select-none;
+  width: 68px; /* visual spec: small fixed width */
+  height: 42px; /* align with .input height */
+}
+.phone-number {
+  @apply border border-border rounded-lg px-3.5 py-2.5 text-sm w-full bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition-all duration-150 ease-out font-mono;
+}
 .select {
   @apply border border-border rounded-lg px-3.5 py-2.5 text-sm w-full bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary transition-all duration-150 ease-out;
 }

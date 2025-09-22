@@ -205,7 +205,14 @@ export default function AdminTickets() {
   const [pagination, setPagination] = useState();
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ subject: "", description: "", requester_email: "", requester_name: "", priority_id: "", assignee_id: "", tag_ids: [] });
+  const [form, setForm] = useState({ subject: "", description: "", requester_email: "", requester_name: "", requester_phone: "+250", location: "", priority_id: "", assignee_id: "", tag_ids: [] });
+  const [phoneLocal, setPhoneLocal] = useState("");
+  const [showNewTag, setShowNewTag] = useState(false);
+  const [newTagName, setNewTagName] = useState("");
+  const [showLocationList, setShowLocationList] = useState(false);
+  const RW_DISTRICTS = [
+    'Nyarugenge','Gasabo','Kicukiro','Musanze','Burera','Gakenke','Rubavu','Nyabihu','Rutsiro','Ngororero','Muhanga','Kamonyi','Ruhango','Nyanza','Huye','Gisagara','Nyaruguru','Nyamagabe','Karongi','Rusizi','Nyamasheke','Gicumbi','Rulindo','Bugesera','Ngoma','Kirehe','Kayonza','Rwamagana'
+  ];
   const [files, setFiles] = useState([]);
   const [fileUploading, setFileUploading] = useState(false);
   const [tempUrls, setTempUrls] = useState([]);
@@ -478,6 +485,8 @@ const createTicket = async (e) => {
       description: form.description,
       requester_email: form.requester_email,
       requester_name: form.requester_name,
+      requester_phone: `+250${phoneLocal}`,
+      location: form.location || undefined,
       priority_id: Number(form.priority_id),
       assignee_id: form.assignee_id ? Number(form.assignee_id) : undefined,
       tag_ids: form.tag_ids,
@@ -488,7 +497,7 @@ const createTicket = async (e) => {
     showToast("Ticket created successfully", "success");
     
     // Reset form and clear temp URLs
-    setForm({ subject: "", description: "", requester_email: "", requester_name: "", priority_id: "", assignee_id: "", tag_ids: [] });
+    setForm({ subject: "", description: "", requester_email: "", requester_name: "", requester_phone: "+250", location: "", priority_id: "", assignee_id: "", tag_ids: [] });
     setTempUrls([]);
     setShowCreate(false);
     
@@ -841,13 +850,12 @@ const createTicket = async (e) => {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Requester Email *</label>
+                  <label className="text-sm font-medium mb-1 block">Requester Email</label>
                   <input 
                     type="email" 
                     className="input w-full" 
                     value={form.requester_email} 
                     onChange={(e) => setForm({ ...form, requester_email: e.target.value })} 
-                    required 
                   />
                 </div>
                 <div>
@@ -858,6 +866,71 @@ const createTicket = async (e) => {
                     onChange={(e) => setForm({ ...form, requester_name: e.target.value })} 
                     required 
                   />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Requester Phone (+250) *</label>
+                  <div className="phone-field">
+                    <span className="phone-prefix" aria-hidden>+250</span>
+                    <input 
+                      className="phone-number" 
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={9}
+                      value={phoneLocal}
+                      onKeyDown={(e) => {
+                        const allowed = ['Backspace','Delete','ArrowLeft','ArrowRight','Tab','Home','End'];
+                        if (allowed.includes(e.key)) return;
+                        if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+                      }}
+                      onPaste={(e) => {
+                        const paste = (e.clipboardData.getData('text') || '').replace(/\D/g, '');
+                        if (!paste) {
+                          e.preventDefault();
+                          return;
+                        }
+                        const current = (phoneLocal || '').replace(/\D/g, '');
+                        const next = (current + paste).slice(0, 9);
+                        e.preventDefault();
+                        setPhoneLocal(next);
+                      }}
+                      onChange={(e) => {
+                        const digits = (e.target.value || '').replace(/\D/g, '').slice(0, 9);
+                        setPhoneLocal(digits);
+                      }}
+                      onBlur={() => setPhoneLocal((v) => (v || '').replace(/\D/g, '').slice(0, 9))}
+                      placeholder="7XXXXXXXX"
+                      required
+                    />
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">Enter 9 digits after +250</div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Location (District)</label>
+                  <div className="relative">
+                    <input
+                      className="input w-full"
+                      value={form.location}
+                      onChange={(e) => { setForm({ ...form, location: e.target.value }); setShowLocationList(true); }}
+                      onFocus={() => setShowLocationList(true)}
+                      onBlur={() => setTimeout(() => setShowLocationList(false), 100)}
+                      placeholder="Select location"
+                    />
+                    {showLocationList && (
+                      <div className="absolute z-10 mt-1 w-full bg-white border border-border rounded-md max-h-40 overflow-y-auto shadow-sm">
+                        {RW_DISTRICTS.filter(d => d.toLowerCase().includes((form.location||'').toLowerCase()))
+                          .map((d) => (
+                            <div
+                              role="button"
+                              key={d}
+                              className="px-3 py-2 hover:bg-muted cursor-pointer"
+                              onMouseDown={() => { setForm((prev) => ({ ...prev, location: d })); setShowLocationList(false); }}
+                            >
+                              {d}
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1 block">Priority *</label>
@@ -888,14 +961,55 @@ const createTicket = async (e) => {
                 </div>
               </div>
               
-              {/* Tags selection with scroll */}
+              {/* Tags selection with scroll and add */}
               <div>
-                <label className="text-sm font-medium mb-1 block">Tags</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium block">Tags</label>
+                  <button
+                    type="button"
+                    className="btn btn-ghost p-1 h-8 w-8 bg-gray-200 hover:bg-gray-200/90 rounded-full"
+                    aria-label={showNewTag ? 'Close new tag' : 'Add new tag'}
+                    onClick={() => setShowNewTag((v) => !v)}
+                    title={showNewTag ? 'Close' : 'Add tag'}
+                  >
+                    {showNewTag ? '×' : '+'}
+                  </button>
+                </div>
+                {showNewTag && (
+                  <div className="flex items-center gap-2 mb-2">
+                    <input
+                      className="input"
+                      placeholder="New tag name"
+                      value={newTagName}
+                      onChange={(e) => setNewTagName(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={async () => {
+                        const name = (newTagName || '').trim();
+                        if (!name) return;
+                        try {
+                          const res = await api.post('/tags', { name });
+                          const tag = res?.data?.data?.tag || res?.data?.tag || res?.data?.data;
+                          if (tag) {
+                            setAvailableTags((prev) => [...prev, tag]);
+                            setForm((f) => ({ ...f, tag_ids: [...(f.tag_ids||[]), tag.id] }));
+                            setNewTagName('');
+                            setShowNewTag(false);
+                          }
+                        } catch {}
+                      }}
+                    >
+                      Add
+                    </button>
+                  </div>
+                )}
                 <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-1 border border-border rounded-lg bg-input">
                   {availableTags.map((t) => {
                     const checked = (form.tag_ids || []).includes(t.id);
                     return (
-                      <label key={t.id} className={`chip cursor-pointer select-none ${checked ? 'bg-primary text-primary-foreground' : ''}`}>
+                      <label key={t.id} className={`chip removable cursor-pointer select-none ${checked ? 'bg-primary text-primary-foreground' : ''}`}>
                         <input
                           type="checkbox"
                           className="mr-1"
@@ -908,6 +1022,13 @@ const createTicket = async (e) => {
                           }}
                         />
                         {t.name}
+                        {checked && (
+                          <button type="button" aria-label="Remove tag" onClick={() => {
+                            const current = new Set(form.tag_ids || []);
+                            current.delete(t.id);
+                            setForm({ ...form, tag_ids: Array.from(current) });
+                          }}>×</button>
+                        )}
                       </label>
                     );
                   })}

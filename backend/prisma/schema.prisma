@@ -53,8 +53,10 @@ model Ticket {
   ticket_code     String     @unique
   subject         String
   description     String
-  requester_email String
+  requester_email String?
   requester_name  String
+  requester_phone String
+  location        String?
   status          TicketStatus @default(new)
   created_at      DateTime   @default(now()) @map("created_at")
   updated_at      DateTime   @updatedAt @map("updated_at")

@@ -114,7 +114,11 @@
     "/api/v1/tickets/priorities": {
       "get": {
         "summary": "/api/v1/tickets/priorities",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       },
       "post": {
@@ -389,7 +393,11 @@
     "/api/v1/tags": {
       "get": {
         "summary": "/api/v1/tags",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       },
       "post": {

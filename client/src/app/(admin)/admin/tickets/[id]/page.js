@@ -330,7 +330,15 @@ export default function TicketDetail() {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground mb-1 block">Email</label>
-                  <div>{ticket.requester_email}</div>
+                  <div>{ticket.requester_email || "Not provided"}</div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground mb-1 block">Phone</label>
+                  <div>{ticket.requester_phone || "Not provided"}</div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground mb-1 block">Location</label>
+                  <div>{ticket.location || "Not provided"}</div>
                 </div>
               </div>
             </div>
@@ -445,9 +453,21 @@ export default function TicketDetail() {
               <h2 className="font-semibold">Activity</h2>
             </div>
             <div className="card-body">
-              <div className="text-sm text-muted-foreground">
-                <div>Created: {ticket.created_at ? new Date(ticket.created_at).toLocaleString() : 'Unknown'}</div>
-                <div>Updated: {ticket.updated_at ? new Date(ticket.updated_at).toLocaleString() : 'Unknown'}</div>
+              <div className="space-y-2 max-h-80 overflow-y-auto">
+                {(ticket.ticket_events || []).length === 0 ? (
+                  <p className="text-muted-foreground text-sm">No activity yet</p>
+                ) : (
+                  (ticket.ticket_events || []).sort((a,b) => new Date(a.created_at) - new Date(b.created_at)).map((ev) => (
+                    <div key={ev.id} className="text-sm">
+                      <div className="text-muted-foreground">
+                        {new Date(ev.created_at).toLocaleString()} • {ev.user ? `${ev.user.first_name} ${ev.user.last_name}` : 'System'}
+                      </div>
+                      <div>
+                        {ev.change_type.replace(/_/g, ' ')} {ev.old_value ? `(${ev.old_value} → ${ev.new_value ?? ''})` : ev.new_value}
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>

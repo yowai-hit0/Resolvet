@@ -323,6 +323,8 @@ export const createTicket = asyncHandler(async (req, res) => {
     description,
     requester_email,
     requester_name,
+    requester_phone,
+    location,
     priority_id,
     assignee_id,
     tag_ids,
@@ -372,6 +374,8 @@ export const createTicket = asyncHandler(async (req, res) => {
         description,
         requester_email,
         requester_name,
+        requester_phone,
+        location,
         priority_id,
         assignee_id,
         created_by_id: req.user.id,
@@ -573,6 +577,53 @@ export const updateTicket = asyncHandler(async (req, res) => {
         change_type: 'priority_changed',
         old_value: existingTicket.priority_id.toString(),
         new_value: updates.priority_id.toString()
+      });
+    }
+
+    // Additional field change logs
+    if (updates.subject && updates.subject !== existingTicket.subject) {
+      events.push({
+        ticket_id: ticket.id,
+        user_id: req.user.id,
+        change_type: 'subject_changed',
+        old_value: existingTicket.subject,
+        new_value: updates.subject
+      });
+    }
+    if (updates.description && updates.description !== existingTicket.description) {
+      events.push({
+        ticket_id: ticket.id,
+        user_id: req.user.id,
+        change_type: 'description_changed',
+        old_value: existingTicket.description?.substring(0, 100) || null,
+        new_value: updates.description.substring(0, 100)
+      });
+    }
+    if (updates.requester_email !== undefined && updates.requester_email !== existingTicket.requester_email) {
+      events.push({
+        ticket_id: ticket.id,
+        user_id: req.user.id,
+        change_type: 'requester_email_changed',
+        old_value: existingTicket.requester_email || null,
+        new_value: updates.requester_email || null
+      });
+    }
+    if (updates.requester_phone !== undefined && updates.requester_phone !== existingTicket.requester_phone) {
+      events.push({
+        ticket_id: ticket.id,
+        user_id: req.user.id,
+        change_type: 'requester_phone_changed',
+        old_value: existingTicket.requester_phone || null,
+        new_value: updates.requester_phone || null
+      });
+    }
+    if (updates.location !== undefined && updates.location !== existingTicket.location) {
+      events.push({
+        ticket_id: ticket.id,
+        user_id: req.user.id,
+        change_type: 'location_changed',
+        old_value: existingTicket.location || null,
+        new_value: updates.location || null
       });
     }
 

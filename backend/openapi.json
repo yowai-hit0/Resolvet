@@ -144,7 +144,9 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "304": {}
+        },
         "tags": []
       },
       "post": {
@@ -196,7 +198,9 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "304": {}
+        },
         "tags": []
       },
       "post": {
@@ -476,7 +480,9 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {},
+        "responses": {
+          "304": {}
+        },
         "tags": []
       },
       "post": {

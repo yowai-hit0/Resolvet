@@ -17,8 +17,8 @@ export const listTags = asyncHandler(async (req, res) => {
 export const createTag = asyncHandler(async (req, res) => {
   const { name } = req.body;
 
-  if (!name || typeof name !== 'string' || name.trim().length === 0) {
-    throw ApiError.badRequest('Tag name is required');
+  if (!name || typeof name !== 'string' || name.trim().length < 2) {
+    throw ApiError.badRequest('Tag name must be at least 2 characters');
   }
 
   const normalizedName = name.trim();
@@ -43,8 +43,8 @@ export const updateTag = asyncHandler(async (req, res) => {
   if (Number.isNaN(tagId)) {
     throw ApiError.badRequest('Invalid tag id');
   }
-  if (!name || typeof name !== 'string' || name.trim().length === 0) {
-    throw ApiError.badRequest('Tag name is required');
+  if (!name || typeof name !== 'string' || name.trim().length < 2) {
+    throw ApiError.badRequest('Tag name must be at least 2 characters');
   }
 
   const normalizedName = name.trim();
