@@ -47,11 +47,7 @@
     "/api/v1/users": {
       "get": {
         "summary": "/api/v1/users",
-        "responses": {
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -114,11 +110,7 @@
     "/api/v1/tickets/priorities": {
       "get": {
         "summary": "/api/v1/tickets/priorities",
-        "responses": {
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "post": {
@@ -162,7 +154,11 @@
     "/api/v1/tickets": {
       "get": {
         "summary": "/api/v1/tickets",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       },
       "post": {
@@ -393,11 +389,7 @@
     "/api/v1/tags": {
       "get": {
         "summary": "/api/v1/tags",
-        "responses": {
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "post": {

@@ -51,7 +51,7 @@ export const createTicketValidator = Joi.object({
     'array.base': 'Tag IDs must be an array',
     'number.base': 'Each tag ID must be a number'
   }),
-  image_urls: Joi.array().items(Joi.string().uri()).optional()
+  image_urls: Joi.array().items(Joi.string().uri()).optional().allow(null).default([])
 });
 
 export const updateTicketValidator = Joi.object({

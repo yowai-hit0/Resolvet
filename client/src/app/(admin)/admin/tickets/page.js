@@ -909,7 +909,7 @@ const createTicket = async (e) => {
                   <div className="relative">
                     <input
                       className="input w-full"
-                      value={form.location}
+                      value={form.location || ""}
                       onChange={(e) => { setForm({ ...form, location: e.target.value }); setShowLocationList(true); }}
                       onFocus={() => setShowLocationList(true)}
                       onBlur={() => setTimeout(() => setShowLocationList(false), 100)}
