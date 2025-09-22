@@ -7,7 +7,6 @@ export function NoData({ message = "No data" }) {
   return <div className="text-sm opacity-70 p-4 text-center">{message}</div>;
 }
 
-// Helper function to calculate Y-axis domain and tick interval
 const getYAxisConfig = (data, yKey) => {
   if (!Array.isArray(data) || data.length === 0) {
     return { domain: [0, 10], ticks: [0, 2, 4, 6, 8, 10] };
@@ -15,15 +14,12 @@ const getYAxisConfig = (data, yKey) => {
 
   const maxValue = Math.max(...data.map(item => item[yKey] || 0));
   
-  // Calculate appropriate domain and tick interval based on max value
   let domainMax = 10;
   let tickInterval = 2;
   
   if (maxValue > 0) {
-    // Calculate appropriate maximum for domain
-    domainMax = Math.ceil(maxValue * 1.1); // Add 10% padding
+    domainMax = Math.ceil(maxValue * 1.1); 
     
-    // Calculate tick interval based on the max value
     if (domainMax <= 10) {
       tickInterval = 2;
     } else if (domainMax <= 20) {
@@ -40,7 +36,6 @@ const getYAxisConfig = (data, yKey) => {
       tickInterval = Math.ceil(domainMax / 5);
     }
     
-    // Ensure domainMax is a multiple of tickInterval for clean ticks
     domainMax = Math.ceil(domainMax / tickInterval) * tickInterval;
   }
 
