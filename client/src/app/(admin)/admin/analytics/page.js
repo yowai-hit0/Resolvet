@@ -32,7 +32,7 @@ export default function AnalyticsPage() {
       <div className="card">
         <div className="card-body">
           <div className="font-medium mb-2">Tickets per day</div>
-          <LineSimple data={trends} xKey={trends[0]?.date ? "date" : "date"} yKey={trends[0]?.count !== undefined ? "count" : "count"} />
+          <LineSimple data={trends} xKey="date" yKey="count" />
         </div>
       </div>
       <div className="card">

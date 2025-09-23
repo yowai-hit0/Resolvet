@@ -12,7 +12,7 @@ const getYAxisConfig = (data, yKey) => {
     return { domain: [0, 10], ticks: [0, 2, 4, 6, 8, 10] };
   }
 
-  const maxValue = Math.max(...data.map(item => item[yKey] || 0));
+  const maxValue = Math.max(...data.map(item => Number(item[yKey]) || 0));
   
   let domainMax = 10;
   let tickInterval = 2;
@@ -59,15 +59,36 @@ const CustomYAxisTick = ({ x, y, payload }) => {
   );
 };
 
+// Normalize: coerce y to number, and sort by x if x is date or number
+const normalizeSeries = (data, xKey, yKey) => {
+  if (!Array.isArray(data)) return [];
+  const mapped = data.map(d => ({
+    ...d,
+    [yKey]: Number(d?.[yKey]) || 0,
+  }));
+  // detect if xKey looks like date or numeric
+  const sample = mapped.find(d => d?.[xKey] !== undefined);
+  const xVal = sample?.[xKey];
+  const isDate = typeof xVal === 'string' && !isNaN(Date.parse(xVal));
+  const isNumber = typeof xVal === 'number';
+  if (isDate) {
+    return [...mapped].sort((a,b) => new Date(a[xKey]).getTime() - new Date(b[xKey]).getTime());
+  }
+  if (isNumber) {
+    return [...mapped].sort((a,b) => (a[xKey] ?? 0) - (b[xKey] ?? 0));
+  }
+  return mapped;
+};
+
 export function LineSimple({ data, xKey, yKey }) {
   if (!Array.isArray(data) || data.length === 0) return <NoData />;
-  
-  const yAxisConfig = getYAxisConfig(data, yKey);
+  const normalized = normalizeSeries(data, xKey, yKey);
+  const yAxisConfig = getYAxisConfig(normalized, yKey);
 
   return (
     <div className="w-full h-64">
       <ResponsiveContainer>
-        <LineChart data={data} margin={{ top: 10, right: 20, left: 20, bottom: 0 }}>
+        <LineChart data={normalized} margin={{ top: 10, right: 20, left: 20, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis dataKey={xKey} tick={{ fontSize: 12 }} stroke="#6b7280" />
           <YAxis 
@@ -101,13 +122,13 @@ export function LineSimple({ data, xKey, yKey }) {
 
 export function BarSimple({ data, xKey, yKey }) {
   if (!Array.isArray(data) || data.length === 0) return <NoData />;
-  
-  const yAxisConfig = getYAxisConfig(data, yKey);
+  const normalized = normalizeSeries(data, xKey, yKey);
+  const yAxisConfig = getYAxisConfig(normalized, yKey);
 
   return (
     <div className="w-full h-64">
       <ResponsiveContainer>
-        <BarChart data={data} margin={{ top: 10, right: 20, left: 20, bottom: 0 }}>
+        <BarChart data={normalized} margin={{ top: 10, right: 20, left: 20, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis dataKey={xKey} tick={{ fontSize: 12 }} stroke="#6b7280" />
           <YAxis 

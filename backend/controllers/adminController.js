@@ -35,21 +35,8 @@ export const getAdminDashboard = asyncHandler(async (req, res) => {
       where: { status: 'closed' }
     }),
     
-    // Tickets created per day (last 30 days)
-    prisma.ticket.groupBy({
-      by: ['created_at'],
-      where: {
-        created_at: {
-          gte: thirtyDaysAgo
-        }
-      },
-      _count: {
-        id: true
-      },
-      orderBy: {
-        created_at: 'asc'
-      }
-    }),
+    // Tickets created per day (last 30 days) - grouped by DATE
+    prisma.$queryRaw`SELECT CAST(created_at AS DATE) AS date, COUNT(*)::int AS count FROM "tickets" WHERE created_at >= ${thirtyDaysAgo} GROUP BY 1 ORDER BY 1 ASC`,
     
     // Tickets by agent
     prisma.ticket.groupBy({
@@ -100,11 +87,16 @@ export const getAdminDashboard = asyncHandler(async (req, res) => {
     })
   ]);
 
-  // Format tickets by day for chart
-  const formattedTicketsByDay = ticketsByDay.map(day => ({
-    date: day.created_at.toISOString().split('T')[0],
-    count: day._count.id
-  }));
+  // Fill last 30 days with zeros for missing dates
+  const countsMap = new Map((ticketsByDay || []).map(r => [new Date(r.date).toISOString().split('T')[0], Number(r.count) || 0]));
+  const formattedTicketsByDay = [];
+  const today = new Date();
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key = d.toISOString().split('T')[0];
+    formattedTicketsByDay.push({ date: key, count: countsMap.get(key) || 0 });
+  }
 
   // Format tickets by agent with agent details
   const agentsWithTickets = await Promise.all(
@@ -412,21 +404,8 @@ export const getSystemAnalytics = asyncHandler(async (req, res) => {
       }
     }),
 
-    // Ticket trends (last 30 days)
-    prisma.ticket.groupBy({
-      by: ['created_at'],
-      where: {
-        created_at: {
-          gte: thirtyDaysAgo
-        }
-      },
-      _count: {
-        id: true
-      },
-      orderBy: {
-        created_at: 'asc'
-      }
-    }),
+    // Ticket trends (last 30 days) - group by DATE
+    prisma.$queryRaw`SELECT CAST(created_at AS DATE) AS date, COUNT(*)::int AS count FROM "tickets" WHERE created_at >= ${thirtyDaysAgo} GROUP BY 1 ORDER BY 1 ASC`,
 
     // Top 5 busiest agents
     prisma.ticket.groupBy({
@@ -470,10 +449,18 @@ export const getSystemAnalytics = asyncHandler(async (req, res) => {
       active: 0,
       inactive: 0
     },
-    ticket_trends: ticketTrends.map(trend => ({
-      date: trend.created_at.toISOString().split('T')[0],
-      count: trend._count.id
-    })),
+    ticket_trends: (() => {
+      const map = new Map((ticketTrends || []).map(r => [new Date(r.date).toISOString().split('T')[0], Number(r.count) || 0]));
+      const out = [];
+      const today = new Date();
+      for (let i = 29; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const key = d.toISOString().split('T')[0];
+        out.push({ date: key, count: map.get(key) || 0 });
+      }
+      return out;
+    })(),
     busiest_agents: [],
     common_tags: []
   };

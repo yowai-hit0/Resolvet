@@ -483,7 +483,7 @@ export const updateTicket = asyncHandler(async (req, res) => {
 
   // Verify assignee exists and is an agent if updating
   if (updates.assignee_id !== undefined) {
-    if(req.user.role !== 'admin'){
+    if(!(req.user.role === 'admin' || req.user.role === 'super_admin')){
       throw ApiError.forbidden('access denied');
     }
     if (updates.assignee_id === null) {

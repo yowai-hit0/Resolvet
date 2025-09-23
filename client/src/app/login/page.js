@@ -35,7 +35,7 @@ export default function LoginPage() {
     }
   };
 
-  if (user && !isRedirecting) return null;
+  if (user) return null;
 
   return (
     <RedirectIfAuth> 
