@@ -11,7 +11,7 @@ export default function Sidebar({ role }) {
     { href: "/admin", label: "Dashboard", icon: "📊" },
     { href: "/admin/tickets", label: "Tickets", icon: "🎫" },
     { href: "/admin/analytics", label: "Analytics", icon: "📈" },
-    { href: "/admin/tags", label: "Tags", icon: "🏷️" },
+    { href: "/admin/tags", label: "Categories", icon: "🏷️" },
 
   ];
   const superAdminExtras = [
@@ -40,7 +40,7 @@ export default function Sidebar({ role }) {
         {/* Only add top padding on desktop, not mobile */}
         <div className="h-full flex flex-col md:pt-16">
           <div className="p-4 border-b md:hidden">
-            <div className="font-semibold text-lg">{(role === "admin" || role === "super_admin") ? "Admin Panel" : "Agent Panel"}</div>
+            <div className="font-semibold text-lg">{role === "super_admin" ? "Admin Panel" : (role === "admin" ? "Clerk Panel" : "Agent Panel")}</div>
           </div>
           
           <nav className="p-3 space-y-1 flex-1 overflow-y-auto">

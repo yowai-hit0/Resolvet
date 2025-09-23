@@ -995,7 +995,7 @@ const createTicket = async (e) => {
               {/* Tags selection with scroll and add */}
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-sm font-medium block">Tags</label>
+              <label className="text-sm font-medium block">Categories</label>
                   <button
                     type="button"
                     className="btn btn-ghost p-1 h-8 w-8 bg-gray-200 hover:bg-gray-200/90 rounded-full"
@@ -1064,7 +1064,7 @@ const createTicket = async (e) => {
                     );
                   })}
                   {availableTags.length === 0 && (
-                    <span className="text-sm text-muted-foreground p-2">No tags available</span>
+                    <span className="text-sm text-muted-foreground p-2">No categories available</span>
                   )}
                 </div>
               </div>

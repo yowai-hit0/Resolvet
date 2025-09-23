@@ -291,7 +291,7 @@ export default function TicketDetail() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-muted-foreground mb-1 block">Tags</label>
+                <label className="text-sm font-medium text-muted-foreground mb-1 block">Categories</label>
                 {editMode ? (
                   <div className="flex flex-wrap gap-2">
                     {Array.isArray(allTags) && allTags.map((t) => (
@@ -313,7 +313,7 @@ export default function TicketDetail() {
                       <span key={t.id} className="chip">{t.name}</span>
                     ))}
                     {(ticket.tags || []).length === 0 && (
-                      <span className="text-muted-foreground">No tags</span>
+                      <span className="text-muted-foreground">No categories</span>
                     )}
                   </div>
                 )}

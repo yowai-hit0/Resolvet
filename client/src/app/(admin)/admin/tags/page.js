@@ -124,7 +124,7 @@ export default function TagsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-foreground">Tags & Priorities</h1>
+      <h1 className="text-2xl font-bold text-foreground">Categories & Priorities</h1>
 
       {/* Tab Navigation */}
       <div className="flex border-b">
@@ -132,7 +132,7 @@ export default function TagsPage() {
           className={`px-4 py-2 font-medium ${activeTab === "tags" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}
           onClick={() => setActiveTab("tags")}
         >
-          Tags
+          Categories
         </button>
         <button
           className={`px-4 py-2 font-medium ${activeTab === "priorities" ? "border-b-2 border-primary text-primary" : "text-muted-foreground"}`}
@@ -142,7 +142,7 @@ export default function TagsPage() {
         </button>
       </div>
 
-      {/* Tags Tab */}
+      {/* Categories Tab */}
       {activeTab === "tags" && (
         <div className="space-y-4">
           <form onSubmit={createTag} className="flex gap-2">
@@ -157,7 +157,7 @@ export default function TagsPage() {
 
           <div className="card">
             <div className="card-header">
-              <h2 className="font-semibold">Tags</h2>
+              <h2 className="font-semibold">Categories</h2>
             </div>
             <div className="card-body p-0">
               {Array.isArray(tags) && tags.length > 0 ? (
@@ -204,7 +204,7 @@ export default function TagsPage() {
                 ))
               ) : (
                 <div className="px-6 py-8 text-center text-muted-foreground">
-                  No tags created yet
+                  No categories created yet
                 </div>
               )}
             </div>

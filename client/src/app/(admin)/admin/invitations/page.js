@@ -57,7 +57,8 @@ export default function InvitationsPage() {
     e.preventDefault();
     try {
       setSubmitting(true);
-      await InvitesAPI.create({ email, role });
+      const payloadRole = role === 'clerk' ? 'admin' : role;
+      await InvitesAPI.create({ email, role: payloadRole });
       setEmail("");
       setRole("admin");
       setOpenModal(false);
@@ -164,7 +165,7 @@ export default function InvitationsPage() {
                   <div>
                     <label className="text-sm">Role</label>
                     <select value={role} onChange={(e)=>setRole(e.target.value)} className="select">
-                      <option value="admin">Admin</option>
+                      <option value="admin">Clerk</option>
                       <option value="agent">Agent</option>
                     </select>
                   </div>

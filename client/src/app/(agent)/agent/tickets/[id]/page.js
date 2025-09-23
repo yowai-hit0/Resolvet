@@ -254,7 +254,7 @@ export default function AgentTicketDetail() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-muted-foreground mb-1 block">Tags</label>
+                <label className="text-sm font-medium text-muted-foreground mb-1 block">Categories</label>
                 {isEditing ? (
                   <div className="flex flex-wrap gap-2">
                     {allTags.map((tag) => (
@@ -277,7 +277,7 @@ export default function AgentTicketDetail() {
                         <span key={tag.id} className="chip">{tag.name}</span>
                       ))
                     ) : (
-                      <span className="text-muted-foreground">No tags</span>
+                      <span className="text-muted-foreground">No categories</span>
                     )}
                   </div>
                 )}

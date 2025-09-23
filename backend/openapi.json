@@ -71,9 +71,7 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "304": {}
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -133,74 +131,8 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "statusCode": {
-                  "type": "number",
-                  "example": 200
-                },
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "stats": {
-                      "type": "object",
-                      "properties": {
-                        "byStatus": {
-                          "type": "object",
-                          "properties": {
-                            "Assigned": {
-                              "type": "number",
-                              "example": 1
-                            }
-                          }
-                        },
-                        "byPriority": {
-                          "type": "object",
-                          "properties": {
-                            "1": {
-                              "type": "number",
-                              "example": 1
-                            }
-                          }
-                        },
-                        "recent": {
-                          "type": "object",
-                          "properties": {
-                            "Assigned": {
-                              "type": "number",
-                              "example": 1
-                            }
-                          }
-                        },
-                        "total": {
-                          "type": "number",
-                          "example": 1
-                        }
-                      }
-                    }
-                  }
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Ticket statistics retrieved successfully"
-                },
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                }
-              }
-            }
-          },
-          "304": {}
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       }
     },
     "/api/v1/tickets/priorities": {
@@ -264,9 +196,7 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "304": {}
-        },
+        "responses": {},
         "tags": []
       },
       "post": {
@@ -292,9 +222,7 @@
             "required": true
           }
         ],
-        "responses": {
-          "304": {}
-        },
+        "responses": {},
         "tags": []
       },
       "put": {
@@ -470,20 +398,8 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string",
-              "example": "\u001bq\u0005\u0000�J�U�gk���\u000fݷ.?0g8c\u0011Čt8>���t��>\u001ef�0�\n��k0��q/�4\fSv\u001eJ\u000e�� �\u0011w^�B��ϵg�4�\u0015z\u0012�~a���_�<�����\"t�pz�n����\u0017c�\u0013�A[@N\u0003[)r���ZjyW�N̕�|cÃ� ��XZql{\u000f��BO��H�\b�:H\u000b(<^Ԫ4�!%�H\r\u001a�,6��j���$#9)HI*R�F%�IBR���\u0014�$\u0015���!IIJR1]N�_���\r{i\u001d��֎9����3��q^ZK\u000bC�,Ca&��q1r�\u0002/dfh�d9�|��د󕍄ݺ�Dz�X��eYm+4�Ph�A���״Ʌ���Ĭ\u0016���i`�h�\u0015��\u001d@������)/\u001c\u001c�3|��෮c���<?�\u0000\u0015��m�\u0003"
-            }
-          },
-          "304": {}
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       }
     },
     "/api/v1/agent/dashboard": {
@@ -561,9 +477,61 @@
         ],
         "parameters": [],
         "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "number",
+                  "example": 200
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "example": [
+                        {
+                          "id": 1,
+                          "name": "authentication"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Tags retrieved successfully"
+                },
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          },
           "304": {}
         },
-        "tags": []
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
       },
       "post": {
         "summary": "/api/v1/tags",
