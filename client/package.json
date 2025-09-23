@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
     "start": "next start",
+    "build": "next build",
+    "pages:build": "npx @cloudflare/next-on-pages build",
     "lint": "eslint"
   },
   "dependencies": {
