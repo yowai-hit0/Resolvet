@@ -50,69 +50,14 @@
         ],
         "parameters": [],
         "responses": {
-          "200": {
-            "description": "OK",
+          "304": {},
+          "401": {
+            "description": "Unauthorized",
             "schema": {
-              "type": "object",
-              "properties": {
-                "statusCode": {
-                  "type": "number",
-                  "example": 200
-                },
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "user": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "number",
-                          "example": 6
-                        },
-                        "email": {
-                          "type": "string",
-                          "example": "patrivy0@gmail.com"
-                        },
-                        "first_name": {
-                          "type": "string",
-                          "example": "Patrick"
-                        },
-                        "last_name": {
-                          "type": "string",
-                          "example": "Vill"
-                        },
-                        "role": {
-                          "type": "string",
-                          "example": "agent"
-                        },
-                        "is_active": {
-                          "type": "boolean",
-                          "example": true
-                        },
-                        "created_at": {
-                          "type": "string",
-                          "example": "2025-09-23T10:49:05.369Z"
-                        },
-                        "updated_at": {
-                          "type": "string",
-                          "example": "2025-09-23T10:49:05.369Z"
-                        }
-                      }
-                    }
-                  }
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Current user retrieved successfully"
-                },
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                }
-              }
+              "type": "string",
+              "example": "\u001bp\u0005\u0000dSg�����em�\u0013��zP\u001d���I*���\u0004��{����0=�\u0000��0\u000f�H\u000b\u0017��\u0012\f��m^��+\u0012�a}Y��{]�Ȫ\u001e�T)_�C\u000e�\u0007=\u0018w֖�8K7�\u0017^�b��ߋ�\u0002Nu\u0014\u001b�#s�]\u000e�j��x�,�q�N�y�\u0010B���,\u001a�3\u0012\n\\���Uڂ�ixgm�\u0015[�Q,�����J\u0003�N\u0016\n�)��S��GK[pcy$co䲺\u0003�$\u001chi��B!M�7@쑶,W��C�I]W�\u0013��\u001e�q'��8K�\b\u0015\u0011\n�{\u0005Q\u0004\"v!6m�u�-+V�\n�U>C�vi,�U\fE��t\bC\u0016��I^�u��|#�w�\u000e\u0015\n��\u0004�~����MF0���ò����U����w�_�DȃQ:~��\u0005P�7I MN\t�9\n\"�|:\u001eB2 \u001d\u0018Lȃ�� ���#"
             }
-          },
-          "304": {}
+          }
         },
         "tags": [],
         "produces": [
@@ -138,20 +83,8 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string",
-              "example": "\u001bU\u0005\u0000�L5�Z��<\r\u0015m�r��\u0002^����� ����a��\u0012�\u0018貢�ƴ���6G�\b�p\t��D϶�R\u0004\u0015�gIx��5a��C�\u001cS�X:\u0001\u0015�\u001at\u001c\u0019t�\u0014�\u0007Џ;h\u0007j\fdb\u001dAX9z�n�i?��Y�L0ث\u000f��̓���v���!���Y�\u0011\u0006~\u0019\u0005\u0004�e�0���ۨ���Ob���?U�?\u001cA(lQ��\u0015���R���Yٸ�0Hk'+=\u0018\f����?�\u001ct������a�Y�;Ƭ�t��uT5������x\u0006\u0015\u001f��Q��S/a\u00197�8�>�U|\u0011�4�0�U����`�1���T���+��\u0019�����W�\u0002O���r��4.\u0017)�>�[�\n�Ev�\u001c�W�?\u000fP��y�̜#p�s��·I���\u0013^\u001ch�n�\u0002yTs�z�^Y~¾]H�)<�UP;\u0010�����_\u0006+�\u001a�Q\u0007�!���{���G\b���Kxd_,i�o��\u0003��r\u001dA{\u001e�t䭗mx�I#��\u000f\u000f\u00067�6\u0000�S\u0010\u001f��D��Iw\u0014R�J\b�4�70�NP�I\u001e\u0000"
-            }
-          },
-          "304": {}
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       }
     },
     "/api/v1/users/{id}": {
@@ -211,89 +144,9 @@
         ],
         "parameters": [],
         "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "statusCode": {
-                  "type": "number",
-                  "example": 200
-                },
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "stats": {
-                      "type": "object",
-                      "properties": {
-                        "byStatus": {
-                          "type": "object",
-                          "properties": {
-                            "new": {
-                              "type": "number",
-                              "example": 2
-                            },
-                            "open": {
-                              "type": "number",
-                              "example": 11
-                            }
-                          }
-                        },
-                        "byPriority": {
-                          "type": "object",
-                          "properties": {
-                            "1": {
-                              "type": "number",
-                              "example": 3
-                            },
-                            "2": {
-                              "type": "number",
-                              "example": 9
-                            },
-                            "3": {
-                              "type": "number",
-                              "example": 1
-                            }
-                          }
-                        },
-                        "recent": {
-                          "type": "object",
-                          "properties": {
-                            "open": {
-                              "type": "number",
-                              "example": 11
-                            },
-                            "new": {
-                              "type": "number",
-                              "example": 2
-                            }
-                          }
-                        },
-                        "total": {
-                          "type": "number",
-                          "example": 13
-                        }
-                      }
-                    }
-                  }
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Ticket statistics retrieved successfully"
-                },
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                }
-              }
-            }
-          },
           "304": {}
         },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "tags": []
       }
     },
     "/api/v1/tickets/priorities": {
@@ -304,61 +157,9 @@
         ],
         "parameters": [],
         "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "statusCode": {
-                  "type": "number",
-                  "example": 200
-                },
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "priorities": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "number"
-                          },
-                          "name": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "name"
-                        ]
-                      },
-                      "example": [
-                        {
-                          "id": 1,
-                          "name": "Medium"
-                        }
-                      ]
-                    }
-                  }
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Ticket priorities retrieved successfully"
-                },
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                }
-              }
-            }
-          },
           "304": {}
         },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "tags": []
       },
       "post": {
         "summary": "/api/v1/tickets/priorities",
@@ -409,19 +210,8 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string",
-              "example": "\u001b�\u001c\u0000������w��}N3Abdō\u000e� ������Z\u000b�c\u0010m�-_|�d�D4��d�\u001f�$���\rR|�4�S�iH\u0010\u001a\u0011B(d\"\r\"*��f�Y&\u001c�9�$R�w\u0017����D E\u0012��!��S)\u0002�z\u000eF\u0002�\u0014�.�y��\u0018����G�k\t�Xu�\u0002�\u0014�{\u0004\u000e���J��\nuʛ\u0019�b{�{@ S�?�5�e\u0006\u000e\"�R��u�v��&/��һ��\u0011 \b*\u0011�3W᧚���a;\u0016AD3\u000f���0\t��2I��,&\u0005\u001c���k+���\u000b+��_�eV��?R�\rmX�t�\u0001\u0004a#�\u0002\u000e/6\u0011��A\u0001�U�\u0000�eU3 H�����O��\u0003)IuTvG���%��Ӷ \u0015�\u0002\b�*�aA�ş�Ǚ��\b����#w�]\u001co?�\u0004�\u0010�\u0018�0+u�\u0010\u0004J��\u001c�rT\u0013\u0004sh�Gf\u0018�/�R\u001emBLsr�'bV������N&��`��eŬ\n1�9ݚ\u0012�Iς���F16����U�}�\u0002+\u0010�rcHRd\u00052\u001b%1D�_�#�Y�U\u000b�s\u0000|\u001b�\u0012�\"\f����K\u0004i��GS�����*�\u000eݻi��B؏�wӾ@�\u0015��*HS��>��\u00060\n2<W�����]\u0011S����2�yw�\u0007��;���(뾼~���O?Z/�T�(��Ko�p�\tɸ�gV�k*���\nZ�\u0004�\\�9�Z�\u0004^l�$�N��%=0ڶ�գw_v����\u000b\u0017��K�\u000b\u0015��\n�S}�R�\u0019-ڶN�}�\u0007���A{�nG�\u0014�\u0004�%o�9���7r��VF�#Hq�\u0012\u0016'�b\u0014�p�\nJR㲾�\u00187���BF�[�K�]�-/co���\u0013�\u0005$&=�|Xz�'~G�$E�i��Z����\u001bl�\b�R����wޯ�Q�$���{�l�Et���;@gf��\u000e�8�\u0005�m�l�m��G� �tPW&���j��e����\u000b����\u0010��R����:���m��-mc�\u001f��\u0019Wо\\�������`�t��\u0017�]\u0003�(�v{��\u0012.X�y����������bH2�ͦ!�m4�[�{+�U��a�h���\u0017\u0002�q�\u0016�[S�s�>G���+��98D�~0�s뜫H��l�b����J3�^@�놰�o\u001d?�\"�\u000b&l{�;K�x�����-*\u00196���Fc\u0017�|�\u0017�34H W�\u0012\u0017u� �k��(���\u0015f�Ȓ%-�;�U\ff�\u0015P�C�Q��Ġ�q\\��8_�A�\tg�Ŀ���1E0��B�N�S�j�ë�N�k�B��d\u0012p\\^^\"H*�\b\u001cށ��\u000b*\u0005�N���|8�\u0018u�~s�co\u0002����%"
-            }
-          }
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       },
       "post": {
         "summary": "/api/v1/tickets",
@@ -446,20 +236,8 @@
             "required": true
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string",
-              "example": "\u001b�\u0005\u0000��l��u��E� X�/��\"�`0�I��;L\\�>�#�=ዮA��\u0004���\t\u0014Gј���]�x��y&�膘$�.�g���\n�?�4��$\u0011�*(�\r�\u0014g\u000e�\u001b�\u0006�b��/\u000e\u0003���6�2_γ'��[\bx�� \b�k6�9\u001br�\bq0'�����,\u0004�W����t-\b�\u0005�ʡ\u000eU<\u000f'\u0013mm��Bw�y�����QƂ0\u001c�S޴����j����k򏷪a\u0010TYk[��꺴���%\u000f���e\u0010��<Y�&�!`'�\u0010\b\u001f\u0007�b�m�\u0010\u0010�\u0000�빅���?\u0002�\n �I�O��4��\t�9�|���_\b�^\u001f�JR�Q����i�r�;{��6Z+��\t�\u001b���p\u001c�F�2\u0001彩Z��Z\b�$��\f��\u0014@h�\u0007�&6\u0018�ð�[\b�����K�Up�8C��=ٟ�Z\b0��W��ːT-�C37��\u0006}�=���g*\u0014�L\u0018\fe>TA~��n�]�AU\u001e��\u0006��^����2��\u0018+�[\u0001�\u001f\u0002��\u0015�Fz#-�\u001a_�+����ڊ�a�\u0019$\u0007�~G��@g��{p����\u0015\u0002-_�����\u00024Kִjъ�G�n\u001d��,��H�A9���R�0\n�(�k��\r+;�{J\u0004K��_T�3\u001a6��jz\u0011��1��ڀ6e��ذM\u001e:\u0007-_7\u0018���\u001c\u0003��Nʐ\u001d��8\n8:�A�.,�N\u001c\u0007g��z�cQ��e�v0��MQPp�G"
-            }
-          },
-          "304": {}
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       },
       "put": {
         "summary": "/api/v1/tickets/{id}",
@@ -473,143 +251,8 @@
             "required": true
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "statusCode": {
-                  "type": "number",
-                  "example": 200
-                },
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "ticket": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "number",
-                          "example": 5
-                        },
-                        "ticket_code": {
-                          "type": "string",
-                          "example": "RES-115734A1AJ"
-                        },
-                        "subject": {
-                          "type": "string",
-                          "example": "3w435e4y5r6tuyihloj;k;l"
-                        },
-                        "description": {
-                          "type": "string",
-                          "example": "srtdrfyjtgukyhiulji;lk;l"
-                        },
-                        "requester_email": {
-                          "type": "string",
-                          "example": "ybarasingiz@gmail.com"
-                        },
-                        "requester_name": {
-                          "type": "string",
-                          "example": "afjdlfjaldjflajdf"
-                        },
-                        "requester_phone": {
-                          "type": "string",
-                          "example": "+250788888888"
-                        },
-                        "location": {
-                          "type": "string",
-                          "example": "Nyarugenge"
-                        },
-                        "status": {
-                          "type": "string",
-                          "example": "open"
-                        },
-                        "created_at": {
-                          "type": "string",
-                          "example": "2025-09-23T10:25:15.741Z"
-                        },
-                        "updated_at": {
-                          "type": "string",
-                          "example": "2025-09-23T11:04:48.392Z"
-                        },
-                        "resolved_at": {
-                          "type": "null",
-                          "example": null
-                        },
-                        "closed_at": {
-                          "type": "null",
-                          "example": null
-                        },
-                        "created_by_id": {
-                          "type": "number",
-                          "example": 4
-                        },
-                        "assignee_id": {
-                          "type": "number",
-                          "example": 6
-                        },
-                        "priority_id": {
-                          "type": "number",
-                          "example": 1
-                        },
-                        "priority": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "number",
-                              "example": 1
-                            },
-                            "name": {
-                              "type": "string",
-                              "example": "Medium"
-                            }
-                          }
-                        },
-                        "assignee": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "number",
-                              "example": 6
-                            },
-                            "first_name": {
-                              "type": "string",
-                              "example": "Patrick"
-                            },
-                            "last_name": {
-                              "type": "string",
-                              "example": "Vill"
-                            }
-                          }
-                        },
-                        "tags": {
-                          "type": "array",
-                          "items": {},
-                          "example": [
-                            null
-                          ]
-                        }
-                      }
-                    }
-                  }
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Ticket updated successfully"
-                },
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                }
-              }
-            }
-          }
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       }
     },
     "/api/v1/tickets/{id}/comments": {
@@ -758,107 +401,8 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "statusCode": {
-                  "type": "number",
-                  "example": 200
-                },
-                "data": {
-                  "type": "object",
-                  "properties": {
-                    "performance": {
-                      "type": "object",
-                      "properties": {
-                        "agent": {
-                          "type": "null",
-                          "example": null
-                        },
-                        "period": {
-                          "type": "object",
-                          "properties": {
-                            "start_date": {
-                              "type": "null",
-                              "example": null
-                            },
-                            "end_date": {
-                              "type": "null",
-                              "example": null
-                            }
-                          }
-                        },
-                        "stats": {
-                          "type": "object",
-                          "properties": {
-                            "by_status": {
-                              "type": "object",
-                              "properties": {
-                                "new": {
-                                  "type": "number",
-                                  "example": 2
-                                },
-                                "open": {
-                                  "type": "number",
-                                  "example": 11
-                                }
-                              }
-                            },
-                            "total_tickets": {
-                              "type": "number",
-                              "example": 13
-                            },
-                            "average_resolution_ms": {
-                              "type": "null",
-                              "example": null
-                            },
-                            "resolved_tickets": {
-                              "type": "number",
-                              "example": 0
-                            }
-                          }
-                        },
-                        "priority_breakdown": {
-                          "type": "object",
-                          "properties": {
-                            "1": {
-                              "type": "number",
-                              "example": 3
-                            },
-                            "2": {
-                              "type": "number",
-                              "example": 9
-                            },
-                            "3": {
-                              "type": "number",
-                              "example": 1
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Agent performance data retrieved successfully"
-                },
-                "success": {
-                  "type": "boolean",
-                  "example": true
-                }
-              }
-            }
-          },
-          "304": {}
-        },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "responses": {},
+        "tags": []
       }
     },
     "/api/v1/admin/analytics/system": {
@@ -869,19 +413,9 @@
         ],
         "parameters": [],
         "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string",
-              "example": "\u001b\t\u0006\u0000�j�U�gk�\u0001��>t9j��Y��\u000f��O��sM�C8����\u0019]\u0000\u000e�0�\u0001��\u00068�.�\u001b�4R��\u0018\u0014\u0004=��R�\n��\u000fQH�x�\u0017\fg�V(H\b�\u000f�/\u000b�\u000fC��K>�\u0016n����B�0�\u001f^���\u0014��3\nEd\u0015��N�p\f�3I�r�;�e�ݸ�N\n��%��]\u0011�^�P�0\u001c���^��\u001c\nɋ�BU�\u0005Y�\u0015XK�j��U�&�LɌ�ɂ,�\n��\u0018M\f�dJfdN\u0016dIV�ĐXb\r�9ch\u0017\u0018��\u00156C�\u001c%�\u0003�\\�����/\u0000�O[\u001f�d\u001d�\f�\u0013�\u0018\n\r�\u000f�m�|B�[�\r\u001c*�x�/�\u001c\u0004�}�c/��o�\"�2��I�4���$��n�\u000f�i�\r�H���胲%ߘ�\u001d\u001e��m�w�PY�B�q��)�t�Y_�n�\u0019J$�!RɊt\u0016I\t\n�ޱ�V2�&���p5m\u0002\u001cn�p;B�\u000bF�%x�q1�C�s�ۡi~�����0p\u0002"
-            }
-          },
           "304": {}
         },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "tags": []
       }
     },
     "/api/v1/agent/dashboard": {
@@ -892,19 +426,9 @@
         ],
         "parameters": [],
         "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string",
-              "example": "\u001b�\u0007\u0000���ZU�y5��\f\u000e_���Xmb8�m#s�\u0007��I�3��~d���I\u0005�n�C�\u0017`�YQ\u0014G���/x������\t\n\"�jզ�i/͞�\u0005��2�7�gP%��wŁ^�]>��]�\u0017�#�1�\u0004z�?��X�s8v�A�������\u0017��\f*\u00136q���\u001e$\u0005&#<\u0018��&W\u0018$g�Z��(1ʜ���)a\f�\tt���Aj#М\\wd[�.\fj�d/\u0004<\u0004���]GA�x�@�S&��\u0002+���޺\u0002B%+���e���\u0014ICr����\r\u0004Jh�\\l� -0dN��@5�'p\b)\u0017۹�\f�7���@t|�\u0007���0�e�W�\"��\u0006\u0004�~�g���l+���\r\u0004V�_\u0006�˾=����m}n1�\u0002\u0019���S\u000b>:�!��gl�ko!�I�VZ�?�\u0010��Wf��W��3���׆��I�2<�S���\\G��hC�\u001a��Ȉ���\t\u001d�����\u0003ݩ4� �F0�ց;��0\u0003{TI�!eV[m\b�A\u001a��p�\u0014�M�Wv���%��\u0017\u0001�R�6;3�\u0003tQ��b�ϳ�\u0014� \bWG���E�j�]q��%\u0005\u001e�/��4��a���L$�\r*i�\u0019"
-            }
-          },
           "304": {}
         },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "tags": []
       }
     },
     "/api/v1/agent/tickets": {
@@ -915,19 +439,9 @@
         ],
         "parameters": [],
         "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "string",
-              "example": "\u001b�\u0005\u0000��L��+�R�`$cS~J��t���l�D���݉��8�']Ɠ\u0017�Ӥ��6��\u0016\b�0�[�,�8*�#�4P�bu�\u0000��ʷ=GL:��t0\f*�\u00140:i�9�۷�\"��9�\u0001Ub��g�\u0013���׹R�zY>V��@�C�+AX��ˊ˩\n��'w�Cs���!`<�lLn�A�!�POM���\u000e.����\u0007\u001b��/;�?�i�A�v:��z�N�l��_�N���\u001d��������4�׍�\u000f�2\u001e��A�STr��􆀭�m |�tȖ{�\u0010\u001fi\u0006\b��=\u0004�e�\u0010���\t�B\u0016�\\n���TT��źT�!�Gs�(E��r�Xn\u000b�\n\u001c\u0007�\u0003��@\u0002\u0014\u001a7��=c7�q\u0006T\n�\u0018��\u001b{%@�0Fi�?h)�/4�=\u001b�;\\^Y:�T\n�.��5���G\u000e\u0010�z{��$�\u0010�5RP\tMⓠ<z\u001dե�ϥ@�\u0016D�*�c߻��~��\u0016��\u0004��E\u0015��Z\u0001I\u0001��G���\u0014��\n��R��E����\u0007�h���o���ݶ��\u001ft�/�˳)�\tS�ln\u000f�\u0019\\���()�j�Zo\u0012\u0015��B\u001e�m��@��y���\u0012�\n�\u0004Fm]�/�s��\u0019|Җ�.�\u0011*���I~�����A�\u000f�?�j�#������u.����\u0014pM\u0016���s�ff�;\u000b���#�Y��=�Xg�'S��\u0014\u0005���\u0012"
-            }
-          },
           "304": {}
         },
-        "tags": [],
-        "produces": [
-          "application/json"
-        ]
+        "tags": []
       }
     },
     "/api/v1/agent/tickets/{id}/status": {
@@ -982,9 +496,7 @@
           "application/json"
         ],
         "parameters": [],
-        "responses": {
-          "304": {}
-        },
+        "responses": {},
         "tags": []
       },
       "post": {
@@ -1117,7 +629,7 @@
                 },
                 "timestamp": {
                   "type": "string",
-                  "example": "2025-09-23T11:05:44.466Z"
+                  "example": "2025-09-23T11:09:39.089Z"
                 }
               }
             }

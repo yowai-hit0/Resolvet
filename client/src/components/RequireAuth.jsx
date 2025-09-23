@@ -6,7 +6,7 @@ import { useAuthStore } from "@/store/auth";
 
 export default function RequireAuth({ children, role }) {
   const router = useRouter();
-  const { user, loading, bootstrap } = useAuthStore();
+  const { user, loading, bootstrap, token } = useAuthStore();
 
   useEffect(() => {
     // try to load session on first mount
@@ -18,6 +18,8 @@ export default function RequireAuth({ children, role }) {
   useEffect(() => {
     if (!loading) {
       if (!user) {
+        // If there's a token but user not loaded yet, wait for bootstrap to finish
+        if (token) return;
         router.replace("/login");
       } else if (role && user.role && user.role !== role) {
         // super_admin can access admin
@@ -25,7 +27,7 @@ export default function RequireAuth({ children, role }) {
         router.replace(user.role === "admin" || user.role === 'super_admin' ? "/admin" : "/agent");
       }
     }
-  }, [user, loading, role, router]);
+  }, [user, loading, token, role, router]);
 
   if (loading || !user) {
     return (
