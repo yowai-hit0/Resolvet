@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import Toaster from "@/components/Toaster";
 import { HealthGate } from "@/components/health-gate";
@@ -25,10 +26,13 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Suspense fallback={null}>
         <RouteProgress/>
-        <HealthGate>
-          {children}
-        </HealthGate>
+
+          <HealthGate>
+            {children}
+          </HealthGate>
+        </Suspense>
         <Toaster />
         {/* <CommandPalette /> */}
       </body>

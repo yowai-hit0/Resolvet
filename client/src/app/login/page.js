@@ -17,7 +17,8 @@ export default function LoginPage() {
     if (error) {
       useAuthStore.getState().error = undefined;
     }
-  }, [email, password]);
+    // include error to satisfy exhaustive-deps; changes are safe
+  }, [email, password, error]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -108,7 +109,7 @@ export default function LoginPage() {
             </form>
 
             <div className="login-footer">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <a href="/register" className="login-link">
                 Sign up
               </a>
