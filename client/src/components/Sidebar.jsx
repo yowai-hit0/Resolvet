@@ -12,10 +12,11 @@ export default function Sidebar({ role }) {
     { href: "/admin/tickets", label: "Tickets", icon: "🎫" },
     { href: "/admin/analytics", label: "Analytics", icon: "📈" },
     { href: "/admin/tags", label: "Tags", icon: "🏷️" },
-    { href: "/admin/users", label: "Users", icon: "👥" },
+
   ];
   const superAdminExtras = [
     { href: "/admin/invitations", label: "Invitations", icon: "✉️" },
+    { href: "/admin/users", label: "Users", icon: "👥" },
   ];
   
   const agentLinks = [

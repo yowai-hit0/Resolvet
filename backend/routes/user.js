@@ -25,12 +25,11 @@ router.use(authenticate);
 router.get('/me', getCurrentUser);
 
 // Get user statistics (admin only)
-router.get('/stats', authorize(['admin']), getUserStats);
+router.get('/stats', authorize(['admin','super_admin']), getUserStats);
 
 // Get all users with pagination and filters (admin only)
-router.get('/', authorize(['admin']), validate(userQueryValidator, 'query'), getAllUsers);
+router.get('/', authorize(['admin','super_admin']), validate(userQueryValidator, 'query'), getAllUsers);
 
-// Get user by ID (admin can access anyone, agents/customers can only access themselves)
 router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   
@@ -62,7 +61,7 @@ router.put('/:id', validate(updateUserValidator), async (req, res, next) => {
   }
   
   // Only admin can update other users
-  if (req.user.role === 'admin' || req.user.role === 'super_admin') {
+  if (req.user.role === 'super_admin') {
     return updateUser(req, res, next);
   }
   
@@ -72,8 +71,8 @@ router.put('/:id', validate(updateUserValidator), async (req, res, next) => {
   });
 });
 
-// Update user status (admin only).. //soft delete
-router.patch('/:id/status', authorize(['admin']), validate(updateUserStatusValidator), updateUserStatus);
+ //soft delete
+router.patch('/:id/status', authorize(['super_admin']), validate(updateUserStatusValidator), updateUserStatus);
 
 // Delete user (admin only)
 // router.delete('/:id', authorize(['admin']), deleteUser);
