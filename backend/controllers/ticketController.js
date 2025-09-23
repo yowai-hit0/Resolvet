@@ -14,13 +14,13 @@ const generateTicketCode = () => {
 
 // Helper function to check if user has access to ticket
 const hasTicketAccess = (user, ticket) => {
-  if (user.role === 'admin') return true;
+  if (user.role === 'admin' || user.role === 'super_admin') return true;
   if (user.role === 'agent' && ticket.assignee_id === user.id) return true;
   if (user.role === 'customer' && ticket.created_by_id === user.id) return true;
   return false;
 };
 const hasTicketUpdateAccess = (user, ticket) => {
-  if (user.role === 'admin') return true;
+  if (user.role === 'admin' || user.role === 'super_admin') return true;
   if (user.role === 'agent' && ticket.assignee_id === user.id) return true;
   return false;
 };

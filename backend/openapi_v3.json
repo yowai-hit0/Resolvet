@@ -19,6 +19,20 @@
     "/api/v1/auth/login": {
       "post": {
         "summary": "/api/v1/auth/login",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/auth/profile": {
+      "get": {
+        "summary": "/api/v1/auth/profile",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/api/v1/users/me": {
+      "get": {
+        "summary": "/api/v1/users/me",
         "responses": {
           "200": {
             "description": "OK",
@@ -60,18 +74,22 @@
                             "is_active": {
                               "type": "boolean",
                               "example": true
+                            },
+                            "created_at": {
+                              "type": "string",
+                              "example": "2025-09-22T14:20:53.954Z"
+                            },
+                            "updated_at": {
+                              "type": "string",
+                              "example": "2025-09-22T14:20:53.954Z"
                             }
                           }
-                        },
-                        "token": {
-                          "type": "string",
-                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInJvbGUiOiJzdXBlcl9hZG1pbiIsImlhdCI6MTc1ODYyMjEzOSwiZXhwIjoxNzU5MjI2OTM5fQ.BAR978VktAS_V8ibTzD60K_LgGqC3rYx3HsoUeE1EpA"
                         }
                       }
                     },
                     "message": {
                       "type": "string",
-                      "example": "Login successful"
+                      "example": "Current user retrieved successfully"
                     },
                     "success": {
                       "type": "boolean",
@@ -81,35 +99,9 @@
                 }
               }
             }
-          }
-        },
-        "tags": []
-      }
-    },
-    "/api/v1/auth/profile": {
-      "get": {
-        "summary": "/api/v1/auth/profile",
-        "responses": {},
-        "tags": []
-      }
-    },
-    "/api/v1/users/me": {
-      "get": {
-        "summary": "/api/v1/users/me",
-        "responses": {
+          },
           "304": {
             "description": ""
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "\u001bp\u0005\u0000dSg�����em�\u0013��zP\u001d���I*���\u0004��{����0=�\u0000��0\u000f�H\u000b\u0017��\u0012\f��m^��+\u0012�a}Y��{]�Ȫ\u001e�T)_�C\u000e�\u0007=\u0018w֖�8K7�\u0017^�b��ߋ�\u0002Nu\u0014\u001b�#s�]\u000e�j��x�,�q�N�y�\u0010B���,\u001a�3\u0012\n\\���Uڂ�ixgm�\u0015[�Q,�����J\u0003�N\u0016\n�)��S��GK[pcy$co䲺\u0003�$\u001chi��B!M�7@쑶,W��C�I]W�\u0013��\u001e�q'��8K�\b\u0015\u0011\n�{\u0005Q\u0004\"v!6m�u�-+V�\n�U>C�vi,�U\fE��t\bC\u0016��I^�u��|#�w�\u000e\u0015\n��\u0004�~����MF0���ò����U����w�_�DȃQ:~��\u0005P�7I MN\t�9\n\"�|:\u001eB2 \u001d\u0018Lȃ�� ���#"
-                }
-              }
-            }
           }
         },
         "tags": []
@@ -126,17 +118,6 @@
       "get": {
         "summary": "/api/v1/users",
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "\u001b�\u0004\u0000���i�k�?O�\u0010Щ�\u000b��\u0015Gk\u001cj��n\u001aF�)�DoPE��i\u0001�ekpt/�-\u001cѰH5sהV(/��e� ?�w��!���\u0014P2�\u001a�\u001c\u0018���yЏwh\t�\r�em@x�ǎ�v��mW-k3.�\u0016\u0006ku>��\u0015\u0010��o�\u0013\u00184�ß�[\u0001a\u0004\u0003�7\u0002\u0002��v0P����O\u0002\n.�Aᄃ�8��L�|4]���~��lN��x�ʿ� \u000e���i0����\u001f�\u0000�\u001b����y\u0012\ri�.\u000e�Xڱ\\t@��\u001e�0�\u000f&����)��x�g\u0014*K\u0003H����[\"Gc��tHF��0Փ^}������x9_PP��\u0007H^�;\u0019s%]��S�'�հ�HQ\u00168���>\u0005fI�I肝�zĮ���M��q=�+\u0010���;>\u0019\f\\�\u0015�&�\u001d7G��\\\t6�\u001f\u001b0�\\�or��؅��d��R^\u0002h͍��];yZn��\u0000J���\u0006;�.\u0000����[N�Sy�r�Ǣ\u0010�ױi^a\u0010���|\u0002"
-                }
-              }
-            }
-          },
           "304": {
             "description": ""
           }
@@ -197,6 +178,87 @@
       "get": {
         "summary": "/api/v1/tickets/stats",
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "stats": {
+                          "type": "object",
+                          "properties": {
+                            "byStatus": {
+                              "type": "object",
+                              "properties": {
+                                "new": {
+                                  "type": "number",
+                                  "example": 2
+                                },
+                                "open": {
+                                  "type": "number",
+                                  "example": 4
+                                }
+                              }
+                            },
+                            "byPriority": {
+                              "type": "object",
+                              "properties": {
+                                "1": {
+                                  "type": "number",
+                                  "example": 2
+                                },
+                                "2": {
+                                  "type": "number",
+                                  "example": 3
+                                },
+                                "3": {
+                                  "type": "number",
+                                  "example": 1
+                                }
+                              }
+                            },
+                            "recent": {
+                              "type": "object",
+                              "properties": {
+                                "open": {
+                                  "type": "number",
+                                  "example": 4
+                                },
+                                "new": {
+                                  "type": "number",
+                                  "example": 2
+                                }
+                              }
+                            },
+                            "total": {
+                              "type": "number",
+                              "example": 6
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Ticket statistics retrieved successfully"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
           "304": {
             "description": ""
           }
@@ -261,212 +323,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "tickets": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "ticket_code": {
-                                "type": "string"
-                              },
-                              "subject": {
-                                "type": "string"
-                              },
-                              "description": {
-                                "type": "string"
-                              },
-                              "requester_email": {
-                                "type": "string"
-                              },
-                              "requester_name": {
-                                "type": "string"
-                              },
-                              "requester_phone": {
-                                "type": "string"
-                              },
-                              "location": {
-                                "type": "string"
-                              },
-                              "status": {
-                                "type": "string"
-                              },
-                              "created_at": {
-                                "type": "string"
-                              },
-                              "updated_at": {
-                                "type": "string"
-                              },
-                              "resolved_at": {
-                                "nullable": true
-                              },
-                              "closed_at": {
-                                "nullable": true
-                              },
-                              "created_by_id": {
-                                "type": "number"
-                              },
-                              "assignee_id": {
-                                "type": "number"
-                              },
-                              "priority_id": {
-                                "type": "number"
-                              },
-                              "priority": {
-                                "type": "object",
-                                "properties": {
-                                  "id": {
-                                    "type": "number"
-                                  },
-                                  "name": {
-                                    "type": "string"
-                                  }
-                                }
-                              },
-                              "assignee": {
-                                "type": "object",
-                                "properties": {
-                                  "id": {
-                                    "type": "number"
-                                  },
-                                  "first_name": {
-                                    "type": "string"
-                                  },
-                                  "last_name": {
-                                    "type": "string"
-                                  },
-                                  "email": {
-                                    "type": "string"
-                                  }
-                                }
-                              },
-                              "created_by": {
-                                "type": "object",
-                                "properties": {
-                                  "id": {
-                                    "type": "number"
-                                  },
-                                  "first_name": {
-                                    "type": "string"
-                                  },
-                                  "last_name": {
-                                    "type": "string"
-                                  },
-                                  "email": {
-                                    "type": "string"
-                                  }
-                                }
-                              },
-                              "tags": {
-                                "type": "array",
-                                "items": {}
-                              },
-                              "_count": {
-                                "type": "object",
-                                "properties": {
-                                  "comments": {
-                                    "type": "number"
-                                  },
-                                  "attachments": {
-                                    "type": "number"
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "example": [
-                            {
-                              "id": 1,
-                              "ticket_code": "RES-144969XEBE",
-                              "subject": "bIlling ISSUE",
-                              "description": "no email sent after paying for confirmation",
-                              "requester_email": "admin@resolveit.com",
-                              "requester_name": "admin ",
-                              "requester_phone": "+250781192822",
-                              "location": "Nyarugenge",
-                              "status": "open",
-                              "created_at": "2025-09-22T13:02:24.980Z",
-                              "updated_at": "2025-09-22T13:02:24.980Z",
-                              "resolved_at": null,
-                              "closed_at": null,
-                              "created_by_id": 1,
-                              "assignee_id": 2,
-                              "priority_id": 1,
-                              "priority": {
-                                "id": 1,
-                                "name": "Medium"
-                              },
-                              "assignee": {
-                                "id": 2,
-                                "first_name": "Jane",
-                                "last_name": "Smith",
-                                "email": "jane.agent@resolveit.com"
-                              },
-                              "created_by": {
-                                "id": 1,
-                                "first_name": "Maria",
-                                "last_name": "Garcia",
-                                "email": "admin@resolveit.com"
-                              },
-                              "tags": [],
-                              "_count": {
-                                "comments": 0,
-                                "attachments": 1
-                              }
-                            }
-                          ]
-                        },
-                        "pagination": {
-                          "type": "object",
-                          "properties": {
-                            "currentPage": {
-                              "type": "number",
-                              "example": 1
-                            },
-                            "totalPages": {
-                              "type": "number",
-                              "example": 1
-                            },
-                            "totalCount": {
-                              "type": "number",
-                              "example": 1
-                            },
-                            "hasNext": {
-                              "type": "boolean",
-                              "example": false
-                            },
-                            "hasPrev": {
-                              "type": "boolean",
-                              "example": false
-                            },
-                            "limit": {
-                              "type": "number",
-                              "example": 10
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Tickets retrieved successfully"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
+                  "type": "string",
+                  "example": "\u001bW\u0013\u0000�Zj���z�2�\u0002�ц��&\b��\u000f��j\\��~\u00068���\u0010ߛG$E��f�p��y���ٝ�5G??�(\u001c�ީ\f'���L�G{��1/��,\u0015\bN)\u0001�\u0019A\u001c!�ݤr\u0002��\bV�h���;\u000f�\u0000o�=+��3�����@`��\u0004\u0001�EU֪Z���e����0\r\u001e\bȉ�\u001f�!�9�\u0000�I�z�899x=��c��Ӄ��@T�0q\u0015�=Z\u000f\u0002�-FL6\u0018{y�����n�\u001fo<�^�\u0000�Nz��K�=:�\u001d���8\u0007\u0005\u0002��5m˶�۾j���\u0011�@��\u0015�bT0\nHAE���.����_�J��\f\u00028��\u0019��x��Q�{Q�\u001bκ/@`9�GXTi��\u001ea��:(�ɋw\u001f���� *\u0002��5A�3�!�49�\u001c~T��G#'PF\b��\u0019�\u0014Pa���/�\"�mL�tO�v9�\b\u0004<~�`\t\u0013L@����OH��\t�[����@8\u0011�h��fU��=��\r�v1p�N���@\u001c\u0001�] (\u0001�\nM ��D�\t�\\�wU�}|�4\u001f�&���vf\u001a����׷�w�:w�]��\u0000RY���me>���Q-x��j\u001e�W�Yk\n�#H�*k<�/�ܺ.��X�\t\u0006��|��y<\u0007�AmШ���\u0000|fA\r^�?�۲��n?9X�YF��l�i\u001d��\u001d<��\u0019,��liT\u000bVoڊŹ�1�ݑ?\u001b\u0010�b}<W�.{@'��w\u0005��\u0015iʚ�W��~Q`\u0012�}��\r�������*/֤d\\u6�4Z7��\u000fA\u000f��m���q���}�d|f���\u0015�3���ŽG��_�\u0001�.)�N�,���\u0010\u0013ng��+�q�DM7��s[����a&p\u0015\u000f����\u0006�,[֗��g���K��v�Y%@콀Nj�N���'�ݷ�M�,\u0006\u0018�\u000f5&'���p�3n4�9\fL)-KZRv�ƭ\u001d�\u000bm\u0018\u00175��5�w���\\n��t�v'�];\u00138#]U}�����o\u001f{o�)\u001e�}��>�Շ��\u0003B�T�ł�\u001f���\r��s,vs�6�\u0005oR^�T{��ټ2�8�/�y\u00029�k�z�q�:\u000b���\u001d+\u0005�W���w\u0012���pXf���?�\r�a{�Ѣ�!��\u000f)�vfU�a�t�N��Ɔ�V\u001fa�\u0007��(}<�?\"�z�F���w���\u0012\u00181�P�3\b�>�\u000b�UT磽��\f��Ӊ�\u0014?� �\u001d��w*��Ѫs%���v*%�x�vd�|\u0015\b\"�E�\u0000"
                 }
               }
             }
@@ -499,47 +357,47 @@
                           "properties": {
                             "id": {
                               "type": "number",
-                              "example": 2
+                              "example": 7
                             },
                             "ticket_code": {
                               "type": "string",
-                              "example": "RES-371937XLLD"
+                              "example": "RES-383212UEBU"
                             },
                             "subject": {
                               "type": "string",
-                              "example": "zjfdfjljdf"
+                              "example": "3w435e4y5r6tuyihloj;k;l"
                             },
                             "description": {
                               "type": "string",
-                              "example": "ajdfjajfajfalkdfj\n\n"
+                              "example": "fasdhf;lakjd;lfkj;laskdjf;lk"
                             },
                             "requester_email": {
                               "type": "string",
-                              "example": ""
+                              "example": "ybarasingiz@gmail.com"
                             },
                             "requester_name": {
                               "type": "string",
-                              "example": "fasjdfjka jhjgjhghg"
+                              "example": "afjdlfjaldjflajdf"
                             },
                             "requester_phone": {
                               "type": "string",
-                              "example": "+250700033030"
+                              "example": "+250737497947"
                             },
                             "location": {
                               "type": "string",
-                              "example": "Nyabihu"
+                              "example": "Nyarugenge"
                             },
                             "status": {
                               "type": "string",
-                              "example": "open"
+                              "example": "new"
                             },
                             "created_at": {
                               "type": "string",
-                              "example": "2025-09-23T10:12:51.950Z"
+                              "example": "2025-09-23T10:29:43.218Z"
                             },
                             "updated_at": {
                               "type": "string",
-                              "example": "2025-09-23T10:12:51.950Z"
+                              "example": "2025-09-23T10:29:43.218Z"
                             },
                             "resolved_at": {
                               "example": null,
@@ -554,8 +412,8 @@
                               "example": 4
                             },
                             "assignee_id": {
-                              "type": "number",
-                              "example": 2
+                              "example": null,
+                              "nullable": true
                             },
                             "priority_id": {
                               "type": "number",
@@ -575,21 +433,8 @@
                               }
                             },
                             "assignee": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "number",
-                                  "example": 2
-                                },
-                                "first_name": {
-                                  "type": "string",
-                                  "example": "Jane"
-                                },
-                                "last_name": {
-                                  "type": "string",
-                                  "example": "Smith"
-                                }
-                              }
+                              "example": null,
+                              "nullable": true
                             }
                           }
                         }
@@ -604,17 +449,6 @@
                       "example": true
                     }
                   }
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "\u001b�\u0005\u0000dSg���Tv\u0001�=mHzpb��ԁ�\\����C{Y\"K��6XY\u0018\u0017N\u000b0�\u000b��(�w~�M\r��~\u001b\nv\u0019;\u000e �4e\u0011����-��a\u0003\u0010^�w�DW\u0016J��\"h\u0001�P\u0006\u0001�:�ܱ�� �����S?�\u001epZKXi�+#ŢO�/�8���V��]EW\u0016&���0������-�h�% \\�P\u0006T\u001b\u001a�B)�LTg���t�\t�ۯjs�\u0019��\u0017�_���]b��\u0017�\b����8��\u001fYJ��\u0013�.��z\u0015�\u0017m�[3��\u0010{���\n�\u000f���\u0004ִ��L�7��ԋ���8t��u������\u001bX\u0017^��j\u0017HD@ �B\u0004�\b2\u0011$\"�\"*J˿yiW��H�~�Ȼ�(��ȁ��Lp6���?]�6�\u0007�@T\u001a�\u0019�\u0006\u0004\u001e\u0010��W���N&8\u001c`o\u0018s�q��X'���J�7Ó��y�cۃ��2��t��\u0011�\u0000"
                 }
               }
             }
@@ -636,7 +470,22 @@
             }
           }
         ],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "\u001b\u0012\u0004\u0000�/�����]#{dH�S�K�x�\rZ5c� �������b|u�ˢ4�~/�ƣhMl�M|`��ΧS�ǘ�x��1�|���G��e��\u0007#�Jk\u0005ÅA�(��K\u0001=\"\u0018P�@��\u0000�^~_�gۋ��χ\u000f/��\u000e�<\b\u000f�\u001a\u001b�h,\u0014L��\u0017�%\f\t\u0004��F����~ollR��0I��wej���\u0007�㇉\u000f\u0002��\u001c��{^E\u001f]�λ��~�C\u0012\u0010��\u0013}���k]k(<�p\u0014�O�|\u001d�\f��\t\u0010�Q\u0012\u0014ҭ��bZ. T�:Y�uU��j�Vt��\\��P�G361I\u001e��I����\u0015~,�\n\"�\u000f\\߷���\u00158���ȡV\n��Y�\r2Є7�y,�����0�b�M�8\t\u0014z�s�\u000f�x(��X�$\u001bv�ʥ&[B�t�\u0001˲1=�\u001d\u000b\u0019�}\u001ee�jJP`��+�\u0014��\u0013/�2�?��m�d>\u001b\u001b��\u0014�<\u0001��\u0010d\bD\\���$$��yNN�r?6Li�,\u0014�޴U�b��InA\u0015�\r�G\u001bP�;\rT\u0013H�w��(��B*�\u0014�\u0016Z�5g����.[:�,�eQx[�\u0002ᇐGW��)ȍ�U��Nr�s��G/� 2Ͳ\u0000"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       },
       "put": {
@@ -777,6 +626,104 @@
       "get": {
         "summary": "/api/v1/admin/analytics/agent-performance",
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "performance": {
+                          "type": "object",
+                          "properties": {
+                            "agent": {
+                              "example": null,
+                              "nullable": true
+                            },
+                            "period": {
+                              "type": "object",
+                              "properties": {
+                                "start_date": {
+                                  "example": null,
+                                  "nullable": true
+                                },
+                                "end_date": {
+                                  "example": null,
+                                  "nullable": true
+                                }
+                              }
+                            },
+                            "stats": {
+                              "type": "object",
+                              "properties": {
+                                "by_status": {
+                                  "type": "object",
+                                  "properties": {
+                                    "new": {
+                                      "type": "number",
+                                      "example": 2
+                                    },
+                                    "open": {
+                                      "type": "number",
+                                      "example": 4
+                                    }
+                                  }
+                                },
+                                "total_tickets": {
+                                  "type": "number",
+                                  "example": 6
+                                },
+                                "average_resolution_ms": {
+                                  "example": null,
+                                  "nullable": true
+                                },
+                                "resolved_tickets": {
+                                  "type": "number",
+                                  "example": 0
+                                }
+                              }
+                            },
+                            "priority_breakdown": {
+                              "type": "object",
+                              "properties": {
+                                "1": {
+                                  "type": "number",
+                                  "example": 2
+                                },
+                                "2": {
+                                  "type": "number",
+                                  "example": 3
+                                },
+                                "3": {
+                                  "type": "number",
+                                  "example": 1
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Agent performance data retrieved successfully"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
           "304": {
             "description": ""
           }
@@ -854,7 +801,11 @@
                                   "count": {
                                     "type": "number"
                                   }
-                                }
+                                },
+                                "required": [
+                                  "date",
+                                  "count"
+                                ]
                               },
                               "example": [
                                 {
@@ -898,7 +849,7 @@
                                     "last_name": "Smith",
                                     "email": "jane.agent@resolveit.com"
                                   },
-                                  "ticket_count": 1
+                                  "ticket_count": 4
                                 }
                               ]
                             },
@@ -926,8 +877,8 @@
                               "example": [
                                 {
                                   "tag": {
-                                    "id": 6,
-                                    "name": "jlkj;j"
+                                    "id": 13,
+                                    "name": "sdfj"
                                   },
                                   "usage_count": 1
                                 }
@@ -1016,59 +967,6 @@
       "get": {
         "summary": "/api/v1/tags",
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "tags": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "name"
-                            ]
-                          },
-                          "example": [
-                            {
-                              "id": 1,
-                              "name": "authentication"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Tags retrieved successfully"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          },
           "304": {
             "description": ""
           }
@@ -1077,50 +975,7 @@
       },
       "post": {
         "summary": "/api/v1/tags",
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 201
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "tag": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "number",
-                              "example": 7
-                            },
-                            "name": {
-                              "type": "string",
-                              "example": "efad"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Tag created successfully"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -1152,197 +1007,19 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {}
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Tag deleted successfully"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       }
     },
     "/api/v1/invites": {
       "post": {
         "summary": "/api/v1/invites",
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "number",
-                          "example": 4
-                        },
-                        "email": {
-                          "type": "string",
-                          "example": "ybarasingiz@gmail.com"
-                        },
-                        "role": {
-                          "type": "string",
-                          "example": "admin"
-                        },
-                        "status": {
-                          "type": "string",
-                          "example": "PENDING"
-                        },
-                        "expiresAt": {
-                          "type": "string",
-                          "example": "2025-09-26T09:45:40.370Z"
-                        },
-                        "acceptUrl": {
-                          "type": "string",
-                          "example": "http://localhost:3000/auth/invite/accept?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnZpdGVJZCI6NCwiZW1haWwiOiJ5YmFyYXNpbmdpekBnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHBpcmVzSW5Ib3VycyI6NzIsImlhdCI6MTc1ODYyMDc0MCwiZXhwIjoxNzU4ODc5OTQwfQ.ZkJgcDUGHJAAAQ2pUd_cKCRbJrJvbiMaKypeCUa8P-k"
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invite created"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "get": {
         "summary": "/api/v1/invites",
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "email": {
-                                "type": "string"
-                              },
-                              "role": {
-                                "type": "string"
-                              },
-                              "token": {
-                                "type": "string"
-                              },
-                              "expires_at": {
-                                "type": "string"
-                              },
-                              "status": {
-                                "type": "string"
-                              },
-                              "created_at": {
-                                "type": "string"
-                              },
-                              "accepted_at": {
-                                "nullable": true
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "email",
-                              "role",
-                              "token",
-                              "expires_at",
-                              "status",
-                              "created_at",
-                              "accepted_at"
-                            ]
-                          },
-                          "example": [
-                            {
-                              "id": 4,
-                              "email": "ybarasingiz@gmail.com",
-                              "role": "admin",
-                              "token": "a67494d3-6a23-4116-8d52-9acd45f5532e",
-                              "expires_at": "2025-09-26T09:45:40.370Z",
-                              "status": "PENDING",
-                              "created_at": "2025-09-23T09:45:40.375Z",
-                              "accepted_at": null
-                            }
-                          ]
-                        },
-                        "total": {
-                          "type": "number",
-                          "example": 4
-                        },
-                        "page": {
-                          "type": "number",
-                          "example": 1
-                        },
-                        "pageSize": {
-                          "type": "number",
-                          "example": 20
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Operation successful"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          },
           "304": {
             "description": ""
           }
@@ -1363,32 +1040,7 @@
             }
           }
         ],
-        "responses": {
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": false
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invite already finalized"
-                    },
-                    "stack": {
-                      "type": "string",
-                      "example": "Error: Invite already finalized\n    at ApiError.conflict (file:///C:/Users/ybara/Downloads/Projects/Resolvet/backend/utils/apiError.js:44:12)\n    at resendInvite (file:///C:/Users/ybara/Downloads/Projects/Resolvet/backend/controllers/inviteController.js:103:28)"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -1412,58 +1064,7 @@
     "/api/v1/invites/accept": {
       "post": {
         "summary": "/api/v1/invites/accept",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "user": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "number",
-                              "example": 5
-                            },
-                            "email": {
-                              "type": "string",
-                              "example": "ybarasingiz@gmail.com"
-                            },
-                            "role": {
-                              "type": "string",
-                              "example": "admin"
-                            }
-                          }
-                        },
-                        "token": {
-                          "type": "string",
-                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1ODYyMDc3OSwiZXhwIjoxNzU5MjI1NTc5fQ.ESwDLTxT8rken2vI2tqs8qYS1YxND_IvuXPChwN34nc"
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invite accepted"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -1488,7 +1089,7 @@
                     },
                     "timestamp": {
                       "type": "string",
-                      "example": "2025-09-23T09:45:13.515Z"
+                      "example": "2025-09-23T10:27:52.702Z"
                     }
                   }
                 }
