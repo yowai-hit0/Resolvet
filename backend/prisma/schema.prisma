@@ -24,10 +24,13 @@ enum UserRole {
 }
 
 enum TicketStatus {
-  new
-  open
-  resolved
-  closed
+  New
+  Assigned
+  In_Progress
+  On_Hold
+  Resolved
+  Closed
+  Reopened
 }
 
 model User {
@@ -58,7 +61,7 @@ model Ticket {
   requester_name  String
   requester_phone String
   location        String?
-  status          TicketStatus @default(new)
+  status          TicketStatus @default(New)
   created_at      DateTime   @default(now()) @map("created_at")
   updated_at      DateTime   @updatedAt @map("updated_at")
   resolved_at     DateTime?

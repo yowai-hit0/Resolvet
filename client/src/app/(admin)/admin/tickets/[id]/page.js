@@ -9,10 +9,13 @@ import { useAuthStore } from "@/store/auth";
 import Attachments from "@/components/Attachments";
 
 const STATUS_OPTIONS = [
-  { value: "new", label: "New", class: "status-new" },
-  { value: "open", label: "Open", class: "status-open" },
-  { value: "resolved", label: "Resolved", class: "status-resolved" },
-  { value: "closed", label: "Closed", class: "status-closed" },
+  { value: "New", label: "New", class: "status-new" },
+  { value: "Assigned", label: "Assigned", class: "status-open" },
+  { value: "In_Progress", label: "In Progress", class: "status-open" },
+  { value: "On_Hold", label: "On Hold", class: "status-open" },
+  { value: "Resolved", label: "Resolved", class: "status-resolved" },
+  { value: "Closed", label: "Closed", class: "status-closed" },
+  { value: "Reopened", label: "Reopened", class: "status-open" },
 ];
 
 export default function TicketDetail() {
@@ -94,7 +97,7 @@ export default function TicketDetail() {
     setError(undefined);
     try {
       // Enforce comment when closing
-      if (editData.status === "closed") {
+      if (editData.status === "Closed") {
         const hasComment = (ticket?.comments || []).length > 0 || comment.trim().length > 0;
         if (!hasComment) {
           setError("Add a comment before closing the ticket");

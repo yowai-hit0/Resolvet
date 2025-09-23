@@ -379,8 +379,8 @@ export const createTicket = asyncHandler(async (req, res) => {
         priority_id,
         assignee_id,
         created_by_id: req.user.id,
-        status: assignee_id ? 'open' : 'new',
-        ...(assignee_id && { status: 'open' })
+        status: assignee_id ? 'Assigned' : 'New',
+        ...(assignee_id && { status: 'Assigned' })
       },
       include: {
         priority: true,
@@ -505,16 +505,16 @@ export const updateTicket = asyncHandler(async (req, res) => {
 
   if (updates.status) {
     statusUpdates.status = updates.status;
-    
-    if (updates.status === 'resolved' && existingTicket.status !== 'resolved') {
+    // Handle resolved timestamp
+    if (updates.status === 'Resolved' && existingTicket.status !== 'Resolved') {
       statusUpdates.resolved_at = now;
-    } else if (updates.status !== 'resolved' && existingTicket.status === 'resolved') {
+    } else if (updates.status !== 'Resolved' && existingTicket.status === 'Resolved') {
       statusUpdates.resolved_at = null;
     }
-    
-    if (updates.status === 'closed' && existingTicket.status !== 'closed') {
+    // Handle closed timestamp
+    if (updates.status === 'Closed' && existingTicket.status !== 'Closed') {
       statusUpdates.closed_at = now;
-    } else if (updates.status !== 'closed' && existingTicket.status === 'closed') {
+    } else if (updates.status !== 'Closed' && existingTicket.status === 'Closed') {
       statusUpdates.closed_at = null;
     }
   }

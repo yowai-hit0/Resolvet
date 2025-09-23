@@ -19,8 +19,8 @@ export const bulkStatusValidator = Joi.object({
     'array.min': 'At least one ticket ID is required',
     'any.required': 'Ticket IDs are required'
   }),
-  status: Joi.string().valid('new', 'open', 'resolved', 'closed').required().messages({
-    'any.only': 'Status must be one of: new, open, resolved, closed',
+  status: Joi.string().valid('New','Assigned','In_Progress','On_Hold','Resolved','Closed','Reopened').required().messages({
+    'any.only': 'Status must be one of: New, Assigned, In_Progress, On_Hold, Resolved, Closed, Reopened',
     'any.required': 'Status is required'
   })
 });

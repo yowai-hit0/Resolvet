@@ -92,8 +92,8 @@ export const updateTicketValidator = Joi.object({
     'number.base': 'Assignee ID must be a number',
     'number.min': 'Assignee ID must be at least 1'
   }),
-  status: Joi.string().valid('new', 'open', 'resolved', 'closed').optional().messages({
-    'any.only': 'Status must be one of: new, open, resolved, closed'
+  status: Joi.string().valid('New','Assigned','In_Progress','On_Hold','Resolved','Closed','Reopened').optional().messages({
+    'any.only': 'Status must be one of: New, Assigned, In_Progress, On_Hold, Resolved, Closed, Reopened'
   }),
   tag_ids: Joi.array().items(Joi.number().integer().min(1)).optional().messages({
     'array.base': 'Tag IDs must be an array',

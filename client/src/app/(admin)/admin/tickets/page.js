@@ -10,10 +10,13 @@ import { TableSkeleton } from "@/components/Loader";
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
 const STATUSES = [
-  { value: "new", label: "New", class: "status-new" },
-  { value: "open", label: "Open", class: "status-open" },
-  { value: "resolved", label: "Resolved", class: "status-resolved" },
-  { value: "closed", label: "Closed", class: "status-closed" },
+  { value: "New", label: "New", class: "status-new" },
+  { value: "Assigned", label: "Assigned", class: "status-open" },
+  { value: "In_Progress", label: "In Progress", class: "status-open" },
+  { value: "On_Hold", label: "On Hold", class: "status-open" },
+  { value: "Resolved", label: "Resolved", class: "status-resolved" },
+  { value: "Closed", label: "Closed", class: "status-closed" },
+  { value: "Reopened", label: "Reopened", class: "status-open" },
 ];
 
 // Mobile Ticket Card Component
@@ -606,21 +609,21 @@ const createTicket = async (e) => {
               <div className="flex items-center gap-1">
                 <button 
                   className="btn" 
-                  onClick={() => bulkStatus("open")} 
+                  onClick={() => bulkStatus("In_Progress")} 
                   disabled={selectedIds.size === 0}
                 >
-                  Open
+                  In Progress
                 </button>
                 <button 
                   className="btn" 
-                  onClick={() => bulkStatus("resolved")} 
+                  onClick={() => bulkStatus("Resolved")} 
                   disabled={selectedIds.size === 0}
                 >
                   Resolve
                 </button>
                 <button 
                   className="btn" 
-                  onClick={() => bulkStatus("closed")} 
+                  onClick={() => bulkStatus("Closed")} 
                   disabled={selectedIds.size === 0}
                 >
                   Close
@@ -659,7 +662,7 @@ const createTicket = async (e) => {
                 <option key={p.id} value={p.id}>{p.name}</option>
               ))}
             </select>
-            <select 
+            {/* <select 
               className="select max-w-48" 
               value={assigneeId} 
               onChange={(e) => { setPage(1); setAssigneeId(e.target.value); }}
@@ -668,7 +671,7 @@ const createTicket = async (e) => {
               {agents.map((a) => (
                 <option key={a.id} value={a.id}>{a.email}</option>
               ))}
-            </select>
+            </select> */}
             <select 
               className="select max-w-32" 
               value={limit} 

@@ -24,19 +24,19 @@ export default function AdminHome() {
 
   const byStatus = stats?.stats?.byStatus || {};
   const total = stats?.stats?.total || 0;
-  const openTickets = (byStatus.open || 0) + (byStatus.new || 0);
-  const closedTickets = (byStatus.resolved || 0) + (byStatus.closed || 0);
+  const openTickets = (byStatus.In_Progress || 0) + (byStatus.Assigned || 0) + (byStatus.On_Hold || 0) + (byStatus.New || 0) + (byStatus.Reopened || 0);
+  const closedTickets = (byStatus.Resolved || 0) + (byStatus.Closed || 0);
 
   const statCards = [
     { 
-      label: "Open Tickets", 
+      label: "Active Tickets", 
       value: openTickets, 
       color: "text-yellow-600",
       bgColor: "bg-yellow-100",
       borderColor: "border-yellow-200"
     },
     { 
-      label: "Closed Tickets", 
+      label: "Completed Tickets", 
       value: closedTickets, 
       color: "text-green-600",
       bgColor: "bg-green-100",

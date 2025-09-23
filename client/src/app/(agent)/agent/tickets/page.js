@@ -9,10 +9,13 @@ import { TableSkeleton } from "@/components/Loader";
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
 const STATUSES = [
-  { value: "new", label: "New", class: "status-new" },
-  { value: "open", label: "Open", class: "status-open" },
-  { value: "resolved", label: "Resolved", class: "status-resolved" },
-  { value: "closed", label: "Closed", class: "status-closed" },
+  { value: "New", label: "New", class: "status-new" },
+  { value: "Assigned", label: "Assigned", class: "status-open" },
+  { value: "In_Progress", label: "In Progress", class: "status-open" },
+  { value: "On_Hold", label: "On Hold", class: "status-open" },
+  { value: "Resolved", label: "Resolved", class: "status-resolved" },
+  { value: "Closed", label: "Closed", class: "status-closed" },
+  { value: "Reopened", label: "Reopened", class: "status-open" },
 ];
 
 // Mobile Ticket Card Component

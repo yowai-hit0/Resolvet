@@ -22,17 +22,17 @@ export const getAdminDashboard = asyncHandler(async (req, res) => {
     
     // Open tickets count
     prisma.ticket.count({
-      where: { status: 'open' }
+      where: { status: 'In_Progress' }
     }),
     
     // Resolved tickets count
     prisma.ticket.count({
-      where: { status: 'resolved' }
+      where: { status: 'Resolved' }
     }),
     
     // Closed tickets count
     prisma.ticket.count({
-      where: { status: 'closed' }
+      where: { status: 'Closed' }
     }),
     
     // Tickets created per day (last 30 days) - grouped by DATE
@@ -188,7 +188,7 @@ export const bulkAssignTickets = asyncHandler(async (req, res) => {
       },
       data: {
         assignee_id,
-        status: 'open',
+        status: 'Assigned',
         updated_at: new Date()
       }
     });
@@ -238,9 +238,9 @@ export const bulkUpdateTicketStatus = asyncHandler(async (req, res) => {
     updated_at: now
   };
 
-  if (status === 'resolved') {
+  if (status === 'Resolved') {
     updateData.resolved_at = now;
-  } else if (status === 'closed') {
+  } else if (status === 'Closed') {
     updateData.closed_at = now;
   }
 
@@ -313,7 +313,7 @@ export const getAgentPerformance = asyncHandler(async (req, res) => {
     prisma.ticket.findMany({
       where: {
         ...agentFilter,
-        status: { in: ['resolved', 'closed'] },
+        status: { in: ['Resolved', 'Closed'] },
         resolved_at: { not: null },
         created_at: Object.keys(dateFilter).length > 0 ? dateFilter : undefined
       },
