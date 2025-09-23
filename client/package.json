@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "start": "next start",
     "build": "next build",
-    "pages:build": "npx @cloudflare/next-on-pages build",
+
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "preview": "npm run pages:build && wrangler pages dev",
+    "deploy": "npm run pages:build && wrangler pages deploy",
     "lint": "eslint"
   },
   "dependencies": {
