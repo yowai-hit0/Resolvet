@@ -107,3 +107,12 @@ export const PrioritiesAPI = {
 };
 
 
+export const InvitesAPI = {
+  create: (payload) => api.post('/invites', payload).then((r) => r.data),
+  list: (params) => api.get('/invites', { params }).then((r) => r.data),
+  resend: (id) => api.post(`/invites/${id}/resend`).then((r) => r.data),
+  revoke: (id) => api.post(`/invites/${id}/revoke`).then((r) => r.data),
+  accept: (payload) => api.post('/invites/accept', payload).then((r) => r.data),
+};
+
+

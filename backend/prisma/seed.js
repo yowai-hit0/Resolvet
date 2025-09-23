@@ -58,6 +58,7 @@ async function main() {
     // Hash password for default users
     const saltRounds = 12;
     const adminPassword = await bcrypt.hash('admin123', saltRounds);
+    const superAdminPassword = await bcrypt.hash(process.env.SUPER_ADMIN_SEED_PASSWORD || 'superadmin123', saltRounds);
     const agentPassword = await bcrypt.hash('agent123', saltRounds);
     const customerPassword = await bcrypt.hash('customer123', saltRounds);
 
@@ -71,6 +72,20 @@ async function main() {
         first_name: 'Maria',
         last_name: 'Garcia',
         role: 'admin'
+      }
+    });
+
+    // Ensure a Super Admin user exists (env-configurable)
+    const superAdminEmail = process.env.SUPER_ADMIN_SEED_EMAIL || 'superadmin@resolveit.com';
+    const superAdminUser = await prisma.user.upsert({
+      where: { email: superAdminEmail },
+      update: { role: 'super_admin' },
+      create: {
+        email: superAdminEmail,
+        password_hash: superAdminPassword,
+        first_name: 'Super',
+        last_name: 'Admin',
+        role: 'super_admin'
       }
     });
 
@@ -102,6 +117,7 @@ async function main() {
 
     console.log('Created users:', [
       `${adminUser.first_name} ${adminUser.last_name} (${adminUser.role})`,
+      `${superAdminUser.first_name} ${superAdminUser.last_name} (${superAdminUser.role})`,
       `${agentUser.first_name} ${agentUser.last_name} (${agentUser.role})`,
       `${customerUser.first_name} ${customerUser.last_name} (${customerUser.role})`
     ]);

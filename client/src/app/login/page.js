@@ -28,7 +28,7 @@ export default function LoginPage() {
       if (result?.user) {
         setIsRedirecting(true);
         const role = result.user.role;
-        router.replace(role === "admin" ? "/admin" : "/agent");
+        router.replace((role === "admin" || role === 'super_admin') ? "/admin" : "/agent");
       }
     } catch (err) {
       console.error("Login error:", err);

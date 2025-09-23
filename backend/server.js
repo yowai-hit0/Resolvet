@@ -12,6 +12,7 @@ import ticketRoutes from './routes/ticket.js'
 import adminRoutes from './routes/admin.js';
 import tagRoutes from './routes/tag.js';
 import agentRoutes from './routes/agent.js';
+import inviteRoutes from './routes/invite.js';
 
 // Load env vars
 dotenv.config();
@@ -66,6 +67,7 @@ app.use('/api/v1/tickets', ticketRoutes);
 app.use('/api/v1/admin', adminRoutes); 
 app.use('/api/v1/agent', agentRoutes);
 app.use('/api/v1/tags', tagRoutes);
+app.use('/api/v1/invites', inviteRoutes);
 // app.use('/api/v1/customer', customerRoutes)
 // Health check endpoint
 app.get('/api/v1/health', (req, res) => {

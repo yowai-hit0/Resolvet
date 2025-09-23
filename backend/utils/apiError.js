@@ -39,6 +39,16 @@ export class ApiError extends Error {
     return new ApiError(404, message, errors);
   }
 
+  // Conflict Error (409)
+  static conflict(message = "Conflict", errors = []) {
+    return new ApiError(409, message, errors);
+  }
+
+  // Gone Error (410)
+  static gone(message = "Gone", errors = []) {
+    return new ApiError(410, message, errors);
+  }
+
   // Validation Error (422)
   static validationError(message = "Validation failed", errors = []) {
     return new ApiError(422, message, errors);

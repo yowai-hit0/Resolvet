@@ -20,13 +20,19 @@ export default function RequireAuth({ children, role }) {
       if (!user) {
         router.replace("/login");
       } else if (role && user.role && user.role !== role) {
-        router.replace(user.role === "admin" ? "/admin" : "/agent");
+        // super_admin can access admin
+        if (role === 'admin' && user.role === 'super_admin') return;
+        router.replace(user.role === "admin" || user.role === 'super_admin' ? "/admin" : "/agent");
       }
     }
   }, [user, loading, role, router]);
 
-  if (!user) {
-    return null;
+  if (loading || !user) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center text-sm text-foreground/70">
+        Loading...
+      </div>
+    );
   }
 
   return children;

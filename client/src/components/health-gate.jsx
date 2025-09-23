@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { HealthAPI } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 
 export function HealthGate({ children }) {
   const router = useRouter();
+  const pathname = usePathname();
   const token = useAuthStore((state) => state.token);
   const user = useAuthStore((state) => state.user);
 
@@ -23,23 +24,32 @@ export function HealthGate({ children }) {
 
         if (!mounted) return;
 
-        // 2. Auth & role-based redirect
+        // 2. Auth & role-based redirect (only from neutral routes)
+        const isNeutral = pathname === '/' || pathname === '';
+        const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register');
+        const isProtected = pathname?.startsWith('/admin') || pathname?.startsWith('/agent');
+
+        if (isProtected) {
+          setChecking(false);
+          return;
+        }
+
         if (token === undefined) {
           // not logged in yet → allow login page
           setChecking(false);
           return;
         }
 
-        if (token && user?.role) {
+        if (token && user?.role && (isNeutral || isAuthPage)) {
           // logged in and role known
-          if (user.role === "admin") {
+          if (user.role === "admin" || user.role === 'super_admin') {
             router.replace("/admin");
           } else if (user.role === "agent") {
             router.replace("/agent");
           } else {
             router.replace("/login");
           }
-        } else if (!token) {
+        } else if (!token && (isNeutral || isAuthPage)) {
           router.replace("/login");
         }
       } catch (e) {

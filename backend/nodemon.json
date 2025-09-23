@@ -1,0 +1,12 @@
+{
+  "watch": ["."],
+  "ext": "js,mjs,cjs,json",
+  "ignore": [
+    "openapi.json",
+    "openapi_v3.json",
+    "report.md",
+    "page.md"
+  ]
+}
+
+

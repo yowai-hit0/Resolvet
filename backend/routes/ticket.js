@@ -38,28 +38,28 @@ router.put('/priorities/:id', authorize(['admin']), updateTicketPriority);
 router.delete('/priorities/:id', authorize(['admin']), deleteTicketPriority);
 
 // Get all tickets with pagination and filters
-router.get('/', authorize(['admin', 'agent', 'customer']), validate(ticketQueryValidator, 'query'), getAllTickets);
+router.get('/', authorize(['admin', 'agent', 'customer','super_admin']), validate(ticketQueryValidator, 'query'), getAllTickets);
 
 // Get ticket by ID
 router.get('/:id', getTicketById);
 
 // Create ticket (admin, customer, agent)
-router.post('/', authorize(['admin', 'customer','agent']), validate(createTicketValidator), createTicket);
+router.post('/', authorize(['admin', 'customer','agent','super_admin']), validate(createTicketValidator), createTicket);
 
 // Update ticket (admin, assigned agent)
-router.put('/:id', authorize(['admin', 'agent']), validate(updateTicketValidator), updateTicket);
+router.put('/:id', authorize(['admin', 'agent','super_admin']), validate(updateTicketValidator), updateTicket);
 
 // Add comment to ticket
-router.post('/:id/comments', authorize(['admin', 'agent']), validate(commentValidator), addComment);
+router.post('/:id/comments', authorize(['admin', 'agent','super_admin']), validate(commentValidator), addComment);
 
 // Image attachments
-router.post('/:id/attachments/image', authorize(['admin', 'agent']), uploadSingleImage, uploadTicketImage);
-router.post('/:id/attachments/images', authorize(['admin', 'agent']), uploadMultipleImages, uploadTicketImages);
-router.delete('/:id/attachments/:attachmentId', authorize(['admin', 'agent']), deleteTicketAttachment);
+router.post('/:id/attachments/image', authorize(['admin', 'agent','super_admin']), uploadSingleImage, uploadTicketImage);
+router.post('/:id/attachments/images', authorize(['admin', 'agent','super_admin']), uploadMultipleImages, uploadTicketImages);
+router.delete('/:id/attachments/:attachmentId', authorize(['admin', 'agent','super_admin']), deleteTicketAttachment);
 
 // Temp pre-create upload (authenticated users)
 router.post('/attachments/temp/images', uploadMultipleImages, uploadTempTicketImages);
-router.delete('/attachments/temp', authorize(['admin', 'agent', 'customer']), deleteTempUploads);
+router.delete('/attachments/temp', authorize(['admin', 'agent', 'customer','super_admin']), deleteTempUploads);
 // Convenience POST endpoint to support clients that cannot send DELETE with body
-router.post('/attachments/temp/delete', authorize(['admin', 'agent', 'customer']), deleteTempUploads);
+router.post('/attachments/temp/delete', authorize(['admin', 'agent', 'customer','super_admin']), deleteTempUploads);
 export default router;

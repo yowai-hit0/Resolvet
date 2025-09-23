@@ -14,13 +14,18 @@ export default function Sidebar({ role }) {
     { href: "/admin/tags", label: "Tags", icon: "🏷️" },
     { href: "/admin/users", label: "Users", icon: "👥" },
   ];
+  const superAdminExtras = [
+    { href: "/admin/invitations", label: "Invitations", icon: "✉️" },
+  ];
   
   const agentLinks = [
     { href: "/agent", label: "Dashboard", icon: "📊" },
     { href: "/agent/tickets", label: "My Tickets", icon: "🎫" },
   ];
   
-  const links = role === "admin" ? adminLinks : agentLinks;
+  const links = role === "admin" || role === "super_admin" 
+    ? (role === "super_admin" ? [...adminLinks, ...superAdminExtras] : adminLinks)
+    : agentLinks;
 
   return (
     <>
@@ -34,7 +39,7 @@ export default function Sidebar({ role }) {
         {/* Only add top padding on desktop, not mobile */}
         <div className="h-full flex flex-col md:pt-16">
           <div className="p-4 border-b md:hidden">
-            <div className="font-semibold text-lg">{role === "admin" ? "Admin Panel" : "Agent Panel"}</div>
+            <div className="font-semibold text-lg">{(role === "admin" || role === "super_admin") ? "Admin Panel" : "Agent Panel"}</div>
           </div>
           
           <nav className="p-3 space-y-1 flex-1 overflow-y-auto">

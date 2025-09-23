@@ -38,6 +38,10 @@ export const authenticate = async (req, res, next) => {
 
 export const authorize = (roles = []) => {
   return (req, res, next) => {
+    // super_admin has universal access
+    if (req.user.role === 'super_admin') {
+      return next();
+    }
     if (!roles.includes(req.user.role)) {
       return next(ApiError.forbidden('Access denied. Insuffiencent permissions. '))
     }

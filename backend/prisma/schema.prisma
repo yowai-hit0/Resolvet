@@ -17,6 +17,7 @@ generator client {
 
 
 enum UserRole {
+  super_admin
   admin
   agent
   customer
@@ -164,4 +165,26 @@ model TicketTag {
 
   @@unique([ticket_id, tag_id])
   @@map("ticket_tags")
+}
+
+// Invitations for onboarding users by email with role assignment
+model Invite {
+  id         Int           @id @default(autoincrement())
+  email      String
+  role       UserRole
+  token      String        @unique
+  expires_at DateTime      @map("expires_at")
+  status     InviteStatus  @default(PENDING)
+  created_at DateTime      @default(now()) @map("created_at")
+  accepted_at DateTime?    @map("accepted_at")
+
+  @@index([email])
+  @@map("invites")
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+  EXPIRED
 }

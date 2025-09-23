@@ -17,7 +17,7 @@ import {
 const router = express.Router();
 
 // All routes require admin authentication
-router.use(authenticate, authorize(['admin']));
+router.use(authenticate, authorize(['admin','super_admin']));
 
 // Admin dashboard
 router.get('/dashboard', getAdminDashboard);

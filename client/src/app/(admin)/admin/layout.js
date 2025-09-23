@@ -5,9 +5,11 @@ import RequireAuth from "@/components/RequireAuth";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { useUIStore } from "@/store/ui";
+import { useAuthStore } from "@/store/auth";
 
 export default function AdminLayout({ children }) {
   const { sidebarOpen } = useUIStore();
+  const { user } = useAuthStore();
   
   return (
     <RequireAuth role="admin">
@@ -26,7 +28,7 @@ export default function AdminLayout({ children }) {
         )}
         
         {/* Sidebar - fixed on left (above overlay) */}
-        <Sidebar role="admin" />
+        <Sidebar role={(user?.role === 'super_admin' ? 'super_admin' : 'admin')} />
         
         {/* Main content - positioned with padding for navbar and sidebar */}
         <div className="pt-16 md:pl-64 min-h-screen">

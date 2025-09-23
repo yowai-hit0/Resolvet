@@ -17,7 +17,7 @@ export default function RedirectIfAuth({ children }) {
 
   useEffect(() => {
     if (!loading && user?.role) {
-      if (user.role === "admin") {
+      if (user.role === "admin" || user.role === 'super_admin') {
         router.replace("/admin");
       } else if (user.role === "agent") {
         router.replace("/agent");
@@ -26,7 +26,9 @@ export default function RedirectIfAuth({ children }) {
   }, [user, loading, router]);
 
   // While checking bootstrap or redirecting → show nothing
-  if (loading) return null;
+  if (loading) return (
+    <div className="w-full min-h-screen flex items-center justify-center text-sm text-foreground/70">Loading...</div>
+  );
 
   return children;
 }

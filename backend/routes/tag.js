@@ -8,9 +8,9 @@ const router = express.Router();
 router.get('/', listTags);
 
 // Admin-only CRUD
-router.post('/', authenticate, authorize(['admin']), createTag);
-router.put('/:id', authenticate, authorize(['admin']), updateTag);
-router.delete('/:id', authenticate, authorize(['admin']), deleteTag);
+router.post('/', authenticate, authorize(['admin','super_admin']), createTag);
+router.put('/:id', authenticate, authorize(['admin','super_admin']), updateTag);
+router.delete('/:id', authenticate, authorize(['admin','super_admin']), deleteTag);
 
 export default router;
 

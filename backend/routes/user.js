@@ -35,7 +35,7 @@ router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   
   // Allow users to access their own profile
-  if (req.user.id === parseInt(id) || req.user.role === 'admin') {
+  if (req.user.id === parseInt(id) || req.user.role === 'admin' || req.user.role === 'super_admin') {
     return getUserById(req, res, next);
   }
   
@@ -62,7 +62,7 @@ router.put('/:id', validate(updateUserValidator), async (req, res, next) => {
   }
   
   // Only admin can update other users
-  if (req.user.role === 'admin') {
+  if (req.user.role === 'admin' || req.user.role === 'super_admin') {
     return updateUser(req, res, next);
   }
   
