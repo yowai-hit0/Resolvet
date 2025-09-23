@@ -6,6 +6,9 @@ import { useAuthStore } from "@/store/auth";
 export default function InvitationsPage() {
   const { user } = useAuthStore();
   const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("admin");
@@ -19,16 +22,18 @@ export default function InvitationsPage() {
   const load = async () => {
     setLoading(true);
     try {
-      const res = await InvitesAPI.list({});
+      const res = await InvitesAPI.list({ page, pageSize });
       const data = res?.data?.items || res?.items || [];
+      const t = res?.data?.total || res?.total || 0;
       setItems(data);
+      setTotal(t);
     } catch {}
     setLoading(false);
   };
 
   useEffect(() => {
     load();
-  }, []);
+  }, [page, pageSize]);
 
   // Auto-refresh when enabled
   useEffect(() => {
@@ -119,6 +124,27 @@ export default function InvitationsPage() {
           </div>
         </div>
       </div>
+
+      {/* Pagination */}
+      {total > 0 && (
+        <div className="flex items-center justify-between gap-4">
+          <div className="text-sm text-muted-foreground">
+            Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, total)} of {total} results
+          </div>
+          <div className="flex items-center gap-2">
+            <select className="select max-w-32" value={pageSize} onChange={(e)=> { setPage(1); setPageSize(Number(e.target.value)); }}>
+              <option value={10}>10 / page</option>
+              <option value={20}>20 / page</option>
+              <option value={50}>50 / page</option>
+            </select>
+            <button className="btn btn-secondary" disabled={page === 1} onClick={()=> setPage((p)=> Math.max(1, p-1))}>Previous</button>
+            {Array.from({ length: Math.max(1, Math.ceil(total / pageSize)) }).slice(0,5).map((_, i) => (
+              <button key={i} className={`btn btn-ghost min-w-[40px] ${page === i+1 ? 'bg-primary text-primary-foreground' : ''}`} onClick={()=> setPage(i+1)}>{i+1}</button>
+            ))}
+            <button className="btn btn-secondary" disabled={page >= Math.ceil(total / pageSize)} onClick={()=> setPage((p)=> p+1)}>Next</button>
+          </div>
+        </div>
+      )}
 
       {/* Modal */}
       {openModal && (

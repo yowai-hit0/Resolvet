@@ -139,9 +139,19 @@
         ],
         "parameters": [],
         "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": "\u001b�\u0004\u0000�������B����ڊ�\u001a�R�����~� �\u001bTQ`cZ@c�\u001a\u001c݋`\u000bG4,R��5�\u0015ʋ�v\u0019?���\u0017>p�~�N\u00054��\fR\u000e\f�E��<��\u0017���\u0006R�\u0016 |��c�U�?kY�Zt����B�\u000f�\u0015�\u0002�=�R+�A�>�V\\\n\bm\u0018��\u0010\u00108-����WN��\u0004\u0014\\\u0014��\t\u0007I_9�0�\r��޼=\u0018^��4�Pޙ��\u000f0�M*��\u001b\f`D��\u000fy\u0000��kN|]�DC����8��-\u0017\u001d\u0010���W����UD�\u001e����xD��4�!�1ym�O�hL\u001d��\n�h�\u0016�zҫO��h@�Ag6�RP��\u0007\u0018���+�p&U��\u0003�'�԰�HQ\u00168�\u0018�}\n�����1;eu�]ґ��\u0014\u0001�z\u0018�A,��\u000f�6h8�+\u000eM�/n�T�8\u0013l�?6`�8\u0013��nֱ\n+�ɒ��|\u0005Ђ\u000b/�;s�Z.��\u0000����\rvL]\u0000µ\u0017�[N�SYI��1I��E,�o\u0018D/(�(�"
+            }
+          },
           "304": {}
         },
-        "tags": []
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/api/v1/users/{id}": {
@@ -1096,9 +1106,19 @@
         ],
         "parameters": [],
         "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": "\u001b\u0000\u0004\u0000�����j��5\bY���J\u001b��KA�͖;��LZ[��\"ik�`\u001c$Pbq`-Nr\u001b�h���h\u0006��_L��<�\u001c\u0006F�Z\u000b\fT\t�/n\u001b�\u0001�X\r�^�w��\"�wOg�V�����bG�mS\u000e;\b�\u000f[F�i\u0001/C�\u001e6�G\u0006��'?8\u0019�:鍉�\u001b������\u0018��\f\u0001�u\\�y�F\u0015\u0019V� u�6��)���n\\�?B`�T�\t\u0019W77w�_��B���*\u000fߨ\"C�8\tCT\n\u001f��1��$�?���q\u0014��\\\u001b� ۮc���d�\u0007�4��,�d\\\u000f����Ƅ0��������zb��ۭA��l\u001cc��;i�uҧ�����:Z�9Ɓ���:5:9�:5F\u0007�aȚ��>�2%��\u0013���8�>��K\u0017]\u000f�]\u000e�i�\t��Zv_\u0004�_�'2\u001di�fwGZ��\u001fF6�����\u00012�\u001d�Luu�_Ls)<M㼅@�D���\u0003"
+            }
+          },
           "304": {}
         },
-        "tags": []
+        "tags": [],
+        "produces": [
+          "application/json"
+        ]
       }
     },
     "/api/v1/invites/{id}/resend": {
