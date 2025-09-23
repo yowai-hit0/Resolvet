@@ -8,6 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
     "start": "node server.js",
+    "full:run": "npm install --omit=dev && npx prisma generate && npx prisma migrate deploy && node prisma/seed.js && node server.js",
+    "full:setup": "npm install --omit=dev && npx prisma generate && npx prisma migrate deploy && node prisma/seed.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",

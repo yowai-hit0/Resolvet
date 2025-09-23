@@ -57,69 +57,44 @@ async function main() {
 
     // Hash password for default users
     const saltRounds = 12;
-    const adminPassword = await bcrypt.hash('admin123', saltRounds);
-    const superAdminPassword = await bcrypt.hash(process.env.SUPER_ADMIN_SEED_PASSWORD || 'superadmin123', saltRounds);
-    const agentPassword = await bcrypt.hash('agent123', saltRounds);
-    const customerPassword = await bcrypt.hash('customer123', saltRounds);
+    const adminPasswordPlain = process.env.DEFAULT_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD || 'admin123';
+    const adminPassword = await bcrypt.hash(adminPasswordPlain, saltRounds);
+    const superAdminPasswordPlain = process.env.SUPER_ADMIN_SEED_PASSWORD || process.env.SUPER_ADMIN_PASSWORD || 'superadmin123';
+    const superAdminPassword = await bcrypt.hash(superAdminPasswordPlain, saltRounds);
 
-    // Create default admin user
+    // Create default admin user (optional)
+    const defaultAdminEmail = process.env.DEFAULT_ADMIN_EMAIL || 'admin@resolveit.com';
     const adminUser = await prisma.user.upsert({
-      where: { email: 'admin@resolveit.com' },
+      where: { email: defaultAdminEmail },
       update: {},
       create: {
-        email: 'admin@resolveit.com',
+        email: defaultAdminEmail,
         password_hash: adminPassword,
-        first_name: 'Maria',
-        last_name: 'Garcia',
+        first_name: process.env.DEFAULT_ADMIN_FIRST_NAME || 'Maria',
+        last_name: process.env.DEFAULT_ADMIN_LAST_NAME || 'Garcia',
         role: 'admin'
       }
     });
 
     // Ensure a Super Admin user exists (env-configurable)
-    const superAdminEmail = process.env.SUPER_ADMIN_SEED_EMAIL || 'superadmin@resolveit.com';
+    const superAdminEmail = process.env.SUPER_ADMIN_SEED_EMAIL || process.env.SUPER_ADMIN_EMAIL || 'superadmin@resolveit.com';
     const superAdminUser = await prisma.user.upsert({
       where: { email: superAdminEmail },
       update: { role: 'super_admin' },
       create: {
         email: superAdminEmail,
         password_hash: superAdminPassword,
-        first_name: 'Super',
-        last_name: 'Admin',
+        first_name: process.env.SUPER_ADMIN_FIRST_NAME || 'Super',
+        last_name: process.env.SUPER_ADMIN_LAST_NAME || 'Admin',
         role: 'super_admin'
       }
     });
 
-    // Create default agent user
-    const agentUser = await prisma.user.upsert({
-      where: { email: 'jane.agent@resolveit.com' },
-      update: {},
-      create: {
-        email: 'jane.agent@resolveit.com',
-        password_hash: agentPassword,
-        first_name: 'Jane',
-        last_name: 'Smith',
-        role: 'agent'
-      }
-    });
-
-    // Create default customer user
-    const customerUser = await prisma.user.upsert({
-      where: { email: 'customer@example.com' },
-      update: {},
-      create: {
-        email: 'customer@example.com',
-        password_hash: customerPassword,
-        first_name: 'John',
-        last_name: 'Doe',
-        role: 'customer'
-      }
-    });
+    // Skipping seeding default agent and customer users per deployment preference
 
     console.log('Created users:', [
       `${adminUser.first_name} ${adminUser.last_name} (${adminUser.role})`,
-      `${superAdminUser.first_name} ${superAdminUser.last_name} (${superAdminUser.role})`,
-      `${agentUser.first_name} ${agentUser.last_name} (${agentUser.role})`,
-      `${customerUser.first_name} ${customerUser.last_name} (${customerUser.role})`
+      `${superAdminUser.first_name} ${superAdminUser.last_name} (${superAdminUser.role})`
     ]);
 
     console.log('Seed completed successfully!');
