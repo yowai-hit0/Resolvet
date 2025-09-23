@@ -69,13 +69,26 @@ app.use('/api/v1/agent', agentRoutes);
 app.use('/api/v1/tags', tagRoutes);
 app.use('/api/v1/invites', inviteRoutes);
 // app.use('/api/v1/customer', customerRoutes)
-// Health check endpoint
+// Health check endpoints
 app.get('/api/v1/health', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Server is running successfully',
     timestamp: new Date().toISOString()
   });
+});
+
+// Render/Platform health checks often call /health and HEAD /health
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', time: new Date().toISOString() });
+});
+app.head('/health', (req, res) => {
+  res.status(200).end();
+});
+
+// Basic root route to avoid 404 on '/'
+app.get('/', (req, res) => {
+  res.status(200).json({ name: 'Resolvet API', version: '1.0.1' });
 });
 
 expressOasGenerator.handleResponses(app, {
