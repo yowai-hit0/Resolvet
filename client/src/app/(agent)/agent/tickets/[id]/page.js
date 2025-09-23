@@ -1,5 +1,6 @@
 // app/(agent)/tickets/[id]/page.js
 "use client";
+export const runtime = 'edge';
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
