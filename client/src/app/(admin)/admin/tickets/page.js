@@ -319,7 +319,8 @@ export default function AdminTickets() {
 
   const handleCloseCreateModal = () => {
     const resetFormState = () => {
-      setForm({ subject: "", description: "", requester_email: "", requester_name: "", priority_id: "", assignee_id: "", tag_ids: [] });
+      setForm({ subject: "", description: "", requester_email: "", requester_name: "", requester_phone: "+250", location: "", priority_id: "", assignee_id: "", tag_ids: [] });
+      setPhoneLocal("");
       setFiles([]);
       setTempUrls([]);
       // reset hidden file input if present
@@ -477,6 +478,33 @@ const removeTempImage = (urlToRemove) => {
 // Update the createTicket function to handle file cleanup
 const createTicket = async (e) => {
   e.preventDefault();
+
+  // Client-side validation mirroring backend Joi (see backend/validators/ticketValidators.js)
+  const validate = () => {
+    const email = (form.requester_email || '').trim();
+    const subject = (form.subject || '').trim();
+    const description = (form.description || '').trim();
+    const requesterName = (form.requester_name || '').trim();
+    const phone = `+250${phoneLocal}`;
+    const priorityId = form.priority_id;
+    const location = form.location;
+
+    if (!subject || subject.length < 5) return 'Subject must be at least 5 characters long';
+    if (!description || description.length < 10) return 'Description must be at least 10 characters long';
+    if (!requesterName || requesterName.length < 2 || requesterName.length > 100) return 'Requester name must be 2-100 characters';
+    if (!/^\+?2507\d{8}$/.test(phone)) return 'Phone must be Rwanda format +2507XXXXXXXX';
+    if (!priorityId) return 'Priority is required';
+    if (email && !/^\S+@\S+\.\S+$/.test(email)) return 'Please provide a valid email address';
+    if (location && !RW_DISTRICTS.includes(location)) return 'Location must be a valid Rwanda district';
+    return null;
+  };
+
+  const validationError = validate();
+  if (validationError) {
+    showToast(validationError, 'error');
+    return;
+  }
+
   setCreating(true);
   
   try {
