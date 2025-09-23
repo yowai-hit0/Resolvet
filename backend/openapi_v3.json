@@ -19,7 +19,94 @@
     "/api/v1/auth/login": {
       "post": {
         "summary": "/api/v1/auth/login",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "number",
+                              "example": 2
+                            },
+                            "email": {
+                              "type": "string",
+                              "example": "ybarasingiz@gmail.com"
+                            },
+                            "first_name": {
+                              "type": "string",
+                              "example": "barasingiza"
+                            },
+                            "last_name": {
+                              "type": "string",
+                              "example": "yasmine"
+                            },
+                            "role": {
+                              "type": "string",
+                              "example": "super_admin"
+                            },
+                            "is_active": {
+                              "type": "boolean",
+                              "example": true
+                            }
+                          }
+                        },
+                        "token": {
+                          "type": "string",
+                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsInJvbGUiOiJzdXBlcl9hZG1pbiIsImlhdCI6MTc1ODY1MDY3NiwiZXhwIjoxNzU5MjU1NDc2fQ.BQvbnn_H3YFAlMAzSXxKsw8EyV_9FeMz9v4BfagjXw8"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Login successful"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid credentials"
+                    },
+                    "stack": {
+                      "type": "string",
+                      "example": "Error: Invalid credentials\n    at ApiError.unauthorized (file:///C:/Users/ybara/Downloads/Projects/Resolvet/backend/utils/apiError.js:29:12)\n    at file:///C:/Users/ybara/Downloads/Projects/Resolvet/backend/controllers/authController.js:87:22"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },
@@ -33,7 +120,19 @@
     "/api/v1/users/me": {
       "get": {
         "summary": "/api/v1/users/me",
-        "responses": {},
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "\u001bA\u0005\u0000dS�����E\u0007P[�6\u0015\u001cG�&lx���\u0005n;��\u0001��\u0017�\u0013���a\u001e����؋\u0012\f0\u0000K�\tƮ�pjv��`��\\)��C%;K�������37�4�cn�T-\u0007~e�h�-�ā1ƤcgS\rw:\u001f:���7T�YUw\u0004B�\u000b\u0010_��\u0015�B\u001a)b��\u0015�flH9+�Ɏ݂�(�ji(��՝\u0015Rw�X\br��\u0003��#cFs+��#Æ��\r�Ґ�\u000b�6\u0016�\u0014\u0002)\u001f���?��\r\u0005�]\u0000�\u0012qXD\u0018D\u0017\r\"4\"�!�a,�\u001f�yG\u0016���,bW\u0017�f�;2�\u001d�Xc!�!6�O;S�����^Y�y�,�X\b�\u0004�0 W�\u000eA�@�\u000b��|P�\u001e��j��ߏ�?�\u0006���D|�@+'�\u001fd\u001e�^J�Iz\u001eo�\u0014|\u000f"
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },
@@ -47,7 +146,11 @@
     "/api/v1/users": {
       "get": {
         "summary": "/api/v1/users",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },
@@ -103,7 +206,61 @@
     "/api/v1/tickets/stats": {
       "get": {
         "summary": "/api/v1/tickets/stats",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "stats": {
+                          "type": "object",
+                          "properties": {
+                            "byStatus": {
+                              "type": "object",
+                              "properties": {}
+                            },
+                            "byPriority": {
+                              "type": "object",
+                              "properties": {}
+                            },
+                            "recent": {
+                              "type": "object",
+                              "properties": {}
+                            },
+                            "total": {
+                              "type": "number",
+                              "example": 0
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Ticket statistics retrieved successfully"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },
@@ -158,7 +315,11 @@
     "/api/v1/tickets": {
       "get": {
         "summary": "/api/v1/tickets",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       },
       "post": {
@@ -320,14 +481,30 @@
     "/api/v1/admin/analytics/agent-performance": {
       "get": {
         "summary": "/api/v1/admin/analytics/agent-performance",
-        "responses": {},
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "\u001b \b\u0000��U�i���Z�^��O�%(�\n�\u0003����-�4�^x� �}�Y\u0016`YY~��p8\u001aO8�\u001d�\u000fd�\u0003���\u001d[/O��R��\u0000���R_\u0014���ʷI&�#\u0007�c\u0007��a�OA�g\u000b��\u001c�F�\nZ~��8\u0018^SлX�\u001c�2\u0014\n}g\u0016��\u0001�jҊ���#Ş�2�jU*ڢ��8\u0016=S�Į*_\u0004��\u0012�hLߣʄ��%ӯ^�qy�gL��$��E,�\tn���X�M�-�\t.LK�s���W�:?�j�\u0011\u0000��ͦ?��>\u0001p|d�oI���\u0012���PG�;C~d�{�����p\u0013���PE��J��\r����:�P��� ���_�ס���}�8v�|P��\u0017JD�39|�G�e+F�*�����\r��%�4<y��BW���XK�ӜgO��|ш��\\��{o2�nݬN�^�rmV��?��nρ\u0005���\r\u0003V)\u0000\u001c\u0000\u0016\u0000\u000b�\u0001�\n�X�U\u0017˾�\u0004�\u000eX\u0004�p\u0002,�Y\fh��Չ�K���Og\u000b��٤\n\u000f,b\u0005�V։׫� �`ZZ\u001dv|t��}�E\u000eQg�\u0015���<�&I\b�f���w�<d\u0002?uX�r�H�w{)n:\u001b�^\u0001"
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },
     "/api/v1/admin/analytics/system": {
       "get": {
         "summary": "/api/v1/admin/analytics/system",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },
@@ -390,59 +567,6 @@
       "get": {
         "summary": "/api/v1/tags",
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "tags": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "name"
-                            ]
-                          },
-                          "example": [
-                            {
-                              "id": 1,
-                              "name": "authentication"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Tags retrieved successfully"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          },
           "304": {
             "description": ""
           }
@@ -543,6 +667,50 @@
     "/api/v1/health": {
       "get": {
         "summary": "/api/v1/health",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Server is running successfully"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "example": "2025-09-23T18:04:21.766Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "/health",
+        "responses": {},
+        "tags": []
+      },
+      "head": {
+        "summary": "/health",
+        "responses": {},
+        "tags": []
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "/",
         "responses": {},
         "tags": []
       }

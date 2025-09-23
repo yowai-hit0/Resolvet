@@ -5,6 +5,28 @@ import { useAuthStore } from "@/store/auth";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001/api/v1";
 
+// Simple in-memory cooldowns to avoid hammering the backend on repeated failures
+// Map key: `${method}|${url}` -> timestamp (ms) when cooldown ends
+const requestCooldowns = new Map();
+
+function getRequestKey(config) {
+  const method = (config?.method || "get").toLowerCase();
+  // Use full URL if axios resolved it, else use provided path
+  const url = config?.url || "";
+  return `${method}|${url}`;
+}
+
+function isOnCooldown(config) {
+  const key = getRequestKey(config);
+  const endsAt = requestCooldowns.get(key) || 0;
+  return Date.now() < endsAt;
+}
+
+function setCooldown(config, ms) {
+  const key = getRequestKey(config);
+  requestCooldowns.set(key, Date.now() + ms);
+}
+
 export const api = axios.create({
   baseURL: API_BASE,
   withCredentials: true,
@@ -13,6 +35,11 @@ export const api = axios.create({
 
 
 api.interceptors.request.use((config) => {
+  // Short-circuit requests that are currently on cooldown
+  if (isOnCooldown(config)) {
+    // Do not send the request; surface a lightweight client-side error
+    return Promise.reject(new Error("request_on_cooldown"));
+  }
   const token = useAuthStore.getState().token;
   if (token) {
     config.headers = config.headers || {};
@@ -25,6 +52,11 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Ignore locally cancelled cooldown errors
+    if (error instanceof Error && error.message === "request_on_cooldown") {
+      return Promise.reject(error);
+    }
+
     if (error?.response?.status === 401) {
 
       if (typeof window !== "undefined") {
@@ -51,13 +83,28 @@ api.interceptors.response.use(
         }
       }
     }
+    // For server-side errors (>= 500), enable a short cooldown per endpoint
+    const status = error?.response?.status;
+    if (status >= 500) {
+      const cfg = error?.config || {};
+      // Detect known Prisma enum error to increase cooldown
+      const message = error?.response?.data?.message || error?.message || "";
+      const isPrismaEnumErr = message.includes('invalid input value for enum') || message.includes('TicketStatus');
+      // 5s default; 30s for known noisy errors
+      setCooldown(cfg, isPrismaEnumErr ? 30000 : 5000);
+    }
     const isLoginError = error?.config?.url?.includes("/auth/login");
     if(!isLoginError){
-    try {
-      const message = error?.response?.data?.message || error?.message || "Request failed";
-      useToastStore.getState().show(message, "error", 4000);
-    } catch {}
-  }
+      // Throttle duplicate toasts while on cooldown
+      const cfg = error?.config || {};
+      const onCooldown = isOnCooldown(cfg);
+      if (!onCooldown) {
+        try {
+          const message = error?.response?.data?.message || error?.message || "Request failed";
+          useToastStore.getState().show(message, "error", 4000);
+        } catch {}
+      }
+    }
     return Promise.reject(error);
   }
 );

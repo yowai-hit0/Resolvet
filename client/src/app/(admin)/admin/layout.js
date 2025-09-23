@@ -16,7 +16,7 @@ export default function AdminLayout({ children }) {
       <div className="min-h-screen bg-background">
         {/* Navbar - fixed at top (highest z-index) */}
         <div className="fixed top-0 left-0 right-0 z-50">
-          <Navbar title="Clerk Dashboard" />
+          {user?.role === 'super_admin' ? <Navbar title="Admin Dashboard" /> : <Navbar title="Clerk Dashboard" />}
         </div>
         
         {/* Mobile overlay - below navbar but above content */}
