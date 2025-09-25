@@ -9,6 +9,16 @@ export const getTransporter = () => {
   const secure = String(process.env.SMTP_SECURE || 'false') === 'true';
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
+  const pool = String(process.env.SMTP_POOL || 'true') === 'true';
+  const maxConnections = Number(process.env.SMTP_MAX_CONNECTIONS || 5);
+  const maxMessages = Number(process.env.SMTP_MAX_MESSAGES || 100);
+  const connectionTimeout = Number(process.env.SMTP_CONNECTION_TIMEOUT_MS || 10000);
+  const greetingTimeout = Number(process.env.SMTP_GREETING_TIMEOUT_MS || 10000);
+  const socketTimeout = Number(process.env.SMTP_SOCKET_TIMEOUT_MS || 10000);
+  const requireTLS = String(process.env.SMTP_REQUIRE_TLS || 'false') === 'true';
+  const ignoreTLS = String(process.env.SMTP_IGNORE_TLS || 'false') === 'true';
+  const tlsRejectUnauthorized = String(process.env.SMTP_TLS_REJECT_UNAUTHORIZED || 'true') === 'true';
+  const enableLogger = String(process.env.SMTP_LOGGER || 'false') === 'true';
 
   if (!host || !user || !pass) {
     // Fallback: JSON transport for dev logging
@@ -21,6 +31,16 @@ export const getTransporter = () => {
     port,
     secure,
     auth: { user, pass },
+    pool,
+    maxConnections,
+    maxMessages,
+    connectionTimeout,
+    greetingTimeout,
+    socketTimeout,
+    requireTLS,
+    ignoreTLS,
+    tls: { rejectUnauthorized: tlsRejectUnauthorized },
+    logger: enableLogger,
   });
   return transporter;
 };
