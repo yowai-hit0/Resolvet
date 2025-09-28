@@ -13,10 +13,9 @@ export const createTicketValidator = Joi.object({
   requester_email: Joi.string().email().optional().allow('', null).messages({
     'string.email': 'Please provide a valid email address'
   }),
-  requester_name: Joi.string().min(2).max(100).required().messages({
+  requester_name: Joi.string().min(2).max(100).optional().allow('', null).messages({
     'string.min': 'Requester name must be at least 2 characters long',
-    'string.max': 'Requester name cannot exceed 100 characters',
-    'any.required': 'Requester name is required'
+    'string.max': 'Requester name cannot exceed 100 characters'
   }),
   requester_phone: Joi.string()
     .pattern(/^\+?2507\d{8}$/)
@@ -51,7 +50,8 @@ export const createTicketValidator = Joi.object({
     'array.base': 'Tag IDs must be an array',
     'number.base': 'Each tag ID must be a number'
   }),
-  image_urls: Joi.array().items(Joi.string().uri()).optional().allow(null).default([])
+  image_urls: Joi.array().items(Joi.string().uri()).optional().allow(null).default([]),
+  media_urls: Joi.array().items(Joi.string().uri()).optional().allow(null).default([])
 });
 
 export const updateTicketValidator = Joi.object({

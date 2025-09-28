@@ -26,6 +26,7 @@ export default function TicketDetail() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [agents, setAgents] = useState([]);
+  const [admins, setAdmins] = useState([]);
   const [allTags, setAllTags] = useState([]);
   const [priorities, setPriorities] = useState([]);
   const [comment, setComment] = useState("");
@@ -72,6 +73,18 @@ export default function TicketDetail() {
   useEffect(() => {
     UsersAPI.list({ role: "agent", page: 1, limit: 100 })
       .then((d) => setAgents(d?.data?.users || d?.users || []))
+      .catch(() => {});
+    
+    // Load admins and super_admins
+    Promise.all([
+      UsersAPI.list({ role: "admin", page: 1, limit: 100 }),
+      UsersAPI.list({ role: "super_admin", page: 1, limit: 100 })
+    ])
+      .then(([adminRes, superAdminRes]) => {
+        const adminUsers = adminRes?.data?.users || adminRes?.users || [];
+        const superAdminUsers = superAdminRes?.data?.users || superAdminRes?.users || [];
+        setAdmins([...adminUsers, ...superAdminUsers]);
+      })
       .catch(() => {});
     
     // Load priorities
@@ -281,8 +294,8 @@ export default function TicketDetail() {
                       disabled={saving}
                     >
                       <option value="">Unassigned</option>
-                      {agents.map((a) => (
-                        <option key={a.id} value={a.id}>{a.email}</option>
+                      {[...agents, ...admins].map((a) => (
+                        <option key={a.id} value={a.id}>{a.email} ({a.role})</option>
                       ))}
                     </select>
                   ) : (

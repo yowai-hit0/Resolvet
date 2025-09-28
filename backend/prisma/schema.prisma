@@ -58,7 +58,7 @@ model Ticket {
   subject         String
   description     String
   requester_email String?
-  requester_name  String
+  requester_name  String?
   requester_phone String
   location        String?
   status          TicketStatus @default(New)

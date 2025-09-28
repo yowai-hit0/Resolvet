@@ -137,8 +137,8 @@ function MobileFilterSheet({ isOpen, onClose, filters, onFilterChange, agents, p
               onChange={(e) => onFilterChange('assigneeId', e.target.value)}
             >
               <option value="">Any Assignee</option>
-              {agents.map((a) => (
-                <option key={a.id} value={a.id}>{a.email}</option>
+              {[...agents, ...admins].map((a) => (
+                <option key={a.id} value={a.id}>{a.email} ({a.role})</option>
               ))}
             </select>
           </div>
@@ -192,6 +192,49 @@ function ImagePreview({ url, onRemove, showRemove = true }) {
   );
 }
 
+function MediaPreview({ url, onRemove, showRemove = true }) {
+  const getFileType = (url) => {
+    const extension = url.split('.').pop()?.toLowerCase();
+    if (['mp3', 'wav', 'ogg', 'aac', 'm4a'].includes(extension)) return 'audio';
+    if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'].includes(extension)) return 'video';
+    return 'unknown';
+  };
+
+  const fileType = getFileType(url);
+  
+  return (
+    <div className="relative group">
+      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded border flex items-center justify-center">
+        {fileType === 'audio' ? (
+          <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          </svg>
+        ) : fileType === 'video' ? (
+          <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+        ) : (
+          <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        )}
+      </div>
+      {showRemove && (
+        <button
+          type="button"
+          aria-label="Remove media"
+          className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-black/80 hover:bg-black text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg ring-1 sm:ring-2 ring-white"
+          onClick={() => onRemove(url)}
+        >
+          <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function AdminTickets() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -202,6 +245,7 @@ export default function AdminTickets() {
   const [priorityId, setPriorityId] = useState("");
   const [assigneeId, setAssigneeId] = useState("");
   const [agents, setAgents] = useState([]);
+  const [admins, setAdmins] = useState([]);
   const [priorities, setPriorities] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
   const [selectedIds, setSelectedIds] = useState(new Set());
@@ -219,6 +263,7 @@ export default function AdminTickets() {
   const [files, setFiles] = useState([]);
   const [fileUploading, setFileUploading] = useState(false);
   const [tempUrls, setTempUrls] = useState([]);
+  const [tempMediaUrls, setTempMediaUrls] = useState([]);
   const showToast = useToastStore((s) => s.show);
   const STORAGE_KEY = "admin_tickets_state";
   const SAVED_VIEWS_KEY = "admin_tickets_saved_views";
@@ -292,6 +337,18 @@ export default function AdminTickets() {
         setAgents(users);
       })
       .catch(() => {});
+    
+    // load admins and super_admins for dropdown
+    Promise.all([
+      UsersAPI.list({ role: "admin", page: 1, limit: 50 }),
+      UsersAPI.list({ role: "super_admin", page: 1, limit: 50 })
+    ])
+      .then(([adminRes, superAdminRes]) => {
+        const adminUsers = adminRes?.data?.users || adminRes?.users || [];
+        const superAdminUsers = superAdminRes?.data?.users || superAdminRes?.users || [];
+        setAdmins([...adminUsers, ...superAdminUsers]);
+      })
+      .catch(() => {});
     // load priorities
     PrioritiesAPI.list()
       .then((r) => {
@@ -326,12 +383,14 @@ export default function AdminTickets() {
       setPhoneLocal("");
       setFiles([]);
       setTempUrls([]);
+      setTempMediaUrls([]);
       // reset hidden file input if present
       try { const input = document.getElementById('file-upload'); if (input) input.value = ""; } catch {}
     };
-    if (tempUrls.length > 0) {
+    if (tempUrls.length > 0 || tempMediaUrls.length > 0) {
       // Always cleanup temporary uploads on cancel
-      cleanupTempFiles(tempUrls).finally(() => {
+      const allTempUrls = [...tempUrls, ...tempMediaUrls];
+      cleanupTempFiles(allTempUrls).finally(() => {
         resetFormState();
         setShowCreate(false);
       });
@@ -350,32 +409,39 @@ const onTempUpload = async (e) => {
   const files = Array.from(e.target.files || []);
   if (files.length === 0) return;
   
-  // Validate image files only
-  const imageFiles = files.filter(file => file.type.startsWith('image/'));
-  if (imageFiles.length !== files.length) {
-    showToast('Only image files are allowed', 'error');
+  // Validate media files (images, audio, video)
+  const mediaFiles = files.filter(file => 
+    file.type.startsWith('image/') || 
+    file.type.startsWith('audio/') || 
+    file.type.startsWith('video/')
+  );
+  if (mediaFiles.length !== files.length) {
+    showToast('Only image, audio, and video files are allowed', 'error');
     return;
   }
   
-  // Check file size (5MB max)
-  const oversizedFiles = imageFiles.filter(file => file.size > 5 * 1024 * 1024);
+  // Check file size (5MB for images, 50MB for audio/video)
+  const oversizedFiles = mediaFiles.filter(file => {
+    const maxSize = file.type.startsWith('image/') ? 5 * 1024 * 1024 : 50 * 1024 * 1024;
+    return file.size > maxSize;
+  });
   if (oversizedFiles.length > 0) {
-    showToast('Some files exceed the 5MB limit', 'error');
+    showToast('Some files exceed the size limit (5MB for images, 50MB for audio/video)', 'error');
     return;
   }
   
   setFileUploading(true);
   try {
     const fd = new FormData();
-    imageFiles.forEach((f) => fd.append('images', f));
+    mediaFiles.forEach((f) => fd.append('media', f));
     
-    const r = await api.post('/tickets/attachments/temp/images', fd, { 
+    const r = await api.post('/tickets/attachments/temp/media', fd, { 
       headers: { 'Content-Type': 'multipart/form-data' } 
     });
     
     const urls = r?.data?.data?.urls || r?.data?.urls || [];
-    setTempUrls((prev) => Array.from(new Set([...(prev || []), ...urls])));
-    showToast('Images uploaded successfully', 'success');
+    setTempMediaUrls((prev) => Array.from(new Set([...(prev || []), ...urls])));
+    showToast('Media files uploaded successfully', 'success');
   } catch (err) {
     showToast('Upload failed', 'error');
   } finally {
@@ -478,6 +544,14 @@ const removeTempImage = (urlToRemove) => {
     .catch(err => console.error('Failed to delete temp image:', err));
 };
 
+const removeTempMedia = (urlToRemove) => {
+  setTempMediaUrls(prev => prev.filter(url => url !== urlToRemove));
+  
+  // Also delete from Cloudinary
+  api.post('/tickets/attachments/temp/delete', { urls: [urlToRemove] })
+    .catch(err => console.error('Failed to delete temp media:', err));
+};
+
 // Update the createTicket function to handle file cleanup
 const createTicket = async (e) => {
   e.preventDefault();
@@ -494,7 +568,7 @@ const createTicket = async (e) => {
 
     if (!subject || subject.length < 5) return 'Subject must be at least 5 characters long';
     if (!description || description.length < 10) return 'Description must be at least 10 characters long';
-    if (!requesterName || requesterName.length < 2 || requesterName.length > 100) return 'Requester name must be 2-100 characters';
+    if (requesterName && (requesterName.length < 2 || requesterName.length > 100)) return 'Requester name must be 2-100 characters';
     if (!/^\+?2507\d{8}$/.test(phone)) return 'Phone must be Rwanda format +2507XXXXXXXX';
     if (!priorityId) return 'Priority is required';
     if (email && !/^\S+@\S+\.\S+$/.test(email)) return 'Please provide a valid email address';
@@ -515,13 +589,14 @@ const createTicket = async (e) => {
       subject: form.subject,
       description: form.description,
       requester_email: form.requester_email,
-      requester_name: form.requester_name,
+      requester_name: form.requester_name || undefined,
       requester_phone: `+250${phoneLocal}`,
       location: form.location || undefined,
       priority_id: Number(form.priority_id),
       assignee_id: form.assignee_id ? Number(form.assignee_id) : undefined,
       tag_ids: form.tag_ids,
-      image_urls: tempUrls // This will attach the pre-uploaded images
+      image_urls: tempUrls, // This will attach the pre-uploaded images
+      media_urls: tempMediaUrls // This will attach the pre-uploaded media files
     };
     
     const created = await api.post("/tickets", payload);
@@ -595,8 +670,8 @@ const createTicket = async (e) => {
                 onChange={(e) => setAssigneeId(e.target.value)}
               >
                 <option value="">Assign to...</option>
-                {agents.map((a) => (
-                  <option key={a.id} value={a.id}>{a.email}</option>
+                {[...agents, ...admins].map((a) => (
+                  <option key={a.id} value={a.id}>{a.email} ({a.role})</option>
                 ))}
               </select>
               <button 
@@ -890,12 +965,12 @@ const createTicket = async (e) => {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Requester Name *</label>
+                  <label className="text-sm font-medium mb-1 block">Requester Name</label>
                   <input 
                     className="input w-full" 
                     value={form.requester_name} 
                     onChange={(e) => setForm({ ...form, requester_name: e.target.value })} 
-                    required 
+                    placeholder="Optional"
                   />
                 </div>
                 <div>
@@ -985,8 +1060,8 @@ const createTicket = async (e) => {
                     onChange={(e) => setForm({ ...form, assignee_id: e.target.value })}
                   >
                     <option value="">Unassigned</option>
-                    {agents.map((a) => (
-                      <option key={a.id} value={a.id}>{a.email}</option>
+                    {[...agents, ...admins].map((a) => (
+                      <option key={a.id} value={a.id}>{a.email} ({a.role})</option>
                     ))}
                   </select>
                 </div>
@@ -1082,11 +1157,11 @@ const createTicket = async (e) => {
               <div>
                 <label className="text-sm font-medium mb-1 block">Attachments</label>
                 
-                {/* Image previews with scroll */}
-                {tempUrls.length > 0 && (
+                {/* Media previews with scroll */}
+                {(tempUrls.length > 0 || tempMediaUrls.length > 0) && (
                   <div className="mb-3">
                     <div className="text-xs text-muted-foreground mb-2">
-                      {tempUrls.length} image{tempUrls.length !== 1 ? 's' : ''} selected
+                      {tempUrls.length + tempMediaUrls.length} file{(tempUrls.length + tempMediaUrls.length) !== 1 ? 's' : ''} selected
                     </div>
                     <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 bg-muted rounded-lg">
                       {tempUrls.map((url) => (
@@ -1096,6 +1171,13 @@ const createTicket = async (e) => {
                           onRemove={removeTempImage}
                         />
                       ))}
+                      {tempMediaUrls.map((url) => (
+                        <MediaPreview 
+                          key={url} 
+                          url={url} 
+                          onRemove={removeTempMedia}
+                        />
+                      ))}
                     </div>
                   </div>
                 )}
@@ -1103,7 +1185,7 @@ const createTicket = async (e) => {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                   <input 
                     type="file" 
-                    accept="image/*" 
+                    accept="image/*,audio/*,video/*" 
                     multiple 
                     onChange={onTempUpload} 
                     disabled={fileUploading} 
@@ -1122,10 +1204,10 @@ const createTicket = async (e) => {
                         </svg>
                         Uploading...
                       </span>
-                    ) : 'Choose Images'}
+                    ) : 'Choose Media Files'}
                   </label>
                   <span className="text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-0">
-                    {fileUploading ? 'Uploading images...' : 'PNG, JPG, GIF up to 5MB'}
+                    {fileUploading ? 'Uploading media files...' : 'Images (5MB), Audio/Video (50MB)'}
                   </span>
                 </div>
               </div>

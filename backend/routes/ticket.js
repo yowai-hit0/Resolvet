@@ -11,7 +11,7 @@ import {
 } from '../controllers/ticketController.js';
 import { authenticate, authorize } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
-import { uploadSingleImage, uploadMultipleImages } from '../middleware/uploadImage.js';
+import { uploadSingleImage, uploadMultipleImages, uploadSingleMedia, uploadMultipleMedia } from '../middleware/uploadImage.js';
 // import { uploadMultipleImages as uploadTempImages, handleUploadErrors as handleTempUploadErrors } from '../middleware/uploadImage.js';
 import {
   createTicketValidator,
@@ -19,7 +19,7 @@ import {
   ticketQueryValidator,
   commentValidator
 } from '../validators/ticketValidators.js';
-import { uploadTicketImage, deleteTicketAttachment, uploadTicketImages, getTicketPriorities, createTicketPriority, updateTicketPriority, deleteTicketPriority, uploadTempTicketImages } from '../controllers/ticketController.js';
+import { uploadTicketImage, deleteTicketAttachment, uploadTicketImages, getTicketPriorities, createTicketPriority, updateTicketPriority, deleteTicketPriority, uploadTempTicketImages, uploadTicketMedia, uploadTicketMediaFiles, uploadTempTicketMedia } from '../controllers/ticketController.js';
 
 const router = express.Router();
 
@@ -52,13 +52,16 @@ router.put('/:id', authorize(['admin', 'agent','super_admin']), validate(updateT
 // Add comment to ticket
 router.post('/:id/comments', authorize(['admin', 'agent','super_admin']), validate(commentValidator), addComment);
 
-// Image attachments
+// Media attachments (images, audio, video)
 router.post('/:id/attachments/image', authorize(['admin', 'agent','super_admin']), uploadSingleImage, uploadTicketImage);
 router.post('/:id/attachments/images', authorize(['admin', 'agent','super_admin']), uploadMultipleImages, uploadTicketImages);
+router.post('/:id/attachments/media', authorize(['admin', 'agent','super_admin']), uploadSingleMedia, uploadTicketMedia);
+router.post('/:id/attachments/media-files', authorize(['admin', 'agent','super_admin']), uploadMultipleMedia, uploadTicketMediaFiles);
 router.delete('/:id/attachments/:attachmentId', authorize(['admin', 'agent','super_admin']), deleteTicketAttachment);
 
 // Temp pre-create upload (authenticated users)
 router.post('/attachments/temp/images', uploadMultipleImages, uploadTempTicketImages);
+router.post('/attachments/temp/media', uploadMultipleMedia, uploadTempTicketMedia);
 router.delete('/attachments/temp', authorize(['admin', 'agent', 'customer','super_admin']), deleteTempUploads);
 // Convenience POST endpoint to support clients that cannot send DELETE with body
 router.post('/attachments/temp/delete', authorize(['admin', 'agent', 'customer','super_admin']), deleteTempUploads);

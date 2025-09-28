@@ -328,9 +328,10 @@ export const createTicket = asyncHandler(async (req, res) => {
     priority_id,
     assignee_id,
     tag_ids,
-    image_urls
+    image_urls,
+    media_urls
   } = req.body;
-  let tempUrlsToCleanup = image_urls || [];
+  let tempUrlsToCleanup = [...(image_urls || []), ...(media_urls || [])];
   // Verify priority exists
   const priority = await prisma.ticketPriority.findUnique({
     where: { id: priority_id }
@@ -340,14 +341,28 @@ export const createTicket = asyncHandler(async (req, res) => {
     throw ApiError.badRequest('Invalid priority');
   }
 
-  // Verify assignee exists and is an agent (if provided)
+  // Verify assignee exists and has appropriate role (if provided)
   if (assignee_id) {
     const assignee = await prisma.user.findUnique({
       where: { id: assignee_id }
     });
 
-    if (!assignee || assignee.role !== 'agent') {
-      throw ApiError.badRequest('Assignee must be an active agent');
+    if (!assignee) {
+      throw ApiError.badRequest('Assignee not found');
+    }
+
+    // Allow self-assignment if user created the ticket or is admin/super_admin
+    if (assignee_id === req.user.id) {
+      // Self-assignment allowed for ticket creators and admins
+      if (req.user.role !== 'admin' && req.user.role !== 'super_admin') {
+        // For non-admins, only allow self-assignment if they're creating the ticket
+        // This will be handled in the ticket creation logic
+      }
+    } else {
+      // For assigning to others, only allow agents, admins, or super_admins
+      if (!['agent', 'admin', 'super_admin'].includes(assignee.role)) {
+        throw ApiError.badRequest('Assignee must be an agent, admin, or super admin');
+      }
     }
   }
 
@@ -436,6 +451,36 @@ export const createTicket = asyncHandler(async (req, res) => {
         }
       }
 
+      // Attach pre-uploaded media urls if provided
+      if (media_urls && Array.isArray(media_urls) && media_urls.length > 0) {
+        const uniqueUrls = Array.from(new Set(media_urls.filter(Boolean)));
+        if (uniqueUrls.length > 0) {
+          await tx.attachment.createMany({
+            data: uniqueUrls.map((url) => {
+              // Determine mime type from URL extension
+              const extension = url.split('.').pop()?.toLowerCase();
+              let mimeType = 'application/octet-stream';
+              if (['mp3', 'wav', 'ogg', 'aac', 'm4a'].includes(extension)) {
+                mimeType = 'audio';
+              } else if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm'].includes(extension)) {
+                mimeType = 'video';
+              }
+              
+              return {
+                original_filename: url.split('/').pop() || 'media',
+                stored_filename: url,
+                mime_type: mimeType,
+                size: BigInt(0),
+                ticket_id: newTicket.id,
+                uploaded_by_id: req.user.id
+              };
+            })
+          });
+          // Clear temp URLs since they're now attached to a ticket
+          tempUrlsToCleanup = tempUrlsToCleanup.filter(url => !uniqueUrls.includes(url));
+        }
+      }
+
     return newTicket;
   });
 
@@ -481,11 +526,8 @@ export const updateTicket = asyncHandler(async (req, res) => {
     }
   }
 
-  // Verify assignee exists and is an agent if updating
+  // Verify assignee exists and has appropriate role if updating
   if (updates.assignee_id !== undefined) {
-    if(!(req.user.role === 'admin' || req.user.role === 'super_admin')){
-      throw ApiError.forbidden('access denied');
-    }
     if (updates.assignee_id === null) {
       updates.assignee_id = null;
     } else {
@@ -493,8 +535,26 @@ export const updateTicket = asyncHandler(async (req, res) => {
         where: { id: updates.assignee_id }
       });
 
-      if (!assignee || assignee.role !== 'agent') {
-        throw ApiError.badRequest('Assignee must be an active agent');
+      if (!assignee) {
+        throw ApiError.badRequest('Assignee not found');
+      }
+
+      // Allow self-assignment if user created the ticket or is admin/super_admin
+      if (updates.assignee_id === req.user.id) {
+        // Self-assignment allowed for ticket creators and admins
+        if (req.user.role !== 'admin' && req.user.role !== 'super_admin' && existingTicket.created_by_id !== req.user.id) {
+          throw ApiError.forbidden('You can only self-assign tickets you created');
+        }
+      } else {
+        // For assigning to others, only admins and super_admins can do this
+        if (!(req.user.role === 'admin' || req.user.role === 'super_admin')) {
+          throw ApiError.forbidden('Only admins can assign tickets to others');
+        }
+        
+        // For assigning to others, only allow agents, admins, or super_admins
+        if (!['agent', 'admin', 'super_admin'].includes(assignee.role)) {
+          throw ApiError.badRequest('Assignee must be an agent, admin, or super admin');
+        }
       }
     }
   }
@@ -523,13 +583,24 @@ export const updateTicket = asyncHandler(async (req, res) => {
   const updatedTicket = await prisma.$transaction(async (tx) => {
     // Handle tags separately
     const { tag_ids, ...rest } = updates;
+    
+    // Only update updated_at for content changes (description, subject), not status changes
+    const contentFields = ['description', 'subject', 'requester_phone'];
+    const hasContentChanges = contentFields.some(field => updates[field] !== undefined);
+    
+    const updateData = {
+      ...rest,
+      ...statusUpdates
+    };
+    
+    // Only set updated_at if there are content changes
+    if (hasContentChanges) {
+      updateData.updated_at = now;
+    }
+    
     const ticket = await tx.ticket.update({
       where: { id: parseInt(id) },
-      data: {
-        ...rest,
-        ...statusUpdates,
-        updated_at: now
-      },
+      data: updateData,
       include: {
         priority: true,
         assignee: {
@@ -723,8 +794,8 @@ export const addComment = asyncHandler(async (req, res) => {
   return res.status(response.statusCode).json(response);
 });
 
-// Upload image attachment to a ticket (admin, agent)
-export const uploadTicketImage = asyncHandler(async (req, res) => {
+// Upload media attachment to a ticket (admin, agent)
+export const uploadTicketMedia = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   const ticket = await prisma.ticket.findUnique({ where: { id: parseInt(id) } });
@@ -737,13 +808,21 @@ export const uploadTicketImage = asyncHandler(async (req, res) => {
   }
 
   if (!req.file) {
-    throw ApiError.badRequest('No image file provided');
+    throw ApiError.badRequest('No media file provided');
+  }
+
+  // Determine resource type based on mime type
+  let resourceType = 'image';
+  if (req.file.mimetype.startsWith('video/')) {
+    resourceType = 'video';
+  } else if (req.file.mimetype.startsWith('audio/')) {
+    resourceType = 'video'; // Cloudinary uses 'video' for audio files
   }
 
   // Upload to Cloudinary using buffer
   const uploadResult = await new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: 'resolvet/tickets', resource_type: 'image' },
+      { folder: 'resolvet/tickets', resource_type: resourceType },
       (error, result) => {
         if (error) return reject(error);
         resolve(result);
@@ -772,12 +851,15 @@ export const uploadTicketImage = asyncHandler(async (req, res) => {
     }
   });
 
-  const response = ApiResponse.created({ attachment }, 'Image uploaded successfully');
+  const response = ApiResponse.created({ attachment }, 'Media uploaded successfully');
   return res.status(response.statusCode).json(response);
 });
 
-// Upload multiple image attachments
-export const uploadTicketImages = asyncHandler(async (req, res) => {
+// Keep the old function name for backward compatibility
+export const uploadTicketImage = uploadTicketMedia;
+
+// Upload multiple media attachments
+export const uploadTicketMediaFiles = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   const ticket = await prisma.ticket.findUnique({ where: { id: parseInt(id) } });
@@ -788,12 +870,20 @@ export const uploadTicketImages = asyncHandler(async (req, res) => {
     throw ApiError.forbidden('Access denied to this ticket');
   }
   if (!req.files || req.files.length === 0) {
-    throw ApiError.badRequest('No image files provided');
+    throw ApiError.badRequest('No media files provided');
   }
 
   const uploads = await Promise.all(req.files.map(file => new Promise((resolve, reject) => {
+    // Determine resource type based on mime type
+    let resourceType = 'image';
+    if (file.mimetype.startsWith('video/')) {
+      resourceType = 'video';
+    } else if (file.mimetype.startsWith('audio/')) {
+      resourceType = 'video'; // Cloudinary uses 'video' for audio files
+    }
+
     const stream = cloudinary.uploader.upload_stream(
-      { folder: 'resolvet/tickets', resource_type: 'image' },
+      { folder: 'resolvet/tickets', resource_type: resourceType },
       (error, result) => {
         if (error) return reject(error);
         resolve({ result, file });
@@ -826,9 +916,12 @@ export const uploadTicketImages = asyncHandler(async (req, res) => {
     return createdAttachments;
   });
 
-  const response = ApiResponse.created({ attachments: created }, 'Images uploaded successfully');
+  const response = ApiResponse.created({ attachments: created }, 'Media files uploaded successfully');
   return res.status(response.statusCode).json(response);
 });
+
+// Keep the old function name for backward compatibility
+export const uploadTicketImages = uploadTicketMediaFiles;
 
 // Delete an attachment from a ticket (admin, agent)
 export const deleteTicketAttachment = asyncHandler(async (req, res) => {
@@ -870,17 +963,25 @@ export const deleteTicketAttachment = asyncHandler(async (req, res) => {
   return res.status(response.statusCode).json(response);
 });
 
-// Temporary upload for images before ticket exists; returns urls only
-export const uploadTempTicketImages = asyncHandler(async (req, res) => {
+// Temporary upload for media before ticket exists; returns urls only
+export const uploadTempTicketMedia = asyncHandler(async (req, res) => {
   if (!req.files || req.files.length === 0) {
-    throw ApiError.badRequest('No image files provided');
+    throw ApiError.badRequest('No media files provided');
   }
   try {
     // Explicitly upload incoming buffers to Cloudinary and return their secure URLs
     const uploads = await Promise.all(
       req.files.map((file) => new Promise((resolve, reject) => {
+        // Determine resource type based on mime type
+        let resourceType = 'image';
+        if (file.mimetype.startsWith('video/')) {
+          resourceType = 'video';
+        } else if (file.mimetype.startsWith('audio/')) {
+          resourceType = 'video'; // Cloudinary uses 'video' for audio files
+        }
+
         const stream = cloudinary.uploader.upload_stream(
-          { folder: 'resolvet/temp', resource_type: 'image' },
+          { folder: 'resolvet/temp', resource_type: resourceType },
           (error, result) => {
             if (error) return reject(error);
             resolve(result.secure_url);
@@ -891,13 +992,16 @@ export const uploadTempTicketImages = asyncHandler(async (req, res) => {
     );
 
     const uniqueUrls = Array.from(new Set(uploads.filter(Boolean)));
-    const response = ApiResponse.success({ urls: uniqueUrls }, 'Images uploaded');
+    const response = ApiResponse.success({ urls: uniqueUrls }, 'Media uploaded');
     return res.status(response.statusCode).json(response);
   } catch (err) {
     console.error('Temp upload failed:', err);
-    throw ApiError.internal(err?.message || 'Image upload failed');
+    throw ApiError.internal(err?.message || 'Media upload failed');
   }
 });
+
+// Keep the old function name for backward compatibility
+export const uploadTempTicketImages = uploadTempTicketMedia;
 
 export const getTicketStats = asyncHandler(async (req, res) => {
   // Role-based filtering
