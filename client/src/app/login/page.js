@@ -107,13 +107,6 @@ export default function LoginPage() {
                 )}
               </button>
             </form>
-
-            <div className="login-footer">
-              Don&apos;t have an account?{" "}
-              <a href="/register" className="login-link">
-                Sign up
-              </a>
-            </div>
           </div>
         </div>
       </div>
