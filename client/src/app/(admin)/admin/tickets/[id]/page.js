@@ -294,9 +294,18 @@ export default function TicketDetail() {
                       disabled={saving}
                     >
                       <option value="">Unassigned</option>
-                      {[...agents, ...admins].map((a) => (
-                        <option key={a.id} value={a.id}>{a.email} ({a.role})</option>
-                      ))}
+                      {/* Add current user as first option for self-assignment */}
+                      {user && (
+                        <option key={user.id} value={user.id}>
+                          {user.email} ({user.role}) - Me
+                        </option>
+                      )}
+                      {/* Add other users, excluding current user to avoid duplicates */}
+                      {[...agents, ...admins]
+                        .filter(a => a.id !== user?.id)
+                        .map((a) => (
+                          <option key={a.id} value={a.id}>{a.email} ({a.role})</option>
+                        ))}
                     </select>
                   ) : (
                     <div className="chip">{ticket.assignee?.email || "Unassigned"}</div>

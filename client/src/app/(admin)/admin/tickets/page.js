@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import Link from "next/link";
 import { TicketsAPI, UsersAPI, AdminAPI, api, PrioritiesAPI } from "@/lib/api";
 import { useToastStore } from "@/store/ui";
+import { useAuthStore } from "@/store/auth";
 import FiltersBar from "@/components/FiltersBar";
 import { TableSkeleton } from "@/components/Loader";
 
@@ -137,9 +138,18 @@ function MobileFilterSheet({ isOpen, onClose, filters, onFilterChange, agents, p
               onChange={(e) => onFilterChange('assigneeId', e.target.value)}
             >
               <option value="">Any Assignee</option>
-              {[...agents, ...admins].map((a) => (
-                <option key={a.id} value={a.id}>{a.email} ({a.role})</option>
-              ))}
+              {/* Add current user as first option for filtering */}
+              {user && (
+                <option key={user.id} value={user.id}>
+                  {user.email} ({user.role}) - Me
+                </option>
+              )}
+              {/* Add other users, excluding current user to avoid duplicates */}
+              {[...agents, ...admins]
+                .filter(a => a.id !== user?.id)
+                .map((a) => (
+                  <option key={a.id} value={a.id}>{a.email} ({a.role})</option>
+                ))}
             </select>
           </div>
 
@@ -247,6 +257,7 @@ export default function AdminTickets() {
   const [agents, setAgents] = useState([]);
   const [admins, setAdmins] = useState([]);
   const [priorities, setPriorities] = useState([]);
+  const { user } = useAuthStore();
   const [availableTags, setAvailableTags] = useState([]);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [pagination, setPagination] = useState();
@@ -1060,9 +1071,18 @@ const createTicket = async (e) => {
                     onChange={(e) => setForm({ ...form, assignee_id: e.target.value })}
                   >
                     <option value="">Unassigned</option>
-                    {[...agents, ...admins].map((a) => (
-                      <option key={a.id} value={a.id}>{a.email} ({a.role})</option>
-                    ))}
+                    {/* Add current user as first option for self-assignment */}
+                    {user && (
+                      <option key={user.id} value={user.id}>
+                        {user.email} ({user.role}) - Me
+                      </option>
+                    )}
+                    {/* Add other users, excluding current user to avoid duplicates */}
+                    {[...agents, ...admins]
+                      .filter(a => a.id !== user?.id)
+                      .map((a) => (
+                        <option key={a.id} value={a.id}>{a.email} ({a.role})</option>
+                      ))}
                   </select>
                 </div>
               </div>
