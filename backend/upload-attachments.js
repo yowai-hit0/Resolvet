@@ -53,6 +53,31 @@ function formatRwandanPhone(phoneNumber) {
   return phoneNumber;
 }
 
+// Helper function to normalize phone number for matching
+function normalizePhoneForMatching(phoneNumber) {
+  if (!phoneNumber) return null;
+  
+  // Remove all non-digit characters
+  const digitsOnly = phoneNumber.replace(/\D/g, '');
+  
+  // Remove +250 prefix if present
+  if (digitsOnly.startsWith('250') && digitsOnly.length === 12) {
+    return digitsOnly.substring(3); // Remove '250' prefix
+  }
+  
+  // If it's 9 digits, return as is
+  if (digitsOnly.length === 9) {
+    return digitsOnly;
+  }
+  
+  // If it's 10 digits starting with 0, remove the 0
+  if (digitsOnly.length === 10 && digitsOnly.startsWith('0')) {
+    return digitsOnly.substring(1);
+  }
+  
+  return digitsOnly;
+}
+
 // Helper function to determine Cloudinary resource type
 function getResourceType(mimeType) {
   if (mimeType.startsWith('video/')) {
@@ -138,15 +163,19 @@ async function main() {
 
     console.log(`📋 Found ${tickets.length} tickets in database`);
 
-    // Create a map of formatted phone numbers to tickets
+    // Create a map of normalized phone numbers to tickets
     const phoneToTicketMap = new Map();
     tickets.forEach(ticket => {
-      const formattedPhone = formatRwandanPhone(ticket.requester_phone);
-      if (formattedPhone) {
-        // Remove +250 prefix for folder matching
-        const phoneWithoutCountryCode = formattedPhone.replace('+250', '');
-        phoneToTicketMap.set(phoneWithoutCountryCode, ticket);
-        console.log(`📞 Mapped phone ${phoneWithoutCountryCode} to ticket ${ticket.ticket_code}`);
+      const normalizedPhone = normalizePhoneForMatching(ticket.requester_phone);
+      if (normalizedPhone) {
+        // Add both formats: with spaces and without spaces
+        // Format: "732088745" -> "732 088 745"
+        const phoneWithSpaces = normalizedPhone.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+        
+        phoneToTicketMap.set(normalizedPhone, ticket);      // "732088745"
+        phoneToTicketMap.set(phoneWithSpaces, ticket);      // "732 088 745"
+        
+        console.log(`📞 Mapped phone ${normalizedPhone} and ${phoneWithSpaces} to ticket ${ticket.ticket_code}`);
       }
     });
 
@@ -173,9 +202,22 @@ async function main() {
       console.log(`\n📂 Processing folder ${processedFolders}/${phoneFolders.length}: ${phoneFolder}`);
 
       // Find matching ticket
-      const ticket = phoneToTicketMap.get(phoneFolder);
+      let ticket = phoneToTicketMap.get(phoneFolder);
+      
+      // If no exact match, try to normalize the folder name and match
+      if (!ticket) {
+        const normalizedFolderPhone = normalizePhoneForMatching(phoneFolder);
+        if (normalizedFolderPhone) {
+          ticket = phoneToTicketMap.get(normalizedFolderPhone);
+          if (ticket) {
+            console.log(`🔍 Found ticket using normalized phone: ${phoneFolder} -> ${normalizedFolderPhone}`);
+          }
+        }
+      }
+      
       if (!ticket) {
         console.warn(`⚠️  No ticket found for phone number: ${phoneFolder}`);
+        console.log(`🔍 Available phone numbers in map:`, Array.from(phoneToTicketMap.keys()).slice(0, 5));
         totalErrors++;
         continue;
       }
