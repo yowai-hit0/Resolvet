@@ -460,7 +460,7 @@ export default function TicketDetail() {
                 items={ticket.attachments || []}
                 onUploaded={load}
                 onDeleted={load}
-                mode={(user?.role === 'admin' || user?.role === 'agent') ? 'edit' : 'view'}
+                mode={(user?.role === 'admin' || user?.role === 'agent' || user?.role === 'super_admin') ? 'edit' : 'view'}
               />
             </div>
           </div>

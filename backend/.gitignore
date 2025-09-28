@@ -9,4 +9,5 @@ page.md
 
 env.example
 CSV_IMPORT_README.md
+ATTACHMENT_UPLOAD_README.md
 test-db-connection.js

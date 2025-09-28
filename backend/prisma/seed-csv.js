@@ -71,6 +71,43 @@ function parseDate(dateString) {
   }
 }
 
+// Helper function to format Rwandan phone number
+function formatRwandanPhone(phoneNumber) {
+  if (!phoneNumber) return '000-000-000';
+  
+  // Remove any spaces, dashes, or other separators
+  const cleaned = phoneNumber.replace(/[\s\-\(\)]/g, '');
+  
+  // If it already starts with +250, return as is
+  if (cleaned.startsWith('+250')) {
+    return cleaned;
+  }
+  
+  // If it starts with 250, add the + sign
+  if (cleaned.startsWith('250')) {
+    return `+${cleaned}`;
+  }
+  
+  // If it's a 9-digit number (typical Rwandan mobile), add +250
+  if (cleaned.length === 9 && /^[0-9]{9}$/.test(cleaned)) {
+    return `+250${cleaned}`;
+  }
+  
+  // If it's a 10-digit number starting with 0, remove the 0 and add +250
+  if (cleaned.length === 10 && cleaned.startsWith('0') && /^0[0-9]{9}$/.test(cleaned)) {
+    return `+250${cleaned.substring(1)}`;
+  }
+  
+  // If it's a 12-digit number starting with 250, add the + sign
+  if (cleaned.length === 12 && cleaned.startsWith('250') && /^250[0-9]{9}$/.test(cleaned)) {
+    return `+${cleaned}`;
+  }
+  
+  // For any other format, return as is (might be invalid)
+  console.warn(`Could not format phone number: ${phoneNumber}`);
+  return phoneNumber;
+}
+
 // Test database connection
 async function testConnection() {
   try {
@@ -213,13 +250,20 @@ async function main() {
         }
 
         console.log(`📝 Processing ticket: ${row.ticket_code}`);
+        
+        // Log phone number formatting
+        const originalPhone = row.requester_number;
+        const formattedPhone = formatRwandanPhone(originalPhone);
+        if (originalPhone && originalPhone !== formattedPhone) {
+          console.log(`📞 Phone formatted: ${originalPhone} → ${formattedPhone}`);
+        }
 
         const ticketData = {
           ticket_code: row.ticket_code,
           subject: row.subject || 'No Subject',
           description: row['Description/Details'] || 'No description provided',
           requester_name: row.requester_name || null,
-          requester_phone: row.requester_number || '000-000-000',
+          requester_phone: formatRwandanPhone(row.requester_number),
           location: row.Location || null,
           status: mapStatus(row.status),
           created_at: parseDate(row.created_at) || new Date(),
