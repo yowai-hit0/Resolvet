@@ -269,7 +269,7 @@ export default function AdminTickets() {
   const [newTagName, setNewTagName] = useState("");
   const [showLocationList, setShowLocationList] = useState(false);
   const RW_DISTRICTS = [
-    'Nyarugenge','Gasabo','Kicukiro','Musanze','Burera','Gakenke','Rubavu','Nyabihu','Rutsiro','Ngororero','Muhanga','Kamonyi','Ruhango','Nyanza','Huye','Gisagara','Nyaruguru','Nyamagabe','Karongi','Rusizi','Nyamasheke','Gicumbi','Rulindo','Bugesera','Ngoma','Kirehe','Kayonza','Rwamagana'
+    'Nyarugenge','Gasabo','Kicukiro','Musanze','Burera','Gakenke','Rubavu','Nyabihu','Rutsiro','Ngororero','Muhanga','Kamonyi','Ruhango','Nyanza','Huye','Gisagara','Nyaruguru','Nyamagabe','Karongi','Rusizi','Nyamasheke','Gicumbi','Rulindo','Bugesera','Ngoma','Kirehe','Kayonza','Rwamagana', 'Gatsibo', 'Nyagatare'
   ];
   const [files, setFiles] = useState([]);
   const [fileUploading, setFileUploading] = useState(false);

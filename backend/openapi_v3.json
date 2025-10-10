@@ -53,23 +53,23 @@
                           "properties": {
                             "id": {
                               "type": "number",
-                              "example": 2
+                              "example": 1
                             },
                             "email": {
                               "type": "string",
-                              "example": "cyusarb25@gmail.com"
+                              "example": "ybarasingiz@gmail.com"
                             },
                             "first_name": {
                               "type": "string",
-                              "example": "Mellon"
+                              "example": "barasingiza"
                             },
                             "last_name": {
                               "type": "string",
-                              "example": "Brice"
+                              "example": "yasmine"
                             },
                             "role": {
                               "type": "string",
-                              "example": "admin"
+                              "example": "super_admin"
                             },
                             "is_active": {
                               "type": "boolean",
@@ -77,11 +77,11 @@
                             },
                             "created_at": {
                               "type": "string",
-                              "example": "2025-09-28T16:01:15.640Z"
+                              "example": "2025-09-28T16:01:15.345Z"
                             },
                             "updated_at": {
                               "type": "string",
-                              "example": "2025-09-28T16:01:15.640Z"
+                              "example": "2025-09-28T16:01:15.345Z"
                             }
                           }
                         }
@@ -117,124 +117,7 @@
     "/api/v1/users": {
       "get": {
         "summary": "/api/v1/users",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "users": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "email": {
-                                "type": "string"
-                              },
-                              "first_name": {
-                                "type": "string"
-                              },
-                              "last_name": {
-                                "type": "string"
-                              },
-                              "role": {
-                                "type": "string"
-                              },
-                              "is_active": {
-                                "type": "boolean"
-                              },
-                              "created_at": {
-                                "type": "string"
-                              },
-                              "updated_at": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "example": [
-                            {
-                              "id": 2,
-                              "email": "cyusarb25@gmail.com",
-                              "first_name": "Mellon",
-                              "last_name": "Brice",
-                              "role": "admin",
-                              "is_active": true,
-                              "created_at": "2025-09-28T16:01:15.640Z",
-                              "updated_at": "2025-09-28T16:01:15.640Z"
-                            }
-                          ]
-                        },
-                        "pagination": {
-                          "type": "object",
-                          "properties": {
-                            "currentPage": {
-                              "type": "number",
-                              "example": 1
-                            },
-                            "totalPages": {
-                              "type": "number",
-                              "example": 1
-                            },
-                            "totalCount": {
-                              "type": "number",
-                              "example": 1
-                            },
-                            "hasNext": {
-                              "type": "boolean",
-                              "example": false
-                            },
-                            "hasPrev": {
-                              "type": "boolean",
-                              "example": false
-                            },
-                            "limit": {
-                              "type": "number",
-                              "example": 50
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Users retrieved successfully"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "304": {
-            "description": ""
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "\u001b�\u0005\u0000dSg���Tv\u0001�=mHzp\u0012\u0005�q�r��n�Ï�++��}��\u001e0\f�p�\u0003F\u001cg�u\u0011��札s�řt�k�<\u000e �8f\u0011��X�\u000e<rX\u0001�Wc�Ą��*'�\u0019�\u0001��y\u0001�:@Z�M\u0000�;�pV\u0010;\"P固\u0011�jQ\u001b��\u000e�w�ɸ\u000e\u001de�c��\u0003\u0012L\\\u0001�Σ�?H�RJ��Ζž��n��\u001aia\u0019��\u0017�_���]d����B��w%�A�#��k\u000e:2q�u�W�����v)8\u0019�`ؔ\\��_޵6Ƴ�m�J��\b�s�2�fǾ��>��ˈZ���ӸǿU�\u0002�\u0000H\"\n��3D�\u0010�&�]D�K���%+�B�L~��\u0016\u0011�w������Rp1���y\u001b�\u0003\u0018�*�\u001a/p0���լB�+\u0005�s��\\<��C�B�&Ĺ���\u0002��Q0\\8\f\n�������\u0018\u0007\u00138\u0001"
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -336,12 +219,7 @@
                             },
                             "recent": {
                               "type": "object",
-                              "properties": {
-                                "Closed": {
-                                  "type": "number",
-                                  "example": 5
-                                }
-                              }
+                              "properties": {}
                             },
                             "total": {
                               "type": "number",
@@ -374,64 +252,7 @@
     "/api/v1/tickets/priorities": {
       "get": {
         "summary": "/api/v1/tickets/priorities",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "priorities": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "name"
-                            ]
-                          },
-                          "example": [
-                            {
-                              "id": 1,
-                              "name": "Medium"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Ticket priorities retrieved successfully"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "post": {
@@ -475,19 +296,7 @@
     "/api/v1/tickets": {
       "get": {
         "summary": "/api/v1/tickets",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "\u001b3\u001e\u0000�R��Z�~�\rq�\u0000#�ρ\u000eQ�#W\u0014F  #�=?\u0017������^5�J4(ں�{\u0003�\u0012�D����\u0017ẸT�辅��,\u0017p�Ot�B:�\u001d�\u0004)�\\��0\u0013h)\u0004��d\u0003�\u0013d;�('�~\u0002;����;��\u0014������]+P\u0002����\u0004\r�\u0002{���a��~�s�����c��lg�Cf'\u001f��nzW�B�Y2�\u0012p����=P��j�\u0003�sA�x���ܟ��\u0013h�I6��V(�\u00108,�\u0002hx���d\u0013\tx��\n\u001ah\u0006\u000e[[��hޛ\f\u001a���N\f;ٍ(4�Z�J\b�\u0007p(�9�\"���\u0016��RR�\u0001����̔Uc5u\u0005FTq�\u0005�t��Ŷ\u001f#�p0)��\u0013���%-\u000b�\fz$z+\u000eï\u0007x\u0011��K&��rH\u000e\u0007\u001bS\u001e�\u0014�Kr.x��L@�{�N\u0004\u001c��\u0019���d�l�,�����\n_:�ʕP9�\u0005�f�\u0006��~�����/\r|����PWCA\u0002Ah\u0001\u001a9\bg�\u0004Z|��;�P\t�Q�=|�k����\"\u0000i\u001f������\u0000��ﻰ�L0�\u0014^�\u0013��]�7�m�\u001aO9 %E�\u0001뮯��X⠈\b]#D����\u0014�*ی�j%G�\u0016°�l�����x��\u0004�-��\u001b�'G�2{\u0007C\b�q%n����o\u001b1�^�d��琪G�t\u0003t\u0019�J\t)<����fDԍ4�-��;��b���l��ᇳ�4�����^�e���.\u0014ȅ�d�\u0004��jv��\u0015Eb.=} �\f)�J�R\r\u0010�y�T�(u�H\u0017+l�q�%�쏸\u001eQ� ���.ʲ��\u0013l��\t�yY��@�x��\u0010��S}ۨzP���#�F�KYTX[I`\u0013�FQ_���'ϱ�b���5f��\u0001�-\u0001�ͦ���o���D�\u001a\u0015W���J78hj�PI�s�~��`H�� ֋��\u001b�\u0002}y�s~��j���\u001e��%\u0012{�R!Я��P�6���E(��<L��gĔ����U~��Z>dvEA`\t�!|Y\u0016���=0ޒk\u0005�64j\u0010JL\n\u001aB��)�AP��m\t�F)��+ľ\r�G1(\u0015��\t{U�\u0016<\u001d��\u0005��~j����\u0016\u001b7\r�OlM�(Znڗ6%�\u0017\u0011���y��\f��2;X?�9��ic�K\u0003$�6\u0016(M´�e�`�\u0000��5،b�u����P\fN���vbF��tv�\u0019�\u0014^�l�Jy�;\u0013\u0010A�80\u0019�8ݗ���q��E[���\u001e�\u0018\"өh����M��\u001dCpb�O˷e[�z\u0012��T����\u0010\u0012#��t^Ѳ��m�)\u001bXe�xB��oQ�%��\u0003\u001aj��/�t\u00193�b�Q1\u0017��1��Z�ݯ\u0006��h��m?\b��:�Uش��q�%\u001al�B\u0007��`!9��p6��J��'8���7f�z\u0002��9Qo�BI������\u0000KK��h�+��A�X�n�M�K�\u0007�\u0012qpv�\u00194�/_8l�.\b4�����\"�h�f��4QJ���&aF.1�\u001c\u000b}\u0001"
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "post": {
@@ -509,22 +318,7 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "\u001b�\t\u0000�����+�ae��9�����[&���l�<��\u000b;�\u0013��h:;���\n�~~�~v��\u000e����fa���m/]��s�\b�g�\u0016�\u0017�E�:��(\u0018��Bp\u0018�5�-���)C��\u001a()9�:��\u0001��Og�\u0010#82�\u0007�����5̇��}�d�x��C4,iG\t\u001c&\u001f�M�l����\u0010��Y\u001a��rgS�;��\u0011)��;(Nt��A����7z}$(�)�\u000e���f��Y�\t×?\u001d�'(ܓ�\u0018�u;��0��\u0012\n�2y\u001d\u000b�G.$2����C��t��\u0014�;\u0013�3�}����\u0012�\u0012B�\u0004G9��猟�^�Z�M���X3R\n�\u0002�p�\u001a���hE\u001b1�\u000b��ѻ��4y\f�N�.�\b��f8^�P������p�\u0015��:*9�6�,p\u0000�\\��pz��a�3�CW����$\u001dw���\u001c�u�\u001c�XY\u0006\u001d�ʬ�\u0004�\u000b����\u0007���Y���_\u001a�\u001f\u000e�i8i��(��T��P�,�w�X\u000e̅�zp�4���C;�\u001c\u000b]\\'6�l�z\u0018�n��^�(\u0012�P�\f\u0002.�\u001c�#\u0006GPh\nb\u0001��\u000fG�j\u0010B��r��Դ���W�?�\u001cXo�@\u001e��f��˰����?B�\u0007f={N���CG:9�]4���CΧ�6�H��](�z\u001d�_�A�)�f.7�\u0014M|Ҧ�\\�fsQ\u000f�V\f]?�\u001bϱ�M�ҧ��i�\u0015M����Tf����У=Ҕ�O\u0004\u0005��'b�P{CP�\u001cƞ�d'�hT��:Q+�mp�Fp�\u0015�_W�\u000b2F�<(�2*,\ro\u0010\u0001\u0005��z�鿓�\u001am�����H\u0017c�fN��ُ�\u0016�@V�n\u0018�?��O\u0017N23\u001f�_.I�J�I\u001bs�H\u0006g�^�\u00157���K��s��Ó��9\u000em�Lt̳$��j�\u000b\u000fL����'�J��H�YW���F���CY�\u001c-]�a��3��/�]I���r,�\u0002"
-                }
-              }
-            }
-          },
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "put": {
@@ -705,105 +499,7 @@
     "/api/v1/admin/analytics/agent-performance": {
       "get": {
         "summary": "/api/v1/admin/analytics/agent-performance",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "performance": {
-                          "type": "object",
-                          "properties": {
-                            "agent": {
-                              "example": null,
-                              "nullable": true
-                            },
-                            "period": {
-                              "type": "object",
-                              "properties": {
-                                "start_date": {
-                                  "example": null,
-                                  "nullable": true
-                                },
-                                "end_date": {
-                                  "example": null,
-                                  "nullable": true
-                                }
-                              }
-                            },
-                            "stats": {
-                              "type": "object",
-                              "properties": {
-                                "by_status": {
-                                  "type": "object",
-                                  "properties": {
-                                    "Closed": {
-                                      "type": "number",
-                                      "example": 23
-                                    }
-                                  }
-                                },
-                                "total_tickets": {
-                                  "type": "number",
-                                  "example": 23
-                                },
-                                "average_resolution_ms": {
-                                  "type": "number",
-                                  "example": 134593333
-                                },
-                                "resolved_tickets": {
-                                  "type": "number",
-                                  "example": 18
-                                }
-                              }
-                            },
-                            "priority_breakdown": {
-                              "type": "object",
-                              "properties": {
-                                "1": {
-                                  "type": "number",
-                                  "example": 11
-                                },
-                                "2": {
-                                  "type": "number",
-                                  "example": 2
-                                },
-                                "3": {
-                                  "type": "number",
-                                  "example": 10
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Agent performance data retrieved successfully"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -817,7 +513,7 @@
               "application/json": {
                 "schema": {
                   "type": "string",
-                  "example": "\u001b�\u0006\u0000��i}U;z5�\u0015��j�z�-/�!��ZC�`����\u001a�Sڙ����k�[\u0018f��y�ub\u0017pT�\u001e7h\u0013F\u0010H���:\u0018�<��/�`*�w>Ѝl���̈a�\u001cf2B���7���ѹu�\u0006�\u000f\"\u0006��[j�2��\\�\"z���\u0017����@�䙙�R�\u0007���$�cKָ�\u001d��\u0007f2FD��i?]��\t\u000e�\u0014���F�k��'J�\u001c(G�\t��'t\u0011zt\u0015\u001e��QF���ц,އ\u0014O�\u0014���5d9Ә�YG�+\u0012nj�dFG\u001b�\t\u0001� \u000e�@\t88�0��\f+<��p\u001f]�[���=��a\u000b�\u0007d\u000e\u0003?{H�*\u0015F�\u000fV]+\u001c�N�ŷ&����D\u0011��F�v\u000f�/K!ѧ�\u0016D��\tO�a���R֚���R6Zԗ\u000e\u000e:*����\u0018��\u001cF��%�_7�\b���\u0004j�IS�G{~�\tΦ���I��!���\u000ep���S*W\u0006>_�#�\n�o�&kM���Y�d��x�w4�o��Ї�\u0016�n�y�l|!Uf���6���. ��[7.���®�5�g�w}�̽?��\u001b\u001c��\u0011�\r�\u0000"
+                  "example": "\u001bE\u0007\u0000��֬N׮w��\u0000�\u0003�I\u001bB�\u0010�.�����|�\u0013�T�~l�T��\nj�_��\u0002�¯�\u0004�\u001bN�@\u0006��Z�M_�˸t��\u0002{�\u001e�\u001d�r�\f\u0004��\u0014\u0018\u001c;�{̿:�{�B��l�+L+��ڼD\"72Qb\u0018%�W@\tF\u000b|A?b۶�U�y\u000eW�\u001e\r�z�\\\u00058��Ė3��������`����{\b�+��B\u0003\u001dp\u001b��*�BI��B)\\�G\u0003��L\u000bu�}г\u0003�\u0018���s@\u0012Gg��\"���h�|\u0010�x���5�\u000e*�� s�\u0003��y��JECF�iȴd::l�%��\u0012���\r����&2�\b����\u0018ra��L0xE1.\t\u0002�����\u001c<A�f\u0017\"\f�\u001c<�\u0006����{�'�\u001a\u001e�cBH�\u0001�B�v���G�\\^\u0012F�<�����_\u001ei\u000e���u�R�/\u0001���,���qvS�5\u0002�\n}�lx�V�\u0002���\u0004\r\u001eV�\b4�\r��w�ƞd������0��hC�_C��X\r��E*\u0006O\u0016�\u0004@y���m$�5�Ò�F<7��Òdai����}Î5�!ƙ�0`)��z�b$�үu\u0015x��\b\f>�\u0016�y��ݱ��9�\u0015\r�R��R�\u001a�-\u0004�ja8WZ\u0001"
                 }
               }
             }
@@ -887,64 +583,7 @@
     "/api/v1/tags": {
       "get": {
         "summary": "/api/v1/tags",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "tags": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "number"
-                              },
-                              "name": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "name"
-                            ]
-                          },
-                          "example": [
-                            {
-                              "id": 3,
-                              "name": "bug_report"
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Tags retrieved successfully"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "post": {
@@ -988,12 +627,165 @@
     "/api/v1/invites": {
       "post": {
         "summary": "/api/v1/invites",
-        "responses": {},
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "example": 4
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "hildenancyiz@gmail.com"
+                        },
+                        "role": {
+                          "type": "string",
+                          "example": "admin"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "PENDING"
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "example": "2025-10-09T10:03:22.948Z"
+                        },
+                        "acceptUrl": {
+                          "type": "string",
+                          "example": "https://resolvety.vercel.app//auth/invite/accept?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnZpdGVJZCI6NCwiZW1haWwiOiJoaWxkZW5hbmN5aXpAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiZXhwaXJlc0luSG91cnMiOjcyLCJpYXQiOjE3NTk3NDUwMDMsImV4cCI6MTc2MDAwNDIwM30.XPA6pojg_HFN-Y310H14di8DKKwSgxp7JeVu4mfwXk8"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invite created"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       },
       "get": {
         "summary": "/api/v1/invites",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "email": {
+                                "type": "string"
+                              },
+                              "role": {
+                                "type": "string"
+                              },
+                              "token": {
+                                "type": "string"
+                              },
+                              "expires_at": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "accepted_at": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "email",
+                              "role",
+                              "token",
+                              "expires_at",
+                              "status",
+                              "created_at",
+                              "accepted_at"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "id": 3,
+                              "email": "sauveur.dev@gmail.com",
+                              "role": "admin",
+                              "token": "b090f50a-9bd5-448e-86de-d7f0208fc3d4",
+                              "expires_at": "2025-10-03T07:08:17.080Z",
+                              "status": "ACCEPTED",
+                              "created_at": "2025-09-30T07:08:17.082Z",
+                              "accepted_at": "2025-09-30T07:10:51.534Z"
+                            }
+                          ]
+                        },
+                        "total": {
+                          "type": "number",
+                          "example": 2
+                        },
+                        "page": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "pageSize": {
+                          "type": "number",
+                          "example": 10
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Operation successful"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },
@@ -1059,7 +851,7 @@
                     },
                     "timestamp": {
                       "type": "string",
-                      "example": "2025-09-28T16:25:11.521Z"
+                      "example": "2025-10-06T10:02:37.209Z"
                     }
                   }
                 }

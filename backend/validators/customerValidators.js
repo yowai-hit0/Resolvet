@@ -26,7 +26,7 @@ export const createCustomerTicketValidator = Joi.object({
     'Gisagara','Nyaruguru','Nyamagabe',
     'Karongi','Rusizi','Nyamasheke',
     'Gicumbi','Rulindo','Bugesera',
-    'Ngoma','Kirehe','Kayonza','Rwamagana'
+    'Ngoma','Kirehe','Kayonza','Rwamagana', 'Gatsibo', 'Nyagatare'
   ).optional().messages({
     'any.only': 'Location must be a valid Rwanda district'
   }),

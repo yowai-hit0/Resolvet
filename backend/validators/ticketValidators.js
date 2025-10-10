@@ -33,7 +33,7 @@ export const createTicketValidator = Joi.object({
     'Gisagara','Nyaruguru','Nyamagabe',
     'Karongi','Rusizi','Nyamasheke',
     'Gicumbi','Rulindo','Bugesera',
-    'Ngoma','Kirehe','Kayonza','Rwamagana'
+    'Ngoma','Kirehe','Kayonza','Rwamagana', 'Gatsibo', 'Nyagatare'
   ).optional().messages({
     'any.only': 'Location must be a valid Rwanda district'
   }),
@@ -80,7 +80,7 @@ export const updateTicketValidator = Joi.object({
     'Gisagara','Nyaruguru','Nyamagabe',
     'Karongi','Rusizi','Nyamasheke',
     'Gicumbi','Rulindo','Bugesera',
-    'Ngoma','Kirehe','Kayonza','Rwamagana'
+    'Ngoma','Kirehe','Kayonza','Rwamagana', 'Gatsibo', 'Nyagatare'
   ).optional().messages({
     'any.only': 'Location must be a valid Rwanda district'
   }),

@@ -43,7 +43,7 @@ export const createInvite = async (req, res, next) => {
       expiresInHours: hours
     });
 
-    const acceptUrlBase = process.env.CLIENT_URL || 'http://localhost:3000';
+    const acceptUrlBase = process.env.CLIENT_DEPLOYED_URL || 'https://resolvety.vercel.app/';
     const acceptUrl = `${acceptUrlBase}/auth/invite/accept?token=${encodeURIComponent(signed)}`;
 
     // Send email via provider or JSON transport fallback
@@ -120,7 +120,7 @@ export const resendInvite = async (req, res, next) => {
       expiresInHours: hours
     });
 
-    const acceptUrlBase = process.env.CLIENT_URL || 'http://localhost:3000';
+    const acceptUrlBase = process.env.CLIENT_DEPLOYED_URL || 'https://resolvety.vercel.app/';
     const acceptUrl = `${acceptUrlBase}/auth/invite/accept?token=${encodeURIComponent(signed)}`;
 
     try {
