@@ -406,23 +406,52 @@ export default function AgentTicketDetail() {
 
           <div className="card">
             <div className="card-header">
-              <h2 className="font-semibold">Activity</h2>
+              <h2 className="font-semibold">History</h2>
             </div>
             <div className="card-body">
-              <div className="space-y-2 max-h-80 overflow-y-auto">
+              <div className="space-y-3">
                 {(ticket.ticket_events || []).length === 0 ? (
-                  <p className="text-muted-foreground text-sm">No activity yet</p>
+                  <p className="text-muted-foreground text-sm">No history yet</p>
                 ) : (
-                  (ticket.ticket_events || []).sort((a,b) => new Date(a.created_at) - new Date(b.created_at)).map((ev) => (
-                    <div key={ev.id} className="text-sm">
-                      <div className="text-muted-foreground">
-                        {new Date(ev.created_at).toLocaleString()} • {ev.user ? `${ev.user.first_name} ${ev.user.last_name}` : 'System'}
+                  <div className="space-y-2">
+                    {(ticket.ticket_events || []).sort((a,b) => new Date(a.created_at) - new Date(b.created_at)).map((ev, index) => (
+                      <div key={ev.id} className="relative issues-tree-item">
+                        {/* Tree line connector */}
+                        {index < (ticket.ticket_events || []).length - 1 && (
+                          <div className="issues-tree-connector"></div>
+                        )}
+                        
+                        <div className="flex items-start space-x-3">
+                          {/* Tree node icon */}
+                          <div className="issues-tree-node">
+                            <div className="issues-tree-dot"></div>
+                          </div>
+                          
+                          {/* Content */}
+                          <div className="issues-tree-content">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <span className="issues-tree-title">
+                                {ev.change_type.replace(/_/g, ' ')}
+                              </span>
+                              {ev.old_value && ev.new_value && (
+                                <span className="issues-tree-change">
+                                  ({ev.old_value} → {ev.new_value})
+                                </span>
+                              )}
+                              {!ev.old_value && ev.new_value && (
+                                <span className="issues-tree-change">
+                                  {ev.new_value}
+                                </span>
+                              )}
+                            </div>
+                            <div className="issues-tree-meta">
+                              {new Date(ev.created_at).toLocaleString()} • {ev.user ? `${ev.user.first_name} ${ev.user.last_name}` : 'System'}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        {ev.change_type.replace(/_/g, ' ')} {ev.old_value ? `(${ev.old_value} → ${ev.new_value ?? ''})` : ev.new_value}
-                      </div>
-                    </div>
-                  ))
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
