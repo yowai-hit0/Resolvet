@@ -57,34 +57,69 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (error?.response?.status === 401) {
+    const status = error?.response?.status;
+    const url = error?.config?.url || "";
 
+    // Handle Authentication Errors (401)
+    if (status === 401) {
       if (typeof window !== "undefined") {
-        const url = error?.config?.url || "";
         const path = window.location.pathname;
         const isAuthPath = path.startsWith("/login") || path.startsWith("/register");
         const isIgnored = url.includes("/auth/login") || url.includes("/health");
-        // Clear token on 401
+        
+        // Let login page handle login errors
         if (url.includes("/auth/login")) {
-          return Promise.reject(error); // Let the login page handle the error
+          return Promise.reject(error);
         }
-        // when a user is logged out i guess
+
+        // Clear token on 401
         const { token } = useAuthStore.getState();
         if (!token) return Promise.reject(error);
 
-
-        if (!isAuthPath && !isIgnored && ! useAuthStore.getState().redirecting401) {
+        // Redirect to login if not already on auth page
+        if (!isAuthPath && !isIgnored && !useAuthStore.getState().redirecting401) {
           useAuthStore.getState().setRedirecting401(true);
           try {
             useAuthStore.getState().setToken(undefined);
+            useAuthStore.getState().setUser(undefined);
+            if (typeof window !== "undefined") {
+              localStorage.removeItem("auth_token");
+            }
           } catch {}
+          
+          // Preserve attempted URL for post-login redirect
+          const attemptedUrl = window.location.pathname + window.location.search;
+          if (attemptedUrl !== "/login" && attemptedUrl !== "/register") {
+            sessionStorage.setItem("redirect_after_login", attemptedUrl);
+            // Store session expired message
+            sessionStorage.setItem("session_expired", "true");
+          }
+          
           window.location.href = "/login";
-          return;
+          return Promise.reject(error);
         }
       }
     }
-    // For server-side errors (>= 500), enable a short cooldown per endpoint
-    const status = error?.response?.status;
+
+    // Handle Authorization Errors (403)
+    if (status === 403) {
+      const message = error?.response?.data?.message || "Access Denied";
+      useToastStore.getState().show(message, "error", 4000);
+      return Promise.reject(error);
+    }
+
+    // Handle Client Errors (400, 422)
+    if (status === 400 || status === 422) {
+      const message = error?.response?.data?.message || "Invalid request";
+      // Don't show toast for validation errors on login/register
+      const isAuthError = url.includes("/auth/login") || url.includes("/auth/register");
+      if (!isAuthError) {
+        useToastStore.getState().show(message, "error", 4000);
+      }
+      return Promise.reject(error);
+    }
+
+    // Handle Server Errors (500+)
     if (status >= 500) {
       const cfg = error?.config || {};
       // Detect known Prisma enum error to increase cooldown
@@ -92,19 +127,29 @@ api.interceptors.response.use(
       const isPrismaEnumErr = message.includes('invalid input value for enum') || message.includes('TicketStatus');
       // 5s default; 30s for known noisy errors
       setCooldown(cfg, isPrismaEnumErr ? 30000 : 5000);
+      
+      // Show generic error message with retry option
+      const isLoginError = url.includes("/auth/login");
+      if (!isLoginError) {
+        const onCooldown = isOnCooldown(cfg);
+        if (!onCooldown) {
+          try {
+            useToastStore.getState().show("Server error. Please try again.", "error", 4000);
+          } catch {}
+        }
+      }
     }
-    const isLoginError = error?.config?.url?.includes("/auth/login");
-    if(!isLoginError){
-      // Throttle duplicate toasts while on cooldown
-      const cfg = error?.config || {};
-      const onCooldown = isOnCooldown(cfg);
-      if (!onCooldown) {
+
+    // Handle Network Errors
+    if (!error.response && error.request) {
+      const isLoginError = url.includes("/auth/login");
+      if (!isLoginError) {
         try {
-          const message = error?.response?.data?.message || error?.message || "Request failed";
-          useToastStore.getState().show(message, "error", 4000);
+          useToastStore.getState().show("Network error. Please check your connection.", "error", 4000);
         } catch {}
       }
     }
+
     return Promise.reject(error);
   }
 );
@@ -113,7 +158,7 @@ api.interceptors.response.use(
 export const AuthAPI = {
   login: (payload) => api.post("/auth/login", payload).then((r) => r.data),
   register: (payload) => api.post("/auth/register", payload).then((r) => r.data),
-  profile: () => api.get("/users/me").then((r) => r.data),
+  profile: () => api.get("/auth/profile").then((r) => r.data),
   logout: () => Promise.resolve(),
 };
 
@@ -161,5 +206,6 @@ export const InvitesAPI = {
   revoke: (id) => api.post(`/invites/${id}/revoke`).then((r) => r.data),
   accept: (payload) => api.post('/invites/accept', payload).then((r) => r.data),
 };
+
 
 

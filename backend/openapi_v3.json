@@ -65,7 +65,7 @@
                         },
                         "token": {
                           "type": "string",
-                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzdXBlcl9hZG1pbiIsImlhdCI6MTc2MDY3OTQzNSwiZXhwIjoxNzYxMjg0MjM1fQ.ka2InGmhq0jp1M4s-0kKnZ_UYyFcspCkFz5jozYGTKc"
+                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzdXBlcl9hZG1pbiIsImlhdCI6MTc2MjY5Mjk2NCwiZXhwIjoxNzYzMjk3NzY0fQ.70x6qBmrV5jI6jV3Qq0OjuuLNL0V3TGRt1TUxSKQgHk"
                         }
                       }
                     },
@@ -97,75 +97,6 @@
       "get": {
         "summary": "/api/v1/users/me",
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "user": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "number",
-                              "example": 1
-                            },
-                            "email": {
-                              "type": "string",
-                              "example": "ybarasingiz@gmail.com"
-                            },
-                            "first_name": {
-                              "type": "string",
-                              "example": "barasingiza"
-                            },
-                            "last_name": {
-                              "type": "string",
-                              "example": "yasmine"
-                            },
-                            "role": {
-                              "type": "string",
-                              "example": "super_admin"
-                            },
-                            "is_active": {
-                              "type": "boolean",
-                              "example": true
-                            },
-                            "created_at": {
-                              "type": "string",
-                              "example": "2025-09-28T16:01:15.345Z"
-                            },
-                            "updated_at": {
-                              "type": "string",
-                              "example": "2025-10-10T14:39:23.527Z"
-                            }
-                          }
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Current user retrieved successfully"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "304": {
-            "description": ""
-          },
           "401": {
             "description": "Unauthorized",
             "content": {
@@ -385,9 +316,13 @@
                             "byStatus": {
                               "type": "object",
                               "properties": {
+                                "New": {
+                                  "type": "number",
+                                  "example": 1
+                                },
                                 "Resolved": {
                                   "type": "number",
-                                  "example": 26
+                                  "example": 35
                                 },
                                 "Closed": {
                                   "type": "number",
@@ -395,7 +330,7 @@
                                 },
                                 "Assigned": {
                                   "type": "number",
-                                  "example": 10
+                                  "example": 21
                                 }
                               }
                             },
@@ -404,38 +339,38 @@
                               "properties": {
                                 "1": {
                                   "type": "number",
-                                  "example": 17
+                                  "example": 24
                                 },
                                 "2": {
                                   "type": "number",
-                                  "example": 5
+                                  "example": 14
                                 },
                                 "3": {
                                   "type": "number",
-                                  "example": 39
+                                  "example": 43
+                                },
+                                "4": {
+                                  "type": "number",
+                                  "example": 1
                                 }
                               }
                             },
                             "recent": {
                               "type": "object",
                               "properties": {
-                                "Closed": {
+                                "Assigned": {
                                   "type": "number",
-                                  "example": 2
+                                  "example": 7
                                 },
                                 "Resolved": {
                                   "type": "number",
-                                  "example": 26
-                                },
-                                "Assigned": {
-                                  "type": "number",
-                                  "example": 10
+                                  "example": 1
                                 }
                               }
                             },
                             "total": {
                               "type": "number",
-                              "example": 61
+                              "example": 82
                             }
                           }
                         }
@@ -572,13 +507,10 @@
               "application/json": {
                 "schema": {
                   "type": "string",
-                  "example": "\u001b�\u001e\u0000�T��i%n���ҧWjc��r�L����౵�\u001c�*Y�.;u�5�`\u0015�\u0010��.��\u0014�$YW�;�'\u0010�8\u0010��Q�$\u0013�*];}B�N\u0014����Է���\bQr>��z�x\u0007��K�\r��;�\u0019�7C��S��\u0000\u001f\u001e<\u000b<po�y�\u0019\u0006�#�%!��^�KF���*a�\u0001��\u001fp�T2D��;'�Ù\r�|,Ud��c����(ό2�߰��t\t\u0003Ԋ��/�\u0013�\u0010�\u0005DN{���u}􇋒\u0011\"�'\rw>8/�R0�J\u0010�B��[K�\u0016a� �0*��\u001eq�\u0001v�������!��Ҝ\t~&�'�\u0014Q�Q*�\u0003\u0006�\u000e3�%\u0013y\u0018���\u001c�,�\u0010��P����\u001894�8��K3D3@j���،\u0014MC\u0019\u0015\u0002q>ƨ\u0001��<�\\��#$��\u0019`G��\tz\u0013x��t\u0003\u0003��y�\u0019\f0\u0013>�\u0005�3攧\u001b����\u0013��T�p\u001a`5�~��\u0016l���R95֐�/������\u0000�s5\r�\u001dH�8�|\u0000�,� ��i\u0018�&��9�1N\u001b���}Ap�J�پd�a%߆�E_�u�\u000e��>KG�\u000b��6d��Z�Ly�\u0002��G�����C[a\u0003�#L4n4��&\\�nT\u0002g�s�d\u0001\bs�_�5δ��\u001d�\u0017\u0012�\"K��\u0004*H�������a:PO������ce\u0015�R�_��\u0015\u001b���?UL\r��̻D<�#��\u0002�\u0017&\u000e\u000eg��:x��\n�OA���\u0018����\u0015?�s�\u0018���\u0012�\u000b�}����K��\u0003n�=���,�l�ݎ�m턍��\t��dpr���\u001dޙ�%e��᫡�\u0016\u0004��Cq��(�ȕ#���\\��\u001a�ه[\t\u001d�an08�����x$!��\u0002R;-}x�??�=�/�{c�\u000f��|�\u0003\u001a;c�RG�1�Y4{\\k��>�O�{^jf��\bA��;;���pf��t8�7lW�\u0017E\u001eƨ�\u001f\u0005�=��-���lsڧ6a���\",a�N\u0018{���\u0014��d\u000bǽ\u0011��L��^C��ۨ]4z�J\u0012λ�>J?��\u0003\u0004տ\u001e[��H\nI\u0001��\u001c�\u0019-\u0017���\u0006{�)���\u001f�vĭ�O��?����c\u0017ʧ�\u001e�8�Q�Աgtw�ܫ�����^;͸�p �Bh�쫧O�`��'��Y����\u001a���}�S��¶|\b�t�3+�2�z@�@�ſ0���\no��������(�˟�\u0018�vd$l�<wH\u00195\u001f�ǘ�=\u0019͋�.܁�����>�J�&���0����fj�\u001f+��/�Qr�ߔ��.�^�GZ2K�Q\u0007'\u0014FL��\u000bL�=p3'\u0006�}�A\u0012:JE.G�\u0004Z�EaG�\u0004��\r�� #@\u000f��\u0010B�x����/KM�(_��G�)�X*9�Ē=�]��c�l*yGu����^��JT���FeV�_�\u001d�\u000fMHHE�O\u0002�ˬ�(M�����hl ��ϵ�q�.�ze�Fq��\u0015\u0005�A� �t�^鷄!ҟ\u001dr��\b#Fp���3S\"c�\u0015ʇ�y\b\u001b��IK�~��'�_�I�hT\u0014b�����\u000b\u0011\u0000�Q�H\u000eɉ�DEr���u-Q��\u0007�&\f\u0005>\u0007�&�GS�.��\u001c�X�>j�\u0007\u0011��UM���&pa<��R��k�Z`���1_?�QfW�*�\u0007(U.>�w,X\u0015��b��\u0000�(i\u001eM\u0018���[\u0011\\�\r�4\u0005��C�~\u000fpH\u000be\u0010�����$�K\u000b�\u0003�����.-�f\u0000���a��t+\u0006�H�\r^w��nX���\u0011�.�\r\u0007XiO\u001d���\u0000��K�\b����\u001b��+�\u0011gֶi��vۺބ�أ(�^7<\u0001"
+                  "example": "\u001b� \u0000�Z�����^����rJ�����`��\u0018��\u000f(N�̷��^�uB��:�fv\u0016\u0015�]�%4(�54R1)�*w�z\u0014�!\u000e�\u0013}��9�B�ܿ\u0018�Nc<��P\t�24:iT��l��\u0014Q���5�8���P�u��\u0002�\u001e���\u0005g�>�x<�\f/��R��:\u0018\n�|�@\u001d�O20\u001f\u0013t�-lX��\f�u�m7�z��Z20\r�!�Q�\r��\u000e�F\u001b�;��\r\u0014\u0017�Oe���\u001c\\�]f��L;\u0003�o'g\u0018\u001a�\u0000LV�j��@�e�\u0019\u0006�J�Z)�h��\n�c\rN�\t�\u001b����oz�\b\u0015�'JV7E%뢮0�\u0003+\u0006E�Wc��0���P�-E?�\u0019]���&3�\t\u0015\n&�\u001d�wXq�\u001a%JU�7�\u00153\u001c7�m��+&UY�m�H&L����k\u0015or^Ք�-�'�bhi�0��Y���P�h����\u0010�y\u0019�\n*�P�pK��Wd�ƿ�v>�\f\u00176ĴMW�\u0013��o�p��n��\u0019���v0�����r��w~��2_��)�^��\\�j�����|mc����G���YMQ�\"�J�b\u0019\"�yDU��e� ]�J����X�֏�'%��(\u0004\u001f�h���|0�-!�\"nj��\t�:��J=�\u0007H�G�\t�6&�\"7|�6\u0006\u000e1\bD\u001d:1($ԉ��,,\r&\u0007�\\jx5�zKή��0%�\u0011BF\u0018m#E]�e��o��I�W�=n\f���k%�b,�\u000bN�m�\u0003������|\u0006\u0005�*�6���.1��O�\"��������\u0011CKo�8\u0004��K]��s\ny�b���뜴��^���Ic�����ף�w���ő\u001b�\u0004\u000e\u0001\u0007�Rd\u0000����*A\u0003-FζXc)Kٔ\u0017�{�d}8n\u0006+�\u0001��Y��%`�\\yG߯%��%2\u001dǇ�\u001e\u0006J���#X��\u001f�Q�\tn�B��\u0000��\u0010O�mЎ~4܎�\u0007�W�\u0015\u0005�5�&/�,�R����7�\u0010J���kb#�����.�\u0017�\u001a2V�C��\\c�j^����'ڐ[Z�΀#2d����Wo���QT\u0011� \u001b2��M=D�&8���z\u0007�?+�LݸM������9ܴ��\\w+�\u000e�\u000b\u0006P»�*��C-d���\u0006J\u0018\u001bN\u000f�2I�\u0011��\u0016��3�\u0017P\u0013s,(~FI\u0004\u001d�Ӏ\u0000�Ӛ�nD#�\u0011\u0017�o�˕�L�:����]�u���8�H!ϓ�'�1�V��`m[5O�!��!K\u0004�Ҟ\b��\u0014�-y]{�:!|&���j�^��h�5�j\f��z�L�Fp.D]@�\u000b\"������P%S����]\u0013���+\u001a\u0006�a������\u000e.g\u001elG�\u001e\r���\u0018`�г:2��\f5�\u0006��`p\u0007��adl�\u001ak!Y%�޳�q�c �h\u0003�}���m�\u0011�>\u0010Tm$��Ǳ\u001a����e�r�Ĵa:���o#�\u00026�A\u0005�أ���|�1������\u0017\u0019́�L���Z\u0006\u00119by��\u001fL\f\u0001:U��,�5\b\u0019t�U�m�\u0006s�)�b2\u0017���u\u001bn5����Ξ\t-\u001bVˇӫV��\u0007��[�\u0010�P\u0002\u0002+ı!�R\u0001�13�\u0013(��\u0019t�\u001a8C�\\�,����\u0002\u0001+y����\u001e�;L�\u000b^i\u001dV\u0005\u0016��2[���\u000e��\u001d \b��X�,޶�m�(8�����Udz��!�\rB\\1l0�t6\u0014��`Sz���V�\u0014!��-a�VL�4\u0010���1m�[�xG>���\u0003��@0щ�A&@۪���wpR�J�,/JA����\u0006\u001f�i������x��w+/$�]��S~\u0012�U���\u0002�ҽP��|���8�=������@�<D\u001a\u0006\u001b+����69{��ܝ>ܟ���32c��\u0017�\u0015��@�R\u000e\u000fۑ��3%\nU6y-\u0018�m�\\�R梩<q�?3�\u000b�H\u001b/~\u0006��c\u0018\u0017[��<3��.W厰.Mt�af���\r��`[\u000bGVB\b~�x!{k�kyG\bp\n��D:���m�\u0007���B��Kݭ�/ �\u001a\u001aj�2�|0)\u001a\u0018\t��F�[�z?&��\u001bA ����\u0001\nO�e�\u0012��z\u0019�\u0012O�sK\u0018��&2��5�䡦�����>��;|�x�\u001c���v����f�U[Լ\u0011\u0018t�Z%D.3�\u0001\u001dĊsU��\u0015\rl,]����\u0010��\u0018�\u0006\u001f\u001f\u0019n��:K^�\u0017��1��%y��\u0017��j��\u00143D���\u000ft���Ȱ�qB_\tU\n#\r�O\u0003}�Z�!R�X������\f/�h�\n����\u0010(\u0005K�d �]G1�\r\u0000\u001e��cT)��\u0007"
                 }
               }
             }
-          },
-          "304": {
-            "description": ""
           }
         },
         "tags": []
@@ -602,22 +534,7 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "\u001b\u0012\b\u0000��tZU˼�\u0004Xd���*o`d�+�W��\u0013�k��\u0001���>��5�wE[�8_���ia�=f\u0001G�e\u0014\u0018v�Muѿ�\u0006\u0016}�\u000b|�!�w�\"�b�`P2H�\u000b�\u001e�)@\\�\u0015DW1��\u001f�\t��\u000f�Һn�����\r\u0007���?\u0005��T�4[:%����k\u000e�\u0018\n`Po��.��B��k;&��H������v���\u0016i7�\u001c��9^r=MR\u001b\b pX9\u0011���l^~��-A�UQ/ڮjx�,K0<\u0011b%\u0004~D/����\u0005\u0002��fO\n\fo�����e�@�(�/R��_t�עn�z٭�\u0010w���\u0015E��\\�ħx��@�\u0014\u0005�n�c<k�X�z� j\u0006�\u001e-\u0011��<�,��M\u000bg��,� �ㄛ\u001c^�\u00015�F;\u001fb�\b~J;��`$ܗ�!\u000f�m�Qd�\u001dN��z��6�0K���a�� G\u000fqW���5n�hn\fIk`_�u��}�ڝp{`h\u001b= �\u001e\u0018\u001a,L���\f݄��hC\u0012\tձ\u0018�y|\n\u001b>NO�Z�I��F=��9 \u0018\bچ��\"�\u001d�l0sT�Jw��\t�*��\u0010�N}(�EyܙY�|��f�,�jY�%3ڐ\u0007�v�r\\���\u000f�\u001dA�ɟ=\u000f�B�#9���3A,\u0018��X܌eV6\u0015���z\u0003>/�\u0014��\ff[~KV\u0016E���j��7���\u001c�ל{zqS�ʿ�,Hf)��|\u0003/*�a+�XB��A�# \n\f�Q�� �@�M����`�p�D��d+�.����잜����ʩ,/J��ʸ}\u0012���^\u0011��.�CZ��\u0010�;�=��8ʦ�E��{�Ǝ_벶m\"\u0011x��\u0018^����8��8\nNӞT��0���h�i�f�\"!��t\u0003"
-                }
-              }
-            }
-          },
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "put": {
@@ -839,9 +756,13 @@
                                 "by_status": {
                                   "type": "object",
                                   "properties": {
+                                    "New": {
+                                      "type": "number",
+                                      "example": 1
+                                    },
                                     "Resolved": {
                                       "type": "number",
-                                      "example": 26
+                                      "example": 35
                                     },
                                     "Closed": {
                                       "type": "number",
@@ -849,21 +770,21 @@
                                     },
                                     "Assigned": {
                                       "type": "number",
-                                      "example": 10
+                                      "example": 21
                                     }
                                   }
                                 },
                                 "total_tickets": {
                                   "type": "number",
-                                  "example": 61
+                                  "example": 82
                                 },
                                 "average_resolution_ms": {
                                   "type": "number",
-                                  "example": 153266023
+                                  "example": 156544968
                                 },
                                 "resolved_tickets": {
                                   "type": "number",
-                                  "example": 44
+                                  "example": 53
                                 }
                               }
                             },
@@ -872,15 +793,19 @@
                               "properties": {
                                 "1": {
                                   "type": "number",
-                                  "example": 17
+                                  "example": 24
                                 },
                                 "2": {
                                   "type": "number",
-                                  "example": 5
+                                  "example": 14
                                 },
                                 "3": {
                                   "type": "number",
-                                  "example": 39
+                                  "example": 43
+                                },
+                                "4": {
+                                  "type": "number",
+                                  "example": 1
                                 }
                               }
                             }
@@ -918,7 +843,7 @@
               "application/json": {
                 "schema": {
                   "type": "string",
-                  "example": "\u001b�\u0007\u0000�JU�Z��P\u0000�$T�?��9�'��AЏ G���;��\u001e��������,б6H'�D\u000b�kk\u0001u�\b6��Aw��\u0000t�=R�\\ң�g�j�Q�)\u0013�=�_\u0012�=J���t�$L�p��q�\\��!�h�v\u0005x`j�\u0012��\u0016l��\u0015�e91v��Y!�����ȡO0���Sf\u0018T��]n�K��B{E����\u0001��T\u001bJ\u000bj����tP�`��HGm�����\u0011C��0z���\u0019��\u001ai�\u0016�-�\u0003��zl^��܈�����P�hZ\u000b5�\u001e�G�P�p��p0�k�9�{H\u000f�U8JL�\u0006\u001a\u0019\u0006o��)@�\u0013�_\\Dq\f\u0005\u001eI<\f\u000eQ\u001c�����\u0003�U��\u0011bdB���\u0015����[\n�v�]��$��{\u000e\u0014ܭܝ\r#�_�i<�W�W�}�ĳ�?Q9q���_~�����\u0013N:\u0012t׫�Ot�k�?\nn\u001a�)�L�\u0010�f\u001a6#�v]���1+�D\u00033^/Ϲ�H�Ӻ\\��J�_$�bW�5i�\u0012yN��!��~!U�\u001f)��#ok�,��F����C\u0019�-\u000f#�=��Օ\u0017GY�`%��I�\u001aմ\u0012m�P����nw��u2��,\"ޅXߨ!+�2?�=\u0016\u0014�G\u000e�\u0016��?�\u0003q\u0006\f>ݦ��¢�c\u00119G�\u0013��T�㔎��[(\u0000\u0005��Xx\u0006"
+                  "example": "\u001b�\b\u0000�Z�z}�~c\nDM�k��N\n�u�\u00161\u000bM�t������\"\u0012GV��F\u0003�����H��J���D/��\u0006�%_\u0003�#w��qɏ�\u0011�4R\n\u0018\u001d;0w��|��Aɘ\u001e�\u0003�+�t\u0002�\u001b�ր�\u0017�12\u0018%�]\u0001F0Z@\t�Z\u000b�Bm\u0002�g:#v\u001d��r\u0013���![N\u0018�\f��\u001d��\u0011\f4��j%k�@@{E\u0015�����!�T\u0015IKU�t�� 驶$��d�s��8��HX\f��1�f,��3=-=\u001d==={z\u000e�\u0018U�R�\u0018U�rףܪ��\u0019U�\u0006\r,�Yۑ�6�QvUK�U-eW�\u0014U�\\-�?\u0002��\t3[�A��U����\u0001�`�\u0002&J�mt\u000b��7\u0018�\u001aA@p\u0010��a\"� \u0000\u0017G\u0001\f\f�<^�g�\u0001�.]�\t�bB-�m�BJ]��.��%���\\R\u00181��o��b^\u001c��_��s�Sj\u0007{�iBϜ{�3��z����\u0017\u001f�=��#���Ҕt՗�D�#�\\9cI��/?^�|�nM�nx7�����\u001f\u0001~]�5Zv�Ԗ��7\u0015}��\\\bȰ\t(��(h\n�\u000b�\u0002=Ԩ�Ń���P���Iu�s�.`�\u000e\u001e,�4h�?a`\"�3�NI\u0001m\u0018�Lsd��\u000e\u000bP��X�m\r�}<�\u001am\u0007E\u0007\u000e�i�dQڃ#�ݒU.�B9c��qp�yp:\u0005��R�\u00053\u0001�Z>@\u000e���S\t\u0013��`��H�W��!>�T�(_N۟m\u0013��r\u0007\u0018�t�\u0019��9rG��\u0013�\u0019�*\u0017�1穄p\u0003\u0002���p*�\u0001"
                 }
               }
             }
@@ -1094,7 +1019,22 @@
       },
       "get": {
         "summary": "/api/v1/invites",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "\u001b\f\u0005\u0000d�YU�j��!V�S�Y��\u001e\u001b`\u0007�]�g\u001e���\"�z\u0011\u0004V\u001b�8\u001a�t~�<��xD��\u0000w�:�8��\u001a�����ڨm��0$��A�F��_���\u001e�\u0002�u�'\u001a���&��t�O�z�\\�T���\u001dt��G�\u0004�\u0005t\u0019:h�'H\u0010K6\u000ee\u0015ҔA\u0018�$�\tV(�\nu��\u000f\n:������\u001a$P���RH�C�$CR�W���\u000e�Fm[!����^���\u001a:�\u000bS��\u001a$Pv\f\u0003\n.ʙ�M옶��K\b�\u0015/����d�-_�i�_��%��\"f����0�(��Ed\n�;5\u0014]4��I�\u001eQ���\t�\u001d�cቦ|;�=ٝh<�y>�S�0Ҡ*\t��\u0016Fs\u0015T\u0002\ni\n�@Y��1\u001f\u0005�\u001f\u0012\u0013�T\u001fM@\u0005O�?����\u0017�\u0017D���o1����%\u001d{��O\b\u000et�Wڮx[��W��\r\u0018�Z$\u0011�b�1�Ep�E�\u0015\u0015��u18 �\u0003}��1 B\u0018�F��\"\u0017gILV�V\u001b\u0002\u0019ᙗ��%�;��%)�:v��&���8��\u0017+�\u0010\u001c\r18�\u0015���b�ݺ�?�%����8\u000bS��Ĥ|\u001f��\t�:hs���\u0015g��\u0019��i���;�$�\u0013��vc�|��8O\u0017�3�kݎ���\f�-\u001b?\u0002"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },
@@ -1111,7 +1051,61 @@
             }
           }
         ],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "example": 6
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "anaganze@sfhrwanda.org"
+                        },
+                        "role": {
+                          "type": "string",
+                          "example": "admin"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "PENDING"
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "example": "2025-11-12T12:56:21.093Z"
+                        },
+                        "acceptUrl": {
+                          "type": "string",
+                          "example": "https://resolvety.vercel.app//auth/invite/accept?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnZpdGVJZCI6NiwiZW1haWwiOiJhbmFnYW56ZUBzZmhyd2FuZGEub3JnIiwicm9sZSI6ImFkbWluIiwiZXhwaXJlc0luSG91cnMiOjcyLCJpYXQiOjE3NjI2OTI5ODEsImV4cCI6MTc2Mjk1MjE4MX0.uJU5VXgjpAo5_OYe4OeTXbz4h0lJqUP3MhoKU7Blcnw"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invite resent"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },
@@ -1160,7 +1154,7 @@
                     },
                     "timestamp": {
                       "type": "string",
-                      "example": "2025-10-17T05:36:29.169Z"
+                      "example": "2025-11-09T12:55:29.630Z"
                     }
                   }
                 }

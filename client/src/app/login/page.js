@@ -11,6 +11,18 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [sessionExpired, setSessionExpired] = useState(false);
+
+  // Check for session expired message
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const expired = sessionStorage.getItem("session_expired");
+      if (expired === "true") {
+        setSessionExpired(true);
+        sessionStorage.removeItem("session_expired");
+      }
+    }
+  }, []);
 
   // Clear error when form inputs change
   useEffect(() => {
@@ -29,7 +41,19 @@ export default function LoginPage() {
       if (result?.user) {
         setIsRedirecting(true);
         const role = result.user.role;
-        router.replace((role === "admin" || role === 'super_admin') ? "/admin" : "/agent");
+        
+        // Check for preserved redirect URL
+        const redirectUrl = typeof window !== "undefined" 
+          ? sessionStorage.getItem("redirect_after_login") 
+          : null;
+        
+        if (redirectUrl && redirectUrl !== "/login" && redirectUrl !== "/register") {
+          sessionStorage.removeItem("redirect_after_login");
+          router.replace(redirectUrl);
+        } else {
+          // Default role-based redirect
+          router.replace((role === "admin" || role === 'super_admin') ? "/admin" : "/agent");
+        }
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -48,7 +72,12 @@ export default function LoginPage() {
               <p className="login-subtitle">Sign in to your account</p>
             </div>
 
-            {error && (
+            {sessionExpired && (
+              <div className="login-error">
+                Session expired, please login again
+              </div>
+            )}
+            {error && !sessionExpired && (
               <div className="login-error">
                 {error.includes("401") ? "Invalid email or password" : error}
               </div>

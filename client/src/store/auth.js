@@ -29,12 +29,29 @@ export const useAuthStore = create((set, get) => ({
       if (stored && !get().token) {
         set({ token: stored });
       }
+      
+      const token = get().token;
+      if (!token) {
+        set({ user: undefined, loading: false });
+        return;
+      }
+
+      // Validate token with /auth/profile endpoint
       const data = await AuthAPI.profile();
       // expect { data: { user, token? } } or { user }
       const user = data?.data?.user || data?.user || data;
       set({ user });
     } catch (err) {
-      set({ user: undefined });
+      // Token expired or invalid (401)
+      if (err?.response?.status === 401) {
+        // Clear all tokens silently
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("auth_token");
+        }
+        set({ token: undefined, user: undefined });
+      } else {
+        set({ user: undefined });
+      }
     } finally {
       set({ loading: false });
     }
