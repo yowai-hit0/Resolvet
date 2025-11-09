@@ -299,16 +299,38 @@ export default function AdminTickets() {
     } catch {}
   }, []);
 
-  const queryParams = useMemo(() => ({
-    page,
-    limit,
-    search: search || undefined,
-    status: status || undefined,
-    priority_id: priorityId || undefined,
-    assignee_id: assigneeId || undefined,
-    sort_by: "created_at",
-    sort_order: "desc",
-  }), [page, limit, search, status, priorityId, assigneeId]);
+  const queryParams = useMemo(() => {
+    const params = {
+      page,
+      limit,
+      sort_by: "created_at",
+      sort_order: "desc",
+    };
+    
+    if (search && search.trim()) {
+      params.search = search.trim();
+    }
+    
+    if (status && status.trim()) {
+      params.status = status.trim();
+    }
+    
+    if (priorityId && priorityId.trim()) {
+      const priorityNum = parseInt(priorityId, 10);
+      if (!isNaN(priorityNum) && priorityNum > 0) {
+        params.priority_id = priorityNum;
+      }
+    }
+    
+    if (assigneeId && assigneeId.trim()) {
+      const assigneeNum = parseInt(assigneeId, 10);
+      if (!isNaN(assigneeNum) && assigneeNum > 0) {
+        params.assignee_id = assigneeNum;
+      }
+    }
+    
+    return params;
+  }, [page, limit, search, status, priorityId, assigneeId]);
 
   useEffect(() => {
     // persist state
@@ -338,7 +360,7 @@ export default function AdminTickets() {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [queryParams, page, limit, search, status, priorityId, assigneeId]);
+  }, [queryParams]);
 
   useEffect(() => {
     // load agents for dropdown
@@ -827,7 +849,7 @@ const createTicket = async (e) => {
       {/* Table View (hidden on mobile when in card view) */}
       <div className={`${mobileView === 'table' ? 'mobile-only' : 'mobile-only hidden'} desktop-only`}>
         <div className="card overflow-x-auto">
-          <div className="table-head grid-cols-8">
+          <div className="table-head grid-cols-7">
             <div>
               <input 
                 type="checkbox" 
@@ -837,7 +859,6 @@ const createTicket = async (e) => {
                 }} 
               />
             </div>
-            <div className="hidden sm:block">Code</div>
             <div>Subject</div>
             <div className="hidden md:block">Requester</div>
             <div className="hidden lg:block">Assignee</div>
@@ -846,7 +867,7 @@ const createTicket = async (e) => {
             <div className="hidden sm:block">Created</div>
           </div>
           
-          {loading && <TableSkeleton rows={5} cols={8} />}
+          {loading && <TableSkeleton rows={5} cols={7} />}
           
           {!loading && items.length === 0 && (
             <div className="card-body text-center py-12">
@@ -867,7 +888,7 @@ const createTicket = async (e) => {
               <Link 
                 key={t.id} 
                 href={`/admin/tickets/${t.id}`} 
-                className="table-row grid-cols-8"
+                className="table-row grid-cols-7"
               >
                 <div>
                   <input
@@ -877,12 +898,9 @@ const createTicket = async (e) => {
                     onClick={(e) => e.stopPropagation()}
                   />
                 </div>
-                <div className="hidden sm:block font-mono text-xs">
-                  {t.ticket_code || t.code || t.id}
-                </div>
                 <div className="truncate font-medium">{t.subject}</div>
                 <div className="truncate hidden md:block text-sm">
-                  {t.requester_email || "-"}
+                  {t.requester_phone || "-"}
                 </div>
                 <div className="truncate hidden lg:block text-sm">
                   {t.assignee?.email || "Unassigned"}

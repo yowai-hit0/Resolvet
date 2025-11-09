@@ -183,13 +183,29 @@ export default function MyTickets() {
       });
   }, []);
 
-  const queryParams = useMemo(() => ({
-    page,
-    limit,
-    search: search || undefined,
-    status: status || undefined,
-    priority_id: priorityId || undefined,
-  }), [page, limit, search, status, priorityId]);
+  const queryParams = useMemo(() => {
+    const params = {
+      page,
+      limit,
+    };
+    
+    if (search && search.trim()) {
+      params.search = search.trim();
+    }
+    
+    if (status && status.trim()) {
+      params.status = status.trim();
+    }
+    
+    if (priorityId && priorityId.trim()) {
+      const priorityNum = parseInt(priorityId, 10);
+      if (!isNaN(priorityNum) && priorityNum > 0) {
+        params.priority_id = priorityNum;
+      }
+    }
+    
+    return params;
+  }, [page, limit, search, status, priorityId]);
 
   useEffect(() => {
     try {
@@ -211,7 +227,7 @@ export default function MyTickets() {
         .finally(() => setLoading(false));
     }, 300);
     return () => { ignore = true; clearTimeout(timer); };
-  }, [queryParams, page, limit, search, status, priorityId]);
+  }, [queryParams]);
 
   const exportCsv = () => {
     const headers = ["id","ticket_code","subject","priority","status","created_at"];
@@ -362,15 +378,14 @@ export default function MyTickets() {
       {/* Table View (hidden on mobile when in card view) */}
       <div className={`${mobileView === 'table' ? 'mobile-only' : 'mobile-only hidden'} desktop-only`}>
         <div className="card overflow-x-auto">
-          <div className="table-head grid-cols-5 text-sm">
-            <div className="hidden sm:block">Code</div>
+          <div className="table-head grid-cols-4 text-sm">
             <div>Subject</div>
             <div className="hidden sm:block">Priority</div>
             <div>Status</div>
             <div className="hidden sm:block">Updated</div>
           </div>
           
-          {loading && <TableSkeleton rows={5} cols={5} />}
+          {loading && <TableSkeleton rows={5} cols={4} />}
           
           {!loading && items.length === 0 && (
             <div className="card-body text-center py-12">
@@ -385,11 +400,8 @@ export default function MyTickets() {
               <Link 
                 key={t.id} 
                 href={`/agent/tickets/${t.id}`} 
-                className="table-row grid-cols-5 text-sm"
+                className="table-row grid-cols-4 text-sm"
               >
-                <div className="hidden sm:block font-mono text-xs">
-                  {t.ticket_code || t.code || t.id}
-                </div>
                 <div className="truncate font-medium">{t.subject}</div>
                 <div className="hidden sm:block">
                   {t.priority?.name || t.priority_id}
