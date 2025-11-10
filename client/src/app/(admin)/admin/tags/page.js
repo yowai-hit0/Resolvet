@@ -1,7 +1,7 @@
 // app/(admin)/tags/page.js
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { PrioritiesAPI } from "@/lib/api";
 import { useToastStore } from "@/store/ui";
@@ -18,7 +18,7 @@ export default function TagsPage() {
   const [activeTab, setActiveTab] = useState("tags");
   const showToast = useToastStore((s) => s.show);
 
-  const load = () => {
+  const load = useCallback(() => {
     api.get("/tags").then((r) => {
       const payload = r.data;
       const candidates = [
@@ -44,11 +44,11 @@ export default function TagsPage() {
         setPriorities([]);
         showToast("Failed to load priorities", "error");
       });
-  };
+  }, [showToast]);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   const createTag = async (e) => {
     e.preventDefault();

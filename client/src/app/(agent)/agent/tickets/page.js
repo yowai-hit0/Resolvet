@@ -227,7 +227,7 @@ export default function MyTickets() {
         .finally(() => setLoading(false));
     }, 300);
     return () => { ignore = true; clearTimeout(timer); };
-  }, [queryParams]);
+  }, [queryParams, page, limit, search, status, priorityId]);
 
   const exportCsv = () => {
     const headers = ["id","ticket_code","subject","priority","status","created_at"];

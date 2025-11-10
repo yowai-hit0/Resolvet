@@ -1,82 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth";
 
 export default function RequireAuth({ children, role }) {
   const router = useRouter();
-  const { user, loading, bootstrap, token } = useAuthStore();
-  const [checking, setChecking] = useState(true);
+  const { user, loading, token } = useAuthStore();
 
   useEffect(() => {
-    let mounted = true;
+    if (loading) return;
+    if (token) return;
 
-    async function checkAuth() {
-      // Step 1: Check for token
-      if (!token) {
-        // No token found, redirect immediately
-        if (mounted) {
-          // Preserve attempted URL for post-login redirect
-          const attemptedUrl = window.location.pathname + window.location.search;
-          if (attemptedUrl !== "/login" && attemptedUrl !== "/register") {
-            sessionStorage.setItem("redirect_after_login", attemptedUrl);
-          }
-          router.replace("/login");
-        }
-        return;
-      }
-
-      // Step 2: Token exists, validate it
-      if (token && !user && !loading) {
-        try {
-          await bootstrap();
-          if (mounted) {
-            const updatedUser = useAuthStore.getState().user;
-            if (!updatedUser) {
-              // Token was invalid, bootstrap cleared it
-              router.replace("/login");
-              return;
-            }
-          }
-        } catch (err) {
-          // Bootstrap failed (token expired/invalid)
-          if (mounted) {
-            router.replace("/login");
-          }
-          return;
-        }
-      }
-
-      if (mounted) {
-        setChecking(false);
+    if (typeof window !== "undefined") {
+      const attemptedUrl = window.location.pathname + window.location.search;
+      if (attemptedUrl !== "/login" && attemptedUrl !== "/register") {
+        sessionStorage.setItem("redirect_after_login", attemptedUrl);
       }
     }
-
-    checkAuth();
-
-    return () => {
-      mounted = false;
-    };
-  }, [token, user, loading, bootstrap, router]);
+    router.replace("/login");
+  }, [token, loading, router]);
 
   useEffect(() => {
-    // Step 3: Role-based access control
-    if (!loading && !checking && user) {
-      if (role && user.role && user.role !== role) {
-        // super_admin can access admin routes
-        if (role === 'admin' && user.role === 'super_admin') {
-          return;
-        }
-        // Redirect to appropriate dashboard based on role
-        const targetRoute = user.role === "admin" || user.role === 'super_admin' ? "/admin" : "/agent";
-        router.replace(targetRoute);
-      }
-    }
-  }, [user, loading, checking, role, router]);
+    if (loading || !user) return;
+    if (!role) return;
+    if (user.role === role) return;
+    if (role === "admin" && user.role === "super_admin") return;
 
-  // Show loading state while checking authentication
-  if (checking || loading || !user) {
+    const targetRoute = user.role === "admin" || user.role === "super_admin" ? "/admin" : "/agent";
+    router.replace(targetRoute);
+  }, [user, loading, role, router]);
+
+  if (loading || !token || !user) {
     return (
       <div className="w-full min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-4">
@@ -85,7 +40,7 @@ export default function RequireAuth({ children, role }) {
         </div>
       </div>
     );
-  }
+    }
 
   return children;
 }

@@ -19,7 +19,70 @@
     "/api/v1/auth/login": {
       "post": {
         "summary": "/api/v1/auth/login",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "number",
+                              "example": 1
+                            },
+                            "email": {
+                              "type": "string",
+                              "example": "ybarasingiz@gmail.com"
+                            },
+                            "first_name": {
+                              "type": "string",
+                              "example": "barasingiza"
+                            },
+                            "last_name": {
+                              "type": "string",
+                              "example": "yasmine"
+                            },
+                            "role": {
+                              "type": "string",
+                              "example": "super_admin"
+                            },
+                            "is_active": {
+                              "type": "boolean",
+                              "example": true
+                            }
+                          }
+                        },
+                        "token": {
+                          "type": "string",
+                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJzdXBlcl9hZG1pbiIsImlhdCI6MTc2Mjc4MTU0MSwiZXhwIjoxNzYzMzg2MzQxfQ.OXf0CvnHEXx7ElTGVdzLSzj6PQYHnlNBewICl26M0TU"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Login successful"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },
@@ -27,8 +90,71 @@
       "get": {
         "summary": "/api/v1/auth/profile",
         "responses": {
-          "304": {
-            "description": ""
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "number",
+                              "example": 1
+                            },
+                            "email": {
+                              "type": "string",
+                              "example": "ybarasingiz@gmail.com"
+                            },
+                            "first_name": {
+                              "type": "string",
+                              "example": "barasingiza"
+                            },
+                            "last_name": {
+                              "type": "string",
+                              "example": "yasmine"
+                            },
+                            "role": {
+                              "type": "string",
+                              "example": "super_admin"
+                            },
+                            "is_active": {
+                              "type": "boolean",
+                              "example": true
+                            },
+                            "created_at": {
+                              "type": "string",
+                              "example": "2025-09-28T16:01:15.345Z"
+                            },
+                            "updated_at": {
+                              "type": "string",
+                              "example": "2025-10-10T14:39:23.527Z"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Profile retrieved successfully"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": []
@@ -51,7 +177,124 @@
     "/api/v1/users": {
       "get": {
         "summary": "/api/v1/users",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "users": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "email": {
+                                "type": "string"
+                              },
+                              "first_name": {
+                                "type": "string"
+                              },
+                              "last_name": {
+                                "type": "string"
+                              },
+                              "role": {
+                                "type": "string"
+                              },
+                              "is_active": {
+                                "type": "boolean"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "id": 4,
+                              "email": "perfect@ictchamber.rw",
+                              "first_name": "Perfect",
+                              "last_name": "Gift IZIHIRWE",
+                              "role": "agent",
+                              "is_active": true,
+                              "created_at": "2025-09-30T10:49:27.443Z",
+                              "updated_at": "2025-09-30T10:49:27.443Z"
+                            }
+                          ]
+                        },
+                        "pagination": {
+                          "type": "object",
+                          "properties": {
+                            "currentPage": {
+                              "type": "number",
+                              "example": 1
+                            },
+                            "totalPages": {
+                              "type": "number",
+                              "example": 1
+                            },
+                            "totalCount": {
+                              "type": "number",
+                              "example": 1
+                            },
+                            "hasNext": {
+                              "type": "boolean",
+                              "example": false
+                            },
+                            "hasPrev": {
+                              "type": "boolean",
+                              "example": false
+                            },
+                            "limit": {
+                              "type": "number",
+                              "example": 50
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Users retrieved successfully"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": ""
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "\u001b�\u0005\u0000dSg���Tv\u0001�=mHzp\u0012\u0005�q�r��n�Ï�++��}��\u001e0\f�p�\u0003F\u001cg�u\u0011��札s�řt�k�<\u000e �8f\u0011��X�\u000e<rX\u0001�Wc�Ą��*'�\u0019�\u0001��y\u0001�:@Z�M\u0000�;�pV\u0010;\"P固\u0011�jQ\u001b��\u000e�w�ɸ\u000e\u001de�c��\u0003\u0012L\\\u0001�Σ�?H�RJ��Ζž��n��\u001aia\u0019��\u0017�_���]d����B��w%�A�#��k\u000e:2q�u�W�����v)8\u0019�`ؔ\\��_޵6Ƴ�m�J��\b�s�2�fǾ��>��ˈZ���ӸǿU�\u0002�\u0000H\"\n��3D�\u0010�&�]D�K���%+�B�L~��\u0016\u0011�w������Rp1���y\u001b�\u0003\u0018�*�\u001a/p0���լB�+\u0005�#\u001c�m.\u001e��!I!K\u0013����`�H�(\u001a.\u001c\u0007��~�J��|��\t�\u0000"
+                }
+              }
+            }
+          }
+        },
         "tags": []
       }
     },
@@ -108,6 +351,99 @@
       "get": {
         "summary": "/api/v1/tickets/stats",
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "stats": {
+                          "type": "object",
+                          "properties": {
+                            "byStatus": {
+                              "type": "object",
+                              "properties": {
+                                "New": {
+                                  "type": "number",
+                                  "example": 1
+                                },
+                                "Resolved": {
+                                  "type": "number",
+                                  "example": 35
+                                },
+                                "Closed": {
+                                  "type": "number",
+                                  "example": 25
+                                },
+                                "Assigned": {
+                                  "type": "number",
+                                  "example": 21
+                                }
+                              }
+                            },
+                            "byPriority": {
+                              "type": "object",
+                              "properties": {
+                                "1": {
+                                  "type": "number",
+                                  "example": 24
+                                },
+                                "2": {
+                                  "type": "number",
+                                  "example": 14
+                                },
+                                "3": {
+                                  "type": "number",
+                                  "example": 43
+                                },
+                                "4": {
+                                  "type": "number",
+                                  "example": 1
+                                }
+                              }
+                            },
+                            "recent": {
+                              "type": "object",
+                              "properties": {
+                                "Assigned": {
+                                  "type": "number",
+                                  "example": 5
+                                },
+                                "Resolved": {
+                                  "type": "number",
+                                  "example": 1
+                                }
+                              }
+                            },
+                            "total": {
+                              "type": "number",
+                              "example": 82
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Ticket statistics retrieved successfully"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
           "304": {
             "description": ""
           }
@@ -118,7 +454,64 @@
     "/api/v1/tickets/priorities": {
       "get": {
         "summary": "/api/v1/tickets/priorities",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "priorities": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "id": 1,
+                              "name": "Medium"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Ticket priorities retrieved successfully"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       },
       "post": {
@@ -162,7 +555,19 @@
     "/api/v1/tickets": {
       "get": {
         "summary": "/api/v1/tickets",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "\u001b� \u0000�Z�����^���\b\u0015Ni�)�5\u000f\u0016k��\f����|k��uZ'��v�e<��,*2��KhP�kh���w�^�x!\u0004�!�����s�*d���)�<��`\t�`�@k�A����o�\u0013����,j���\u001f\u001a�k�������L6�\u0017O'X�!ѷ\n5^GK\u0011|�\u0010�'�N\u0016\u0016S�>���k�X�=.��&��\u001f�K\u0016n�d���f�EoF㒋\u0010<��\u0006���g���]\u0005\u000e쮴�oc��÷�\u0003�\u000eg\u0000��G��R��r�\u0002#\u001d%}�\u0014�6nD��؁7kB��q����!xB��\tŚ��eS55\u0016�aŸ��jJ�\u0011\u001639\u0010j��\u0014�!�C�?�d�&�F����|�U\u000f��B銗�����ic�ȹfR+Uv-#����{*�Ӽ-y�0��\u0000��������s�,jU�Iɭ<��\u0010�\u0005y�\u0016j��,pNu�WdݴƟ��zAT�K\u0017S�������'\u00168��[�`��au�\u001b-y��O���Z\u001b7�}�;6�\u001c{ϒ͊�U�I��h�\u0016k��\u000b\u001e�\u00168ϟ�\u001a�7��\njV �='���O1\u000fr�L�g�m�T�<]�(j�Q�!B�\u0010�߇h�_A2#%�4}?\u0010lM�k�\u0007�\u000f���4\u0010�]����\t�Z8$!Xա\u001d��B����\u000e:���hK�Ƚ�W�`����x\u00037dzB�H�k�h�R��>��d\u0013\u001f\u0015��1�e?7Zp�X�T�X�2\u000b�����H~������P\\R��x�'n���������\u0011C+n�8\u0007����`�\u000b�e�b�H�tN�\u000f�$�fz�)����ٯ��g����(-�\u0003����Ze\u0000�V��*\u0011\u0003-^NZ�PI%[uq�wM���ft+i��-6�k�\u0019XNW���c\u0015;��T��akƑ2��\t�!��9�5�iV��\u001ffМ�٧��ӗ��)\u000f��it�b�!��JKU*)�\u0013�\u0007��Jh�J�4D\"�ėͩ[\r\u000fB\rd���\u0000��a�\u001a�����3��\u001d-'o�\u0013YR�����@��\"|P\u0012\u0011P!�����\u0003��&����\u0005\u000f�?k�B���ё\u0005�|t�\u0012NZ\u0013la�7p\u001e�\u000b\u0006P��h��Ld��q\u0016\u0014t\r���L\u0012)$H����-�%�Ĝ\f��\u0004I��|\u001a\u0016��[�5�h�T����\u000fk-�fM)�L�*8{`��R���\u001aI�QOX��ÙF\ny��=\u0011�9\"�+H��+�uu��\u001e��\u0018:Ep\u0005c�\u0000������\r�!�\u0013�fҙ�����\u0004K�Y۾M�}Ѡ�I�\n΅h*�t\u0011���S>�J+�9+9'\u000eȗ�wCDM�W4���`?:=\u001a-�Z\u0016���豰?m�\u0001&�>�#\u0003�*�͛A�8*�\u0011\"kx\u0019)�a#$���{�4��\u0014\t6Ƃ�����=p\t�!\u0012dm���Ǳ\u001c�[\u0019�ՐK�$u�?�!l\u0013�\n6�PHN\u0005`�#���b�1���_����@Y�P�C�\u0000�\u001c5>\u0016)�և\u0000���dG�\u0003.�AܱZv]�bN:��L������ZyҌ�����I,[���ӫN�\u0007\r�_�\u0010$P�\u0002+ıQ�P\u0001�1\u001b\u001f2\b��\u00054�\u001a\u0018C�|�-��\u00021+yŹT�\u0016�W��\u0014��:D\u0015�\u000e0_N�ҍ��\u001d!�\u0016�2K��l�\u001d\n�$�f\u000f�5Y�/\u0007pl\u0003\u0017W\u0012\u0017�%�\r�?Slʮ�\u0005�\u001a�\u0013�p�%L�J�\u0004b��<��C+���\u0006��x@�\u001b\tf&SV��hWWu]�\u000eNjVk��J\t\u0012\u0019O�k�!��UM��p�KΡ�B��7�=�;A[��6,\u0000+=\u0000EH9�o�\u001aOi pI2��\u0018\tr�D�cE�\u0015r�fg�׳��Ǉ3xyyA�o��u�3\u001c�P��a;�?p�E�U[6�\u0011]�ǍV�\u0014mm����o^�+���\u0003H�\u001b\u0017�\u0000.\u000f�i��Ա#�I\u0013\u0003}�;����'0H\u001b��Z\b�\u000f�.��\u0014|��\t\u0001\u001e����x�z�\u001d�H�\b\u001f�\tqi�7\bK\b�F�\u001c�,�\u0010m�\u0006z�\u0014�R���!L\u0019��\u0016\u0010�\u0004s�C��S�9�� �I\u0001.œ��\nF�v�,�s�!\u0007�)%b�w����\u000e\u001f/\u001eg�{pn��,|~\u0019]�U\ro\u0005\u0006=�N\u000bQ��cX�Lq�+Qv���\u0015\u001b�>�/\u0011\u001c�\t�\u0004�[�Ƭ���u�1\r\u001d�\u001b�\"�\u0010��~\u001cn̊R�\b�I�@��ފ\u0002\u0007�f��Q�8Q\u0019�&�;�\u0019\u0013\u0015��`�9��)���\u0016���ｚ\u0004�rt�N\u0016����\u0012�\u0000���ܣ�q�\u001f"
+                }
+              }
+            }
+          }
+        },
         "tags": []
       },
       "post": {
@@ -449,7 +854,64 @@
     "/api/v1/tags": {
       "get": {
         "summary": "/api/v1/tags",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "id": 8,
+                              "name": "Application_issues"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Tags retrieved successfully"
+                    },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       },
       "post": {
@@ -564,7 +1026,7 @@
                     },
                     "timestamp": {
                       "type": "string",
-                      "example": "2025-11-10T11:57:35.260Z"
+                      "example": "2025-11-10T13:00:35.645Z"
                     }
                   }
                 }

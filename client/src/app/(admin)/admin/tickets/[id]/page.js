@@ -2,7 +2,7 @@
 "use client";
 export const runtime = 'edge';
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { TicketsAPI, UsersAPI, api } from "@/lib/api";
 import { useToastStore } from "@/store/ui";
@@ -44,7 +44,7 @@ export default function TicketDetail() {
     tag_ids: []
   });
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     setError(undefined);
     try {
@@ -63,12 +63,12 @@ export default function TicketDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     if (!id) return;
     load();
-  }, [id]);
+  }, [id, load]);
 
   useEffect(() => {
     UsersAPI.list({ role: "agent", page: 1, limit: 100 })

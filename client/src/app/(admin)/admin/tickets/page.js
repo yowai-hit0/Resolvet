@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { TicketsAPI, UsersAPI, AdminAPI, api, PrioritiesAPI } from "@/lib/api";
 import { useToastStore } from "@/store/ui";
@@ -181,9 +182,11 @@ function MobileFilterSheet({ isOpen, onClose, filters, onFilterChange, agents, a
 function ImagePreview({ url, onRemove, showRemove = true }) {
   return (
     <div className="relative group">
-      <img 
+      <Image 
         src={url} 
         alt="Preview" 
+        width={80}
+        height={80}
         className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded border"
       />
       {showRemove && (
@@ -360,7 +363,7 @@ export default function AdminTickets() {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [queryParams]);
+  }, [queryParams, page, limit, search, status, priorityId, assigneeId]);
 
   useEffect(() => {
     // load agents for dropdown

@@ -1,7 +1,7 @@
 "use client";
 export const runtime = 'edge';
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { useToastStore } from "@/store/ui";
@@ -14,7 +14,7 @@ export default function UserDetail() {
   const [saving, setSaving] = useState(false);
   const showToast = useToastStore((s) => s.show);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const r = await api.get(`/users/${id}`);
@@ -24,12 +24,12 @@ export default function UserDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, showToast]);
 
   useEffect(() => {
     if (!id) return;
     load();
-  }, [id]);
+  }, [id, load]);
 
   const toggleStatus = async () => {
     setSaving(true);

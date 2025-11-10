@@ -1,7 +1,7 @@
 "use client";
 export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { UsersAPI } from "@/lib/api";
 import { useToastStore } from "@/store/ui";
@@ -16,7 +16,7 @@ export default function UsersList() {
   const [pagination, setPagination] = useState();
   const showToast = useToastStore((s) => s.show);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const r = await UsersAPI.list({ search: search || undefined, role: role || undefined, page, limit });
@@ -29,12 +29,12 @@ export default function UsersList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, role, page, limit, showToast]);
 
   useEffect(() => {
     const t = setTimeout(load, 300);
     return () => clearTimeout(t);
-  }, [search, role, page, limit]);
+  }, [search, role, page, limit, load]);
 
   return (
     <div>

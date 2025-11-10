@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { InvitesAPI } from "@/lib/api";
 import { useAuthStore } from "@/store/auth";
 
@@ -19,7 +19,7 @@ export default function InvitationsPage() {
 
   const isSuperAdmin = user?.role === "super_admin";
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const res = await InvitesAPI.list({ page, pageSize });
@@ -29,18 +29,18 @@ export default function InvitationsPage() {
       setTotal(t);
     } catch {}
     setLoading(false);
-  };
+  }, [page, pageSize]);
 
   useEffect(() => {
     load();
-  }, [page, pageSize]);
+  }, [load]);
 
   // Auto-refresh when enabled
   useEffect(() => {
     if (!autoRefresh) return;
     const id = setInterval(() => load(), 10000); // every 10s
     return () => clearInterval(id);
-  }, [autoRefresh]);
+  }, [autoRefresh, load]);
 
   // Refresh when tab gains focus
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function InvitationsPage() {
     return () => {
       if (typeof window !== 'undefined') window.removeEventListener('focus', onFocus);
     };
-  }, []);
+  }, [load]);
 
   const createInvite = async (e) => {
     e.preventDefault();

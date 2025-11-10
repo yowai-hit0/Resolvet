@@ -2,7 +2,7 @@
 "use client";
 export const runtime = 'edge';
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { TicketsAPI, AgentAPI, api } from "@/lib/api";
 import { useToastStore } from "@/store/ui";
@@ -37,7 +37,7 @@ export default function AgentTicketDetail() {
     tag_ids: []
   });
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const d = await TicketsAPI.get(id);
@@ -51,7 +51,7 @@ export default function AgentTicketDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     if (id) load();
@@ -75,7 +75,7 @@ export default function AgentTicketDetail() {
         setPriorities(list);
       })
       .catch(() => setPriorities([]));
-  }, [id]);
+  }, [id, load]);
 
   const handleEditToggle = () => {
     if (isEditing) {
