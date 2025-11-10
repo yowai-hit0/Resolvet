@@ -75,7 +75,7 @@ function MobileTicketCard({ ticket, isSelected, onSelect }) {
 }
 
 // Mobile Filter Sheet Component
-function MobileFilterSheet({ isOpen, onClose, filters, onFilterChange, agents, priorities }) {
+function MobileFilterSheet({ isOpen, onClose, filters, onFilterChange, agents, admins, priorities, user }) {
   if (!isOpen) return null;
 
   return (
@@ -807,7 +807,9 @@ const createTicket = async (e) => {
           if (key === 'limit') setLimit(value);
         }}
         agents={agents}
+        admins={admins}
         priorities={priorities}
+        user={user}
       />
 
       {/* Mobile Card View */}

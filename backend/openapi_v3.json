@@ -51,22 +51,7 @@
     "/api/v1/users": {
       "get": {
         "summary": "/api/v1/users",
-        "responses": {
-          "304": {
-            "description": ""
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "\u001b�\u0005\u0000dSg���Tv\u0001�=mHzp\u0012\u0005�q�r��n�Ï�++��}��\u001e0\f�p�\u0003F\u001cg�u\u0011��札s�řt�k�<\u000e �8f\u0011��X�\u000e<rX\u0001�Wc�Ą��*'�\u0019�\u0001��y\u0001�:@Z�M\u0000�;�pV\u0010;\"P固\u0011�jQ\u001b��\u000e�w�ɸ\u000e\u001de�c��\u0003\u0012L\\\u0001�Σ�?H�RJ��Ζž��n��\u001aia\u0019��\u0017�_���]d����B��w%�A�#��k\u000e:2q�u�W�����v)8\u0019�`ؔ\\��_޵6Ƴ�m�J��\b�s�2�fǾ��>��ˈZ���ӸǿU�\u0002�\u0000H\"\n��3D�\u0010�&�]D�K���%+�B�L~��\u0016\u0011�w������Rp1���y\u001b�\u0003\u0018�*�\u001a/p0���լB�+\u0005�#\u001c�m.\u001e��!I!K\u0013����`�H�(\u001a.\u001c\u0007��~�J��|��\t�\u0000"
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -122,18 +107,18 @@
     "/api/v1/tickets/stats": {
       "get": {
         "summary": "/api/v1/tickets/stats",
-        "responses": {},
+        "responses": {
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },
     "/api/v1/tickets/priorities": {
       "get": {
         "summary": "/api/v1/tickets/priorities",
-        "responses": {
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "post": {
@@ -177,19 +162,7 @@
     "/api/v1/tickets": {
       "get": {
         "summary": "/api/v1/tickets",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "\u001b� \u0000�Z�����^����rJ�����`��\u0018��\u000f(N�̷��^�uB��:�fv\u0016\u0015�]�%4(�54R1)�*w�z\u0014�!\u000e�\u0013}��9�B�ܿ\u0018�Nc<��P\t�24:iT��l��\u0014Q���5�8���P�u��\u0002�\u001e���\u0005g�>�x<�\f/��R��:\u0018\n�|�@\u001d�O20\u001f\u0013t�-lX��\f�u�m7�z��Z20\r�!�Q�\r��\u000e�F\u001b�;��\r\u0014\u0017�Oe���\u001c\\�]f��L;\u0003�o'g\u0018\u001a�\u0000LV�j��@�e�\u0019\u0006�J�Z)�h��\n�c\rN�\t�\u001b����oz�\b\u0015�'JV7E%뢮0�\u0003+\u0006E�Wc��0���P�-E?�\u0019]���&3�\t\u0015\n&�\u001d�wXq�\u001a%JU�7�\u00153\u001c7�m��+&UY�m�H&L����k\u0015or^Ք�-�'�bhi�0��Y���P�h����\u0010�y\u0019�\n*�P�pK��Wd�ƿ�v>�\f\u00176ĴMW�\u0013��o�p��n��\u0019���v0�����r��w~��2_��)�^��\\�j�����|mc����G���YMQ�\"�J�b\u0019\"�yDU��e� ]�J����X�֏�'%��(\u0004\u001f�h���|0�-!�\"nj��\t�:��J=�\u0007H�G�\t�6&�\"7|�6\u0006\u000e1\bD\u001d:1($ԉ��,,\r&\u0007�\\jx5�zKή��0%�\u0011BF\u0018m#E]�e��o��I�W�=n\f���k%�b,�\u000bN�m�\u0003������|\u0006\u0005�*�6���.1��O�\"��������\u0011CKo�8\u0004��K]��s\ny�b���뜴��^���Ic�����ף�w���ő\u001b�\u0004\u000e\u0001\u0007�Rd\u0000����*A\u0003-FζXc)Kٔ\u0017�{�d}8n\u0006+�\u0001��Y��%`�\\yG߯%��%2\u001dǇ�\u001e\u0006J���#X��\u001f�Q�\tn�B��\u0000��\u0010O�mЎ~4܎�\u0007�W�\u0015\u0005�5�&/�,�R����7�\u0010J���kb#�����.�\u0017�\u001a2V�C��\\c�j^����'ڐ[Z�΀#2d����Wo���QT\u0011� \u001b2��M=D�&8���z\u0007�?+�LݸM������9ܴ��\\w+�\u000e�\u000b\u0006P»�*��C-d���\u0006J\u0018\u001bN\u000f�2I�\u0011��\u0016��3�\u0017P\u0013s,(~FI\u0004\u001d�Ӏ\u0000�Ӛ�nD#�\u0011\u0017�o�˕�L�:����]�u���8�H!ϓ�'�1�V��`m[5O�!��!K\u0004�Ҟ\b��\u0014�-y]{�:!|&���j�^��h�5�j\f��z�L�Fp.D]@�\u000b\"������P%S����]\u0013���+\u001a\u0006�a������\u000e.g\u001elG�\u001e\r���\u0018`�г:2��\f5�\u0006��`p\u0007��adl�\u001ak!Y%�޳�q�c �h\u0003�}���m�\u0011�>\u0010Tm$��Ǳ\u001a����e�r�Ĵa:���o#�\u00026�A\u0005�أ���|�1������\u0017\u0019́�L���Z\u0006\u00119by��\u001fL\f\u0001:U��,�5\b\u0019t�U�m�\u0006s�)�b2\u0017���u\u001bn5����Ξ\t-\u001bVˇӫV��\u0007��[�\u0010�P\u0002\u0002+ı!�R\u0001�13�\u0013(��\u0019t�\u001a8C�\\�,����\u0002\u0001+y����\u001e�;L�\u000b^i\u001dV\u0005\u0016��2[���\u000e��\u001d \b��X�,޶�m�(8�����Udz��!�\rB\\1l0�t6\u0014��`Sz���V�\u0014!��-a�VL�4\u0010���1m�[�xG>���\u0003��@0щ�A&@۪���wpR�J�,/JA����\u0006\u001f�i������x��w+/$�]��S~\u0012�U���\u0002�ҽP��|���8�=������@�<D\u001a\u0006\u001b+����69{��ܝ>ܟ���32c��\u0017�\u0015��@�R\u000e\u000fۑ��3%\nU6y-\u0018�m�\\�R梩<q�?3�\u000b�H\u001b/~\u0006��c\u0018\u0017[��<3��.W厰.Mt�af���\r��`[\u000bGVB\b~�x!{k�kyG\bp\n��D:���m�\u0007���B��Kݭ�/ �\u001a\u001aj�2�|0)\u001a\u0018\t��F�[�z?&��\u001bA ����\u0001\nO�e�\u0012��z\u0019�\u0012O�sK\u0018��&2��5�䡦�����>��;|�x�\u001c���v����f�U[Լ\u0011\u0018t�Z%D.3�\u0001\u001dĊsU��\u0015\rl,]����\u0010��\u0018�\u0006\u001f\u001f\u0019n��:K^�\u0017��1��%y��\u0017��j��\u00143D���\u000ft���Ȱ�qB_\tU\n#\r�O\u0003}�Z�!R�X������\f/�h�\n����\u0010(\u0005K�d �]G1�\r\u0000\u001e��cT)��\u0007"
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "post": {
@@ -399,7 +372,22 @@
     "/api/v1/admin/analytics/system": {
       "get": {
         "summary": "/api/v1/admin/analytics/system",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "\u001b�\b\u0000d[j��\u001e�q\u0006\\Rx�V\u0019\u0019�Y�a�\u0003��������\n�{�[�=\u001cYѦ\u001b���wU�\u0018i\u0015X\t���\u0016}+�?�.�\u001a�^r\u0007YPJ~��\u0004��Z���`�@�\u0005����)=X\u0007�7��)\u0018n\\Z\u0002!_�HQ�\u001a\u0005�\n0��\u0015���s`\u001b̪\u0000���9~��W\u0005��\u001f��Dq�`���B`��M_\u001b]�\u0006\u0014�WT�)\u000e\u001a�%4PG�B}|:�-a\u0007��Q�~�� O�!C�&#��4��O�O�ϖ�\u001d?{|�+G��\u0018W�\noG�M�M;��\r\u001a\\��v#?]�#ySk���M��0�>�bFo��`(�)�3\u001bT�ZmL��Gc��&NY\\ę��\u001b\na��  Ŀx��\u0013(�\u00199��!��\u000b��/q\u001e(m�\u0015� j&4j�UQ��\u0007���o�̚�?r�a�������qF\u000e\u001b�̧�f��F{Oi\"/�{�3��z����\u0017\u001f�=���#�W�iQmݗ�\"��OX�TR��ˏ\u0017?�|�[��[ތt����G�_�y�N�(�Ղ�MMߣ+\f�\u0004V\u0005%�\u0004M��q\\`�5jw��8�/�n�K2=�=2\u0006����\u0004Ղ\u0006�\u0013\u0006\u0016�\u0018\\��qv�\u0001�q(G�c�̵_��Tƒ�jx\u001f⅗�:(:r@�%��ځ\u0003�ݚU.��9c��q�wxp:\u0005��N�q΅2\u0001�:>`\u000e��rS\t\u0013�0S��X�g0��1>�T�(_n�uU���\u0000X�t����9�D�H\u0012ә�*\u0017�)穄p\u0003\n���J*�\u0002"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": ""
+          }
+        },
         "tags": []
       }
     },
@@ -461,11 +449,7 @@
     "/api/v1/tags": {
       "get": {
         "summary": "/api/v1/tags",
-        "responses": {
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "post": {
@@ -509,81 +493,12 @@
     "/api/v1/invites": {
       "post": {
         "summary": "/api/v1/invites",
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "number",
-                          "example": 7
-                        },
-                        "email": {
-                          "type": "string",
-                          "example": "patrivy0@gmail.com"
-                        },
-                        "role": {
-                          "type": "string",
-                          "example": "admin"
-                        },
-                        "status": {
-                          "type": "string",
-                          "example": "PENDING"
-                        },
-                        "expiresAt": {
-                          "type": "string",
-                          "example": "2025-11-12T19:13:31.318Z"
-                        },
-                        "acceptUrl": {
-                          "type": "string",
-                          "example": "https://resolvety.vercel.app//auth/invite/accept?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnZpdGVJZCI6NywiZW1haWwiOiJwYXRyaXZ5MEBnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHBpcmVzSW5Ib3VycyI6NzIsImlhdCI6MTc2MjcxNTYxMiwiZXhwIjoxNzYyOTc0ODEyfQ.RkXWW2ELnxPp0NI4gi-b9PoJKqG2coCZlH0UbmF4jKI"
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invite created"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       },
       "get": {
         "summary": "/api/v1/invites",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "\u001b#\u0005\u0000dSզ�\u000f��\u0003�HLߋ��\u0010\t9r\u0012�'QI������\t&<u\n\u0006���<�<��\u0006I��\u0011�M]�\u0001�Ps�}�\f�B\"��&��6n���X\u0005�\"vP�1�=�m�\u0017�~��T�b\u0007r��\u0005\u0010��{����:�-�<W��e\u000f\u001d,�\u000b\u0001��\u0005�\u0019:h�s���\u0004\u001el�E\u0015�X�,AeI�R�b��{7x�@nN�\"�?n@`�\u0006e�2vg2a\"�:e�\u0013:X\u001b�m\u0005���>�|��\rtP\u0016�&�\u001f7 ��U�v&�Id��}�ĥȩ9\u001b�����\u0010\u0004\"�m�,��TZ9��A\u0016�\\�S\u001c�P�3���z��XT�\u0018T�2�4:�i`��\u0010�z\u001d���g/^���{�����\u0019��l���x�I���\u0013҆���E���r;�=�_�t��񲟂��\u0007;���;坌�kBe|E\u001e�\u0018;\u0016\u0014\\�V!�#ku�I^T\u0018�]\u0005���\u0010�e��\u0011pk^y��m�U��)\u001b0�\u0018�U\u001ejP�'Q)VQ�\u001f�b\u001a���\u0003r;�\t\u0013�^cB|���x'��\u0005�$�\u0014�\u000e�\u001b0\u0001�d\u0019�\\p�^�vIj\u001a�D�ʱq�c\u001e��נʐ\"\u000f9E�x�S@\u001dCػ�;��|�>\u0006p\r��d{�l�\u0013\u001e�tЎ�/��z��\u0001Ή��c�\u0013 ��\u001d\\ʺN׆/'Y�M��ɺ�\"�:n\u0017���\u0016�-�<\u0002"
-                }
-              }
-            }
-          },
-          "304": {
-            "description": ""
-          }
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -600,61 +515,7 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "statusCode": {
-                      "type": "number",
-                      "example": 200
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "number",
-                          "example": 6
-                        },
-                        "email": {
-                          "type": "string",
-                          "example": "anaganze@sfhrwanda.org"
-                        },
-                        "role": {
-                          "type": "string",
-                          "example": "admin"
-                        },
-                        "status": {
-                          "type": "string",
-                          "example": "PENDING"
-                        },
-                        "expiresAt": {
-                          "type": "string",
-                          "example": "2025-11-12T19:08:02.892Z"
-                        },
-                        "acceptUrl": {
-                          "type": "string",
-                          "example": "https://resolvety.vercel.app//auth/invite/accept?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnZpdGVJZCI6NiwiZW1haWwiOiJhbmFnYW56ZUBzZmhyd2FuZGEub3JnIiwicm9sZSI6ImFkbWluIiwiZXhwaXJlc0luSG91cnMiOjcyLCJpYXQiOjE3NjI3MTUyODMsImV4cCI6MTc2Mjk3NDQ4M30.cM8D_n7FrBwZox85OVVXnzEbOzB0kGzM8medpf1CsZU"
-                        }
-                      }
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invite resent"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        "responses": {},
         "tags": []
       }
     },
@@ -703,7 +564,7 @@
                     },
                     "timestamp": {
                       "type": "string",
-                      "example": "2025-11-09T19:07:46.646Z"
+                      "example": "2025-11-10T11:57:35.260Z"
                     }
                   }
                 }

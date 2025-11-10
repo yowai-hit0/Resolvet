@@ -9,7 +9,7 @@
     "dev": "nodemon server.js",
     "start": "node server.js",
     "full:run": "npm install --omit=dev && npx prisma generate && npx prisma migrate deploy && node prisma/seed-csv.js && node upload-attachments.js && node server.js",
-    "full:setup": "npm install --omit=dev && npx prisma generate && npx prisma migrate deploy && node prisma/seed-csv.js && node upload-attachments.js",
+    "full:setup": "npm install --omit=dev && npx prisma generate && npx prisma migrate deploy",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
